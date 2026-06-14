@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dlpal1rn4sjjg"]
+
+[ext_resource type="Script" uid="uid://hfic1kd2a15j" path="res://scripts/battle/Battlescene.gd" id="1_sx6bk"]
+[ext_resource type="PackedScene" uid="uid://djdrn1tgj56hi" path="res://scenes/battle/Grid.tscn" id="2_curwf"]
+[ext_resource type="PackedScene" uid="uid://bd000x17iehe0" path="res://scenes/units/player_character.tscn" id="2_g3tu8"]
+[ext_resource type="PackedScene" uid="uid://cqk87mlrchf2c" path="res://scenes/units/Unit.tscn" id="3_g3tu8"]
+
+[node name="Battlescene" type="Node2D" unique_id=1208126284]
+script = ExtResource("1_sx6bk")
+
+[node name="PlayerCharacter" parent="." unique_id=1154184100 instance=ExtResource("2_g3tu8")]
+
+[node name="Grid" parent="." unique_id=651052919 instance=ExtResource("2_curwf")]
+
+[node name="Unit" parent="." unique_id=1715206411 instance=ExtResource("3_g3tu8")]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1136979303]
+zoom = Vector2(2, 2)

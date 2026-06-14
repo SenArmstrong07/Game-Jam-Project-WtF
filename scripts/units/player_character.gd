@@ -39,7 +39,7 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 	return Vector2(
 		cell.x * TILE_SIZE + TILE_SIZE / 2.0,
 		cell.y * TILE_SIZE + TILE_SIZE / 2.0
-	) + Vector2(0, -TILE_SIZE / 2.0)
+	)
 
 #player controls
 func _unhandled_input(event):

@@ -25,7 +25,7 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 	return Vector2(
 		world_grid_x * TILE_SIZE + TILE_SIZE / 2.0,
 		cell.y * TILE_SIZE + TILE_SIZE / 2.0
-	) + Vector2(0, -TILE_SIZE / 2.0)
+	)
 
 func _process(delta):
 	move_timer += delta

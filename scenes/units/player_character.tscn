@@ -245,10 +245,11 @@ height = 54.0
 script = ExtResource("1_53vxl")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1459718297]
+position = Vector2(4, -65)
 sprite_frames = SubResource("SpriteFrames_tvdtv")
-animation = &"Move_Down"
+animation = &"Idle"
 autoplay = "Idle"
-frame_progress = 0.09910124
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=303944798]
+position = Vector2(0, -28)
 shape = SubResource("CapsuleShape2D_hnlyq")

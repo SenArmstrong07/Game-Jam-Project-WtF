@@ -9,12 +9,8 @@ enum Team {
 enum DamageType {
 	#just add more types dito, or change the existing ones if you want. ni-AI ko lang sila, but you can use whatever you like.
 	NEUTRAL,    # Standard damage with no special properties
-	CRASH,      # System crash errors
-	GLITCH,     # Visual/temporal glitches
-	CORRUPT,    # Data corruption
-	MALWARE,    # Malicious viruses
-	LOGIC,      # Logic errors in code
-	OVERFLOW    # Buffer/memory overflow
+	INEFFECTIVE, # damage halves (0.5)
+	SUPER_EFFECTIVE $ double damage (2)
 }
 
 var team : Team

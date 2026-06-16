@@ -28,13 +28,11 @@ var attack_damage_type : DamageType = DamageType.NEUTRAL
 
 # Damage type resistances/weaknesses (list nalang sa array kung anong type ng damage ang effective or ineffective sa unit)
 
-var weak_to : Array[DamageType] = []  # Takes super effective damage from these
-var resistant_to : Array[DamageType] = []  # Takes ineffective damage from these
+var dmg_eff : Array[DamageType] = []  # DMG Type indicator
 
 #EXAMPLE USAGE:
 # In Enemy._ready()
-# weak_to = [Unit.DamageType.CRASH]  # Weak to crash-type attacks
-# resistant_to = [Unit.DamageType.GLITCH]  # Resistant to glitch-type attacks
+#
 
 # When attacking
 # attack_damage_type = Unit.DamageType.MALWARE
@@ -54,9 +52,9 @@ func take_damage(amount: int, damage_type: DamageType = DamageType.NEUTRAL) -> v
 	# Calculate type multiplier
 	var type_multiplier : float = 1.0
 	
-	if damage_type in weak_to:
+	if damage_type == DamageType.SUPER_EFFECTIVE:
 		type_multiplier = 2.0  # Super effective - double damage
-	elif damage_type in resistant_to:
+	elif damage_type == DamageType.INEFFECTIVE:
 		type_multiplier = 0.5  # Ineffective - half damage
 	
 	var final_damage : int = int(amount * type_multiplier)

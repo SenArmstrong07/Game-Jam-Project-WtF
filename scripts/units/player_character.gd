@@ -26,6 +26,13 @@ func _ready():
 	# placed player
 	position = grid_to_world(grid_pos)
 
+	# Safety check for camera
+	if camera_2d == null:
+		print("ERROR: Camera2D not found at path '../Camera2D'")
+		print("Current node path: ", get_path())
+		print("Parent: ", get_parent())
+		return
+	
 	# center camera on grid
 	var grid_center = Vector2(
 		GRID_WIDTH * TILE_SIZE / 2.0,

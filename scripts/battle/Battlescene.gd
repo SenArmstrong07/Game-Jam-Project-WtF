@@ -29,8 +29,8 @@ enum BattlePhase {
 var current_phase: BattlePhase = BattlePhase.PREPARATION
 
 @onready var grid = $Grid
-@onready var player: Unit = $Grid/player_character
-@onready var enemy: Unit = $Grid/CommonBug
+@onready var player: Unit = get_node("PlayerCharacter")
+@onready var enemy: Unit = get_node("CommonBug")
 
 var player_deck: ChipDeck
 var enemy_deck: ChipDeck

@@ -17,8 +17,8 @@ var spawned_enemies = []  # Track spawned enemy positions
 
 # Enemy spawning settings
 var enemy_scene = preload("res://scenes/units/overworld_enemy.tscn")
-var min_distance_between_enemies = 600  # Minimum pixels between enemy spawns
-var spawn_chance_per_tile = 0.00001  # Chance to spawn enemy on each valid tile
+var min_distance_between_enemies = 700  # Minimum pixels between enemy spawns
+var spawn_chance_per_tile = 0.000001  # Chance to spawn enemy on each valid tile
 
 
 func _ready():

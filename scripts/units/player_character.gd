@@ -25,6 +25,12 @@ var max_lives: int = 5
 var facing: Vector2i = Vector2i.RIGHT
 var movement_locked := false
 
+func get_lives() -> int:
+	return lives
+
+func get_max_lives() -> int:
+	return max_lives
+	
 func _ready():
 	# placed player
 	grid_pos = Vector2i(1, 2)

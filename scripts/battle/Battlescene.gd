@@ -7,6 +7,7 @@ enum BattlePhase {
 	END
 }
 
+@onready var ui: CanvasLayer = $BattlePhaseUI
 @onready var enemy_hitpoint: Marker2D = $CommonBug/CommonBugMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
 var current_phase: BattlePhase = BattlePhase.PREPARATION
@@ -54,6 +55,25 @@ func _process(delta: float) -> void:
 # ============================================================
 # PREPARATION PHASE
 # ============================================================
+func _update_ui() -> void:
+	if ui == null:
+		return
+
+	ui.visible = current_phase == BattlePhase.PREPARATION
+
+	if current_phase != BattlePhase.PREPARATION:
+		return
+
+	ui.update_ui(
+		player_hand,
+		selected_chips,
+		player_chip_index,
+		max_selected_chips,
+		player.get_lives(),
+		player.get_max_lives(),
+		enemy.hp,
+		enemy.max_hp
+	)
 
 func _start_preparation_phase() -> void:
 	print("=== PREPARATION PHASE ===")
@@ -63,78 +83,56 @@ func _start_preparation_phase() -> void:
 
 	player_hand = player_deck.draw_hand(5)
 
+	selected_chips.clear()
+	current_chip_index = 0
 	player_chip_index = 0
-	var selected_chips: Array[Chip] = []
-	var current_chip_index := 0
 
 	var chip_names := []
 
 	for chip in player_hand:
 		chip_names.append(chip.name)
-
+		
+	_update_ui()
 	print("Player hand: ", chip_names)
 
 func _handle_preparation_input() -> void:
 	if player_hand.is_empty():
 		return
 
-	# Browse chips
 	if Input.is_action_just_pressed("ui_right"):
 		player_chip_index = (player_chip_index + 1) % player_hand.size()
-		print("Viewing: ", player_hand[player_chip_index].name)
 
 	if Input.is_action_just_pressed("ui_left"):
 		player_chip_index = (player_chip_index - 1 + player_hand.size()) % player_hand.size()
-		print("Viewing: ", player_hand[player_chip_index].name)
 
-	# Select chip
 	if Input.is_action_just_pressed("ui_accept"):
-
 		var chip = player_hand[player_chip_index]
 
-		# prevent duplicates
 		if selected_chips.has(chip):
-			print("Chip already selected")
 			return
 
 		selected_chips.append(chip)
-		print("Selected: ", chip.name)
 
-		# limit to 2 chips
 		if selected_chips.size() >= max_selected_chips:
-			print("Module selected → starting battle")
 			_start_battle_phase()
+
+	_update_ui()
 
 # ============================================================
 # BATTLE PHASE
 # ============================================================
 
 func _start_battle_phase() -> void:
-	print("=== BATTLE PHASE ===")
-
 	current_phase = BattlePhase.BATTLE
-	phase_changed.emit(current_phase)
 
 	battle_active = true
 	current_chip_index = 0
 
-	# Apply FIRST chip stats as default combat stats
 	var first_chip := selected_chips[0]
-
 	player.attack_range = first_chip.range_tile
 	player.attack_power = first_chip.power
 
-	print("Battle started!")
-	print("Selected chips: ")
-
-	for chip in selected_chips:
-		print("- ", chip.name)
-
-	print("First active chip: ", first_chip.name)
-	# Enemy AI now handles: (found in the enemy script)
-	# - movement
-	# - targeting
-	# - shooting projectiles
+	_update_ui()
 
 func _handle_battle_input() -> void:
 	if player_attack_locked:
@@ -169,6 +167,8 @@ func _handle_battle_input() -> void:
 
 			if current_phase != BattlePhase.END:
 				_next_round()
+		
+		_update_ui()
 							
 func use_chip(chip: Chip):
 	match chip.attack_type:

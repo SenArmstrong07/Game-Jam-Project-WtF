@@ -5,13 +5,22 @@ extends CharacterBody2D
 @export var friction := 1000.0
 
 var last_direction := Vector2.DOWN
+var frontlayer: TileMapLayer
+
+func _ready() -> void:
+	# Get reference to frontlayer to check if world is ready
+	frontlayer = get_parent().get_node("TileNode/front")
 
 func _physics_process(delta: float) -> void:
+	# Don't allow movement until world generation is complete
+	if frontlayer and not frontlayer.is_world_ready:
+		return
+	
 	var input_dir := Input.get_vector(
-		"ui_left",
-		"ui_right",
-		"ui_up",
-		"ui_down"
+		"left",
+		"right",
+		"up",
+		"down"
 	)
 
 	# Track last direction for facing/animations

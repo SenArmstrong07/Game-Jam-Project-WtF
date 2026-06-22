@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://t6qfwqjp5o4y" path="res://scripts/overworld/frontlayer.gd" id="2_udnr2"]
 [ext_resource type="PackedScene" uid="uid://ctc3bb7s55ha1" path="res://scenes/units/overworld_player.tscn" id="3_80qnd"]
 [ext_resource type="PackedScene" uid="uid://b8uwoo3tcjryd" path="res://scenes/overworld/minimap.tscn" id="4_01jcn"]
+[ext_resource type="PackedScene" uid="uid://bp7rq1s1rj2x8" path="res://scenes/overworld/loading_screen.tscn" id="5_loading"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_udnr2"]
 texture = ExtResource("1_ruwbt")
@@ -66,3 +67,5 @@ script = ExtResource("2_udnr2")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=350550884]
 
 [node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
+
+[node name="LoadingScreen" parent="." unique_id=1500000010 instance=ExtResource("5_loading")]

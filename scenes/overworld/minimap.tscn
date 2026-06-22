@@ -1,39 +1,67 @@
 [gd_scene format=3 uid="uid://b8uwoo3tcjryd"]
 
 [ext_resource type="Script" uid="uid://cpb0ygpkoemds" path="res://scripts/overworld/minimap.gd" id="1_vu6ey"]
+[ext_resource type="Script" uid="uid://x2ri40ch5jiw" path="res://scripts/overworld/circle_border.gd" id="2_circle"]
+[ext_resource type="Shader" uid="uid://mrpatb6mrrff" path="res://scripts/overworld/minimap_circle.gdshader" id="3_shader"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_nlwk1"]
-size = Vector2(4, 4)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_minimap"]
+shader = ExtResource("3_shader")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_0l0qg"]
+size = Vector2(16, 16)
 
 [node name="Minimap" type="CanvasLayer" unique_id=1115139525]
 script = ExtResource("1_vu6ey")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1094118409]
+material = SubResource("ShaderMaterial_minimap")
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -256.0
-offset_top = -256.0
+offset_left = -192.0
+offset_top = -192.0
 grow_horizontal = 0
 grow_vertical = 0
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1259698418]
 handle_input_locally = false
-size = Vector2i(256, 256)
+size = Vector2i(192, 192)
 render_target_update_mode = 4
 
-[node name="UI" type="CanvasLayer" parent="SubViewportContainer/SubViewport" unique_id=817634303]
-
-[node name="playerMarker" type="Sprite2D" parent="SubViewportContainer/SubViewport/UI" unique_id=1105811853]
-position = Vector2(128, 128)
-texture = SubResource("PlaceholderTexture2D_nlwk1")
+[node name="Background" type="ColorRect" parent="SubViewportContainer/SubViewport" unique_id=1500000001]
+offset_right = 192.0
+offset_bottom = 192.0
+color = Color(0.023280388, 0.16639876, 0.18127617, 1)
 
 [node name="Map" type="Node2D" parent="SubViewportContainer/SubViewport" unique_id=572475574]
 
 [node name="minimapCam" type="Camera2D" parent="SubViewportContainer/SubViewport/Map" unique_id=1582837307]
 unique_name_in_owner = true
 
+[node name="TerrainVisuals" type="Node2D" parent="SubViewportContainer/SubViewport/Map" unique_id=1500000003]
+unique_name_in_owner = true
+
 [node name="mapMarkers" type="Node2D" parent="SubViewportContainer/SubViewport/Map" unique_id=1318088185]
 unique_name_in_owner = true
+
+[node name="UI" type="CanvasLayer" parent="SubViewportContainer/SubViewport" unique_id=817634303]
+
+[node name="playerMarker" type="Sprite2D" parent="SubViewportContainer/SubViewport/UI" unique_id=1105811853]
+position = Vector2(96, 96)
+texture = SubResource("PlaceholderTexture2D_0l0qg")
+
+[node name="CircleBorder" type="Control" parent="." unique_id=1500000004]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_top = -192.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("2_circle")

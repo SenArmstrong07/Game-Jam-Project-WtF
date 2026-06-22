@@ -227,7 +227,7 @@ func attempt_spawn_enemy(spawn_position: Vector2) -> void:
 	# Spawn the enemy
 	var new_enemy = enemy_scene.instantiate()
 	new_enemy.position = spawn_position
-	get_parent().add_child(new_enemy)  # Add to same parent as tilemap
+	get_parent().add_child.call_deferred(new_enemy)  # Add to same parent as tilemap
 	spawned_enemies.append(spawn_position)
 	
 	# Emit signal so minimap can create a marker

@@ -1,38 +1,24 @@
 [gd_scene format=3 uid="uid://ca4tyfdtbm2xw"]
 
 [ext_resource type="Script" uid="uid://dwn4s0sbamact" path="res://scripts/manager/quarantine_laser.gd" id="1_cuqm7"]
-[ext_resource type="Texture2D" uid="uid://d2ynm620k0uq4" path="res://icon.svg" id="2_irv37"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_irv37"]
-atlas = ExtResource("2_irv37")
-region = Rect2(0, 64, 32, 32)
+[ext_resource type="Texture2D" uid="uid://dn23wf5vlcreo" path="res://assets/characters/MeGaMan/Reactor_Man_Player/PNG/Playable_Projectile_Full_Charge.png" id="2_irv37"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ovb27"]
 atlas = ExtResource("2_irv37")
-region = Rect2(32, 64, 32, 32)
+region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_81tsg"]
 atlas = ExtResource("2_irv37")
-region = Rect2(64, 64, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2rb6x"]
-atlas = ExtResource("2_irv37")
-region = Rect2(96, 64, 32, 32)
+region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_cuqm7"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_irv37")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_ovb27")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_81tsg")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2rb6x")
 }],
 "loop": 1,
 "name": &"default",
@@ -46,9 +32,11 @@ radius = 20.09975
 script = ExtResource("1_cuqm7")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=785272758]
+position = Vector2(1.9999995, 0)
+scale = Vector2(2.96875, 2.375)
 sprite_frames = SubResource("SpriteFrames_cuqm7")
 autoplay = "default"
-frame_progress = 0.8889124
+frame_progress = 0.87577987
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=359789311]
 shape = SubResource("CircleShape2D_irv37")

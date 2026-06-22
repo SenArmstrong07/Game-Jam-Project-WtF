@@ -1,6 +1,51 @@
 [gd_scene format=3 uid="uid://6hbsmgfnmld0"]
 
 [ext_resource type="Texture2D" uid="uid://7xr60dr6o12m" path="res://assets/tiles/apartmentA5demo.png" id="1_4et0r"]
+[ext_resource type="Texture2D" uid="uid://d1qlrxiv6jy6p" path="res://assets/tiles/city.png" id="1_x6q1i"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qlats"]
+texture = ExtResource("1_x6q1i")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4et0r"]
 texture = ExtResource("1_4et0r")
@@ -68,6 +113,7 @@ texture_region_size = Vector2i(64, 64)
 [sub_resource type="TileSet" id="TileSet_qlats"]
 tile_size = Vector2i(64, 64)
 sources/2 = SubResource("TileSetAtlasSource_4et0r")
+sources/0 = SubResource("TileSetAtlasSource_qlats")
 
 [node name="GridMap" type="TileMapLayer" unique_id=1241810169]
 tile_set = SubResource("TileSet_qlats")

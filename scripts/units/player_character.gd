@@ -19,7 +19,6 @@ var move_speed := 400.0
 #direction of the player
 var target_position := Vector2.ZERO
 var move_dir := Vector2i.ZERO
-var last_anim := "Idle"
 var lives: int = 5
 var max_lives: int = 5
 var facing: Vector2i = Vector2i.RIGHT
@@ -31,7 +30,7 @@ func _ready():
 	position = grid_to_world(grid_pos)
 	grid_x = grid_pos.x
 	grid_y = grid_pos.y
-
+	anim_player.play("Idle")
 	# Safety check for camera
 	if camera_2d == null:
 		print("ERROR: Camera2D not found at path '../Camera2D'")
@@ -110,7 +109,14 @@ func _unhandled_input(event):
 		target_position = grid_to_world(grid_pos)
 		moving = true
 
-		anim_player.play(last_anim)
+		if move_dir == Vector2i.RIGHT:
+			anim_player.play("Move_right")
+		elif move_dir == Vector2i.LEFT:
+			anim_player.play("Move_left")
+		elif move_dir == Vector2i.UP:
+			anim_player.play("Move_up")
+		elif move_dir == Vector2i.DOWN:
+			anim_player.play("Move_Down")
 #movement loop		
 func _process(delta):
 	if moving:
@@ -123,3 +129,19 @@ func _process(delta):
 			position = target_position
 			moving = false
 			anim_player.play("Idle")
+
+func update_animation(input_dir: Vector2):
+	if input_dir == Vector2.ZERO:
+		anim_player.play("Idle")
+		return
+
+	if abs(input_dir.x) > abs(input_dir.y):
+		if input_dir.x > 0:
+			anim_player.play("Move_right")
+		else:
+			anim_player.play("Move_left")
+	else:
+		if input_dir.y > 0:
+			anim_player.play("Move_down")
+		else:
+			anim_player.play("Move_up")

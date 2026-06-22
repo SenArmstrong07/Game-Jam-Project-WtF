@@ -84,6 +84,9 @@ func _process(delta):
 
 	position = position.move_toward(target_position, move_speed * delta)
 
+	if position.distance_to(target_position) < 2.0:
+		if anim_player.animation in ["Up", "Down", "Left", "Right"]:
+			anim_player.play("Idle")
 	# shooting
 	if shoot_timer >= shoot_interval and not attack_locked:
 		shoot_timer = 0.0
@@ -98,7 +101,8 @@ func _process(delta):
 func follow_player():
 	if player_character == null:
 		return
-
+		
+	var old_grid_pos = grid_pos
 	var player_row := player_character.grid_pos.y
 	var player_col := player_character.grid_pos.x
 
@@ -148,6 +152,7 @@ func follow_player():
 	# ----------------------------------------------------
 	grid_pos.x = clamp(grid_pos.x, 0, GRID_WIDTH - 1)
 	grid_pos.y = clamp(grid_pos.y, 0, GRID_HEIGHT - 1)
+	play_move_animation(old_grid_pos, grid_pos)
 
 	grid_x = grid_pos.x
 	grid_y = grid_pos.y
@@ -215,3 +220,17 @@ func apply_stun(duration: float):
 
 	stunned = true
 	stun_timer = duration
+
+func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
+	var delta = new_pos - old_pos
+
+	if delta.x > 0:
+		anim_player.play("Right")
+	elif delta.x < 0:
+		anim_player.play("Left")
+	elif delta.y > 0:
+		anim_player.play("Down")
+	elif delta.y < 0:
+		anim_player.play("Up")
+	else:
+		anim_player.play("Idle")

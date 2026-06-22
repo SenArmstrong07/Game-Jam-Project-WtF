@@ -1,24 +1,70 @@
 [gd_scene format=3 uid="uid://cnt0okx0i7ily"]
 
 [ext_resource type="Script" uid="uid://b7c4575mpsh0" path="res://scripts/manager/enemy_basic_projectile.gd" id="1_evgu3"]
-[ext_resource type="Texture2D" uid="uid://d2ynm620k0uq4" path="res://icon.svg" id="2_ibsax"]
+[ext_resource type="Texture2D" uid="uid://b2vr1is35ived" path="res://assets/characters/MeGaMan/Reactor_Man_Enemies/PNG/UFO_Bomb.png" id="2_evgu3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k8vgc"]
-size = Vector2(18, 8)
+size = Vector2(19.5, 19)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ibsax"]
+atlas = ExtResource("2_evgu3")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8vgc"]
+atlas = ExtResource("2_evgu3")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6xm84"]
+atlas = ExtResource("2_evgu3")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lyvt5"]
+atlas = ExtResource("2_evgu3")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e4spe"]
+atlas = ExtResource("2_evgu3")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8jovo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ibsax")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k8vgc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6xm84")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lyvt5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e4spe")
+}],
+"loop": 1,
+"name": &"Projectiles",
+"speed": 5.0
+}]
 
 [node name="EnemyBasicProjectile" type="Area2D" unique_id=828435834]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_evgu3")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2124875398]
-position = Vector2(0, -1.75)
-scale = Vector2(0.109375, 0.01953125)
-texture = ExtResource("2_ibsax")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1778585215]
-position = Vector2(0, -2)
+position = Vector2(-0.75, -0.5)
 shape = SubResource("RectangleShape2D_k8vgc")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=789162316]
-position = Vector2(0, -2)
+position = Vector2(-1, -1)
+rect = Rect2(-10, -10, 21, 22)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1304939727]
+scale = Vector2(1.4375, 1.4375)
+sprite_frames = SubResource("SpriteFrames_8jovo")
+animation = &"Projectiles"
+autoplay = "Projectiles"
+frame_progress = 0.5684099

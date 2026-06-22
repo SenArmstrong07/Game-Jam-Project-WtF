@@ -1,27 +1,30 @@
 [gd_scene format=3 uid="uid://cxcsd36elkqlv"]
 
 [ext_resource type="Script" uid="uid://b1tn87lp5k4ob" path="res://scripts/manager/delete_projectile.gd" id="1_pwrhv"]
-[ext_resource type="Texture2D" uid="uid://d2ynm620k0uq4" path="res://icon.svg" id="2_6etxc"]
+[ext_resource type="Texture2D" uid="uid://dy01hkjluu0b2" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/MainCharacterGunShot/BasicShot_Bullet_RP1 (16x16).png" id="2_pwrhv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6etxc"]
+atlas = ExtResource("2_pwrhv")
+region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6geqn"]
-atlas = ExtResource("2_6etxc")
-region = Rect2(0, 32, 32, 32)
+atlas = ExtResource("2_pwrhv")
+region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g08yg"]
-atlas = ExtResource("2_6etxc")
-region = Rect2(32, 0, 32, 32)
+atlas = ExtResource("2_pwrhv")
+region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vbvgf"]
-atlas = ExtResource("2_6etxc")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5j307"]
-atlas = ExtResource("2_6etxc")
-region = Rect2(96, 32, 32, 32)
+atlas = ExtResource("2_pwrhv")
+region = Rect2(48, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7nrbm"]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6etxc")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6geqn")
 }, {
@@ -30,9 +33,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vbvgf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5j307")
 }],
 "loop": 1,
 "name": &"Projectile",
@@ -40,21 +40,21 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cq3a5"]
-size = Vector2(32.5, 5)
+size = Vector2(32.5, 19)
 
 [node name="delete_projectile" type="Area2D" unique_id=1740427849]
 script = ExtResource("1_pwrhv")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=424636958]
-position = Vector2(1, 0)
-scale = Vector2(1, 0.15625)
+position = Vector2(-0.49999833, 1.9073486e-06)
+scale = Vector2(2.8124998, 2.25)
 sprite_frames = SubResource("SpriteFrames_7nrbm")
 animation = &"Projectile"
 autoplay = "Projectile"
 frame_progress = 0.06583784
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1265173840]
-position = Vector2(1, 0.5)
+position = Vector2(1, -0.5)
 shape = SubResource("RectangleShape2D_cq3a5")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1842398480]

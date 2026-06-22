@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://derk5cxa1jcbg"]
+
+[ext_resource type="Script" uid="uid://rh5c5vc8kaou" path="res://scripts/battle/battle_phase_ui.gd" id="1_fq5n0"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=1182309003]
+script = ExtResource("1_fq5n0")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1322043048]
+anchors_preset = -1
+anchor_bottom = 0.5
+offset_right = 303.0
+offset_bottom = 9.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=430509331]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PanelContainer/VBoxContainer" unique_id=838365013]
+layout_mode = 2
+text = "PREPARE YOUR MOVES"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer" unique_id=492220667]
+layout_mode = 2
+
+[node name="ChipNameLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=885973983]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ChipDescriptionLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1390701923]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ChipPowerLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1397866594]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="SelectionCountLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=50465299]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer" unique_id=142379950]
+layout_mode = 2
+
+[node name="ChipAvailable" type="Label" parent="PanelContainer/VBoxContainer" unique_id=14200483]
+layout_mode = 2
+text = "AVAILABLE CHIPS"
+horizontal_alignment = 1
+
+[node name="PlayerHand" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1982282146]
+layout_mode = 2
+alignment = 1
+
+[node name="HSeparator3" type="HSeparator" parent="PanelContainer/VBoxContainer" unique_id=1329374795]
+layout_mode = 2
+
+[node name="SelectedChips" type="Label" parent="PanelContainer/VBoxContainer" unique_id=605042880]
+layout_mode = 2
+text = "SELECTED CHIPS"
+horizontal_alignment = 1
+
+[node name="SelectedContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1983998848]
+layout_mode = 2
+alignment = 1
+
+[node name="PanelContainer2" type="PanelContainer" parent="." unique_id=1089148438]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 50.0
+grow_horizontal = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2" unique_id=60962984]
+layout_mode = 2
+
+[node name="PlayerHPLabel" type="Label" parent="PanelContainer2/VBoxContainer" unique_id=2047942873]
+layout_mode = 2
+
+[node name="EnemyHPLabel" type="Label" parent="PanelContainer2/VBoxContainer" unique_id=1722407945]
+layout_mode = 2

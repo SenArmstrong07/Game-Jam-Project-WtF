@@ -3,9 +3,11 @@ class_name Chip
 
 enum AttackType {
 	PROJECTILE,
-	MELEE,
 	HOMING,
-	STUN_PROJECTILE
+	STUN_PROJECTILE,
+	WALL,
+	HEAL,
+	BUFF,
 }
 
 @export var name: String

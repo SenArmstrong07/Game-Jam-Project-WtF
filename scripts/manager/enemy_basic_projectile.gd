@@ -8,6 +8,7 @@ var hit := false
 
 func _ready():
 	body_entered.connect(_on_body_entered)
+	add_to_group("enemy_projectiles")
 
 func _process(delta):
 	position += direction * speed * delta

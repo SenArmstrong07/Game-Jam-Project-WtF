@@ -7,6 +7,7 @@ enum BattlePhase {
 	END
 }
 
+
 @onready var ui: CanvasLayer = $BattlePhaseUI
 @onready var enemy_hitpoint: Marker2D = $CommonBug/CommonBugMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
@@ -15,10 +16,13 @@ var current_phase: BattlePhase = BattlePhase.PREPARATION
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
 const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
+const FIREWALL = preload("uid://x8y5dkw5aur6")
+const SCAN_EFFECT = preload("uid://bty6pm1am7ebp")
+const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 
 @onready var grid = $Grid
 @onready var player: Unit = $PlayerCharacter
-@onready var enemy: Unit = $CommonBug
+var enemies: Array[Unit] = []
 @export var max_selected_chips := 2
 # PLAYER ONLY uses chips now
 var player_deck: ChipDeck
@@ -29,6 +33,8 @@ var current_chip_index := 0
 var player_chip_index: int = 0
 var turn_locked := false
 var battle_active: bool = false
+var blocked_tiles: Array[Vector2i] = []
+var occupied_tiles := {}
 
 signal phase_changed(new_phase: BattlePhase)
 signal player_chip_selected(chip: Chip)
@@ -36,11 +42,22 @@ signal battle_ended(winner: Unit)
 var player_attack_locked := false
 @export var player_attack_delay := 0.4
 
+#put new vector to add enemy
+var enemy_spawn_positions := [
+	Vector2i(1, 2),
+	Vector2i(2, 1)
+]
+
 func _ready() -> void:
 	player_deck = ChipDeck.new()
 
 	player.unit_died.connect(_on_unit_died)
-	enemy.unit_died.connect(_on_unit_died)
+
+	# IMPORTANT: store enemies properly
+	enemies.clear()
+
+	for pos in enemy_spawn_positions:
+		spawn_enemy(pos)
 
 	_start_preparation_phase()
 
@@ -51,7 +68,10 @@ func _process(delta: float) -> void:
 		BattlePhase.BATTLE:
 			if battle_active:
 				_handle_battle_input()
-
+				
+func is_tile_free(tile: Vector2i) -> bool:
+	return not occupied_tiles.has(tile)
+	
 # ============================================================
 # PREPARATION PHASE
 # ============================================================
@@ -64,6 +84,13 @@ func _update_ui() -> void:
 	if current_phase != BattlePhase.PREPARATION:
 		return
 
+	var total_hp := 0
+	var total_max := 0
+
+	for e in enemies:
+		total_hp += e.hp
+		total_max += e.max_hp
+
 	ui.update_ui(
 		player_hand,
 		selected_chips,
@@ -71,10 +98,33 @@ func _update_ui() -> void:
 		max_selected_chips,
 		player.get_lives(),
 		player.get_max_lives(),
-		enemy.hp,
-		enemy.max_hp
+		total_hp,
+		total_max
 	)
+	
+func spawn_enemy(pos: Vector2i) -> void:
+	while is_enemy_on_tile(pos):
+		pos.x += 1
 
+	var e: Unit = COMMON_BUG_SCENE.instantiate()
+	get_tree().current_scene.add_child(e)
+
+	e.add_to_group("enemies")
+	e.init(pos)
+
+	enemies.append(e)
+	occupied_tiles[pos] = true
+
+	# IMPORTANT SAFETY
+	if not e.unit_died.is_connected(_on_unit_died):
+		e.unit_died.connect(_on_unit_died)
+	
+func is_enemy_on_tile(pos: Vector2i) -> bool:
+	for n in enemies:
+		if n.grid_pos == pos:
+			return true
+	return false
+	
 func _start_preparation_phase() -> void:
 	print("=== PREPARATION PHASE ===")
 
@@ -181,6 +231,15 @@ func use_chip(chip: Chip):
 
 		Chip.AttackType.STUN_PROJECTILE:
 			use_quarantine(chip)
+			
+		Chip.AttackType.WALL:
+			use_firewall(chip)
+		
+		Chip.AttackType.HEAL:
+			use_backup(chip)
+			
+		Chip.AttackType.BUFF:
+			use_optimize(chip)
 # ============================================================
 # ROUND MANAGEMENT
 # ============================================================
@@ -197,7 +256,14 @@ func _next_round() -> void:
 # ============================================================
 # CHIPS / MOVES
 # ============================================================
+func use_optimize(chip: Chip):
+	player.activate_optimize(chip.power, 8.0)
 
+func use_backup(chip: Chip):
+	player.heal(chip.power)
+
+	print("BACKUP restored ", chip.power, " life")
+	
 func use_delete(chip: Chip):
 	var projectile = DELETE_PROJECTILE.instantiate()
 	get_tree().current_scene.add_child(projectile)
@@ -219,7 +285,7 @@ func use_patch(chip: Chip):
 	get_tree().current_scene.add_child(projectile)
 
 	projectile.global_position = player_muzzle.global_position
-	projectile.target = enemy
+	projectile.target = get_closest_enemy()
 
 	projectile.damage = chip.power
 	projectile.chip = chip
@@ -239,7 +305,41 @@ func use_quarantine(chip: Chip):
 	projectile.chip = chip
 
 	print("QUARANTINE used")
-		
+
+func get_closest_enemy() -> Unit:
+	var best: Unit = null
+	var best_dist := INF
+
+	for e in enemies:
+		if e == null:
+			continue
+
+		var d := player.global_position.distance_to(e.global_position)
+		if d < best_dist:
+			best_dist = d
+			best = e
+
+	return best
+	
+func use_firewall(chip: Chip):
+	z_index = 10
+	var firewall = FIREWALL.instantiate()
+	get_tree().current_scene.add_child(firewall)
+
+	# tile directly in front of player
+	var firewall_tile = player.grid_pos + Vector2i.RIGHT
+
+	firewall.grid_pos = firewall_tile
+	firewall.position = player.grid_to_world(firewall_tile)
+
+	blocked_tiles.append(firewall_tile)
+
+	firewall.firewall_destroyed.connect(_on_firewall_destroyed)
+
+	print("FIREWALL deployed at ", firewall_tile)
+	
+func _on_firewall_destroyed(tile: Vector2i):
+	blocked_tiles.erase(tile)
 # ============================================================
 # DEATH / END BATTLE
 # ============================================================
@@ -248,21 +348,55 @@ func _on_unit_died(unit: Unit) -> void:
 	if current_phase == BattlePhase.END:
 		return
 
+	if unit.is_in_group("enemies"):
+
+		# remove safely
+		enemies.erase(unit)
+
+		if occupied_tiles.has(unit.grid_pos):
+			occupied_tiles.erase(unit.grid_pos)
+
+		unit.remove_from_group("enemies")
+
+		# IMPORTANT: delay free (prevents tree corruption)
+		unit.call_deferred("queue_free")
+
+		# check AFTER engine updates
+		call_deferred("_check_win_condition")
+		return
+
+	# PLAYER DIED
 	current_phase = BattlePhase.END
 	battle_active = false
 
-	print(unit.name, " died!")
-
-	var winner: Unit
-
-	if unit == player:
-		winner = enemy
-		print("Enemy wins!")
-	else:
-		winner = player
-		print("Player wins!")
-
-	battle_ended.emit(winner)
+	print("Enemy wins!")
+	battle_ended.emit(enemies[0] if enemies.size() > 0 else null)
 
 	await get_tree().create_timer(1.0).timeout
 	get_tree().reload_current_scene()
+
+func _check_win_condition():
+	# remove invalid references
+	enemies = enemies.filter(func(e):
+		return is_instance_valid(e) and not e.is_dead
+	)
+
+	if enemies.size() == 0:
+		current_phase = BattlePhase.END
+		battle_active = false
+
+		print("Player wins!")
+		battle_ended.emit(player)
+
+		# HARD STOP ALL ENEMIES
+		for e in get_tree().get_nodes_in_group("enemies"):
+			if is_instance_valid(e):
+				e.queue_free()
+
+		await get_tree().create_timer(0.5).timeout
+		get_tree().reload_current_scene()
+		
+func get_alive_enemies() -> Array:
+	return enemies.filter(func(e):
+		return is_instance_valid(e) and not e.is_dead
+	)

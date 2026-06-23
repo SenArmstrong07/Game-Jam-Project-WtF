@@ -29,6 +29,7 @@ horizontal_alignment = 1
 [node name="ChipDescriptionLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1390701923]
 layout_mode = 2
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="ChipPowerLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1397866594]
 layout_mode = 2

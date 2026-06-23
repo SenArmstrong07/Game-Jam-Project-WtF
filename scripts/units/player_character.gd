@@ -9,6 +9,8 @@ const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
 const GRID_WIDTH := 8
 const GRID_HEIGHT := 4
 const TILE_SIZE := 64
+var optimize_particles: GPUParticles2D
+
 #player allowed tiles
 const PLAYER_WIDTH := 4
 const PLAYER_HEIGHT := 4
@@ -16,7 +18,11 @@ const PLAYER_HEIGHT := 4
 
 #anti spam move
 var moving := false
-var move_speed := 400.0
+var optimized := false
+var base_move_speed := 400.0
+var optimize_damage_bonus := 15
+var move_speed := base_move_speed
+
 #direction of the player
 var target_position := Vector2.ZERO
 var move_dir := Vector2i.ZERO
@@ -33,11 +39,16 @@ func get_max_lives() -> int:
 	
 func _ready():
 	# placed player
+	z_index = 10
 	grid_pos = Vector2i(1, 2)
+	optimize_particles = GPUParticles2D.new()
+	add_child(optimize_particles)
+	
 	position = grid_to_world(grid_pos)
 	grid_x = grid_pos.x
 	grid_y = grid_pos.y
 	anim_player.play("Idle")
+	
 	# Safety check for camera
 	if camera_2d == null:
 		print("ERROR: Camera2D not found at path '../Camera2D'")
@@ -103,12 +114,18 @@ func _unhandled_input(event):
 
 	if move_dir == Vector2i.ZERO:
 		return
-
 	var new_pos = grid_pos + move_dir
+	
+	if battle_scene.blocked_tiles.has(new_pos):
+		return
+	
 	#grids boundary limits
 	new_pos.x = clamp(new_pos.x, 0, PLAYER_WIDTH - 1)
 	new_pos.y = clamp(new_pos.y, 0, PLAYER_HEIGHT - 1)
 	#player movement
+	if battle_scene.blocked_tiles.has(new_pos):
+		return
+
 	if new_pos != grid_pos:
 		grid_pos = new_pos
 
@@ -126,6 +143,7 @@ func _unhandled_input(event):
 			anim_player.play("Move_up")
 		elif move_dir == Vector2i.DOWN:
 			anim_player.play("Move_Down")
+
 #movement loop		
 func _process(delta):
 	if moving:
@@ -172,3 +190,98 @@ func play_hurt():
 
 	movement_locked = false
 	is_hurt = false
+	
+func play_optimize_effect():
+
+	var mat := ParticleProcessMaterial.new()
+
+	mat.direction = Vector3(0, -1, 0)
+	mat.spread = 0
+
+	mat.initial_velocity_min = 250
+	mat.initial_velocity_max = 250
+
+	mat.gravity = Vector3.ZERO
+
+
+	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	mat.emission_box_extents = Vector3(20, 4, 0)
+
+	optimize_particles.process_material = mat
+
+	optimize_particles.amount = 50
+	optimize_particles.lifetime = 0.3
+	optimize_particles.emitting = true
+
+	anim_player.modulate = Color(0.4, 0.8, 1.0)
+	
+func heal(amount: int):
+	lives = min(lives + amount, max_lives)
+
+	play_heal()
+
+	print("Lives: ", lives, "/", max_lives)
+
+func play_heal():
+	anim_player.modulate = Color.GREEN
+
+	var effect := Label.new()
+	effect.text = "+1"
+	effect.scale = Vector2(1, 1)
+
+	add_child(effect)
+
+	effect.position = Vector2(0, -50)
+
+	var tween = create_tween()
+
+	tween.parallel().tween_property(
+		effect,
+		"position",
+		effect.position + Vector2(0, -40),
+		0.8
+	)
+
+	tween.parallel().tween_property(
+		effect,
+		"modulate:a",
+		0.0,
+		0.8
+	)
+
+	await tween.finished
+
+	effect.queue_free()
+
+	anim_player.modulate = Color.WHITE
+
+func activate_optimize(damage_bonus: int, duration: float):
+
+	if optimized:
+		return
+
+	optimized = true
+
+	move_speed += 200
+	attack_power += damage_bonus
+
+	play_optimize_effect()
+
+	print("OPTIMIZE ACTIVE")
+
+	await get_tree().create_timer(duration).timeout
+
+	move_speed -= 200
+	attack_power -= damage_bonus
+
+	optimized = false
+
+	stop_optimize_effect()
+
+	print("OPTIMIZE EXPIRED")
+
+func stop_optimize_effect():
+
+	optimize_particles.emitting = false
+
+	anim_player.modulate = Color.WHITE

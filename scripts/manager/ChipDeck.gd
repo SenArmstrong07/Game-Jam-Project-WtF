@@ -10,9 +10,9 @@ func _initialize_deck() -> void:
 	deck = [
 		Chip.new(
 			"DELETE",
-			45,
+			35,
 			999,
-			"Direct system crash attack",
+			"Forcefully terminates a target process and purges it from active system memory.",
 			Chip.AttackType.PROJECTILE,
 			{}
 		),
@@ -21,7 +21,7 @@ func _initialize_deck() -> void:
 			"Patch",
 			25,
 			999,
-			"Homing DoT",
+			"Deploys a security patch that auto-routes toward detected vulnerabilities in the system.",
 			Chip.AttackType.HOMING,
 			{
 				"CommonBug": Unit.DamageType.SUPER_EFFECTIVE
@@ -32,11 +32,39 @@ func _initialize_deck() -> void:
 			"Quarantine",
 			10,
 			999,
-			"Stunning projectile",
+			"Isolates malicious threads and temporarily suspends their execution cycle.",
 			Chip.AttackType.STUN_PROJECTILE,
 			{}
-		)
+		),
+
+		Chip.new(
+			"Firewall",
+			0,
+			1,
+			"Deploys a defensive network barrier that intercepts and blocks incoming hostile data packets.",
+			Chip.AttackType.WALL,
+			{}
+		),
+
+		Chip.new(
+			"Backup",
+			1,
+			0,
+			"Restores system integrity by rolling back corrupted state and recovering 1 health unit.",
+			Chip.AttackType.HEAL,
+			{}
+		),
+
+		Chip.new(
+			"Optimize",
+			15,
+			0,
+			"Runs system optimization routines, increasing processing throughput and attack efficiency for a short duration.",
+			Chip.AttackType.BUFF,
+			{}
+		),
 	]
+
 func draw_hand(hand_size: int = 5) -> Array[Chip]:
 	var hand: Array[Chip] = []
 	var available_indices: Array[int] = []

@@ -39,6 +39,7 @@ var lane_switch_interval := 0.6
 
 func _ready():
 	z_index = 10
+	team = Team.ENEMY
 	add_to_group("enemies")
 
 func init(pos: Vector2i) -> void:

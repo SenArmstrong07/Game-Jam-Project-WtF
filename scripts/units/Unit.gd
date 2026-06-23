@@ -163,7 +163,7 @@ func attack_with_chip(target: Unit, chip: Chip) -> bool:
 	return true
 
 # ============================================================
-# BASIC ATTACK (OPTIONAL / FUTURE USE)
+# BASIC ATTACK 
 # ============================================================
 func attack(target: Unit) -> bool:
 	if target == null:
@@ -202,71 +202,45 @@ func die() -> void:
 	set_physics_process(false)
 
 	var start_pos = position
-
-	# =====================================================
-	# DETERMINE KNOCKBACK DIRECTION
-	# =====================================================
 	var knockback_dir := 1.0
 
-	var player = get_tree().get_first_node_in_group("player")
-
-	if player:
-		if global_position.x > player.global_position.x:
-			# enemy is right of player -> fly right
-			knockback_dir = 1.0
-		else:
-			# enemy is left of player -> fly left
+	match team:
+		Team.PLAYER:
 			knockback_dir = -1.0
 
-	# =====================================================
-	# BOUNCE SEQUENCE
-	# =====================================================
+		Team.ENEMY:
+			knockback_dir = 1.0
 	var tween = create_tween()
 
 	# Launch
 	tween.tween_property(
 		self,
 		"position",
-		start_pos + Vector2(32 * knockback_dir, -18),
-		0.12
+		start_pos + Vector2(40 * knockback_dir, -22),
+		0.18
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 	# Bounce 1
 	tween.tween_property(
 		self,
 		"position",
-		start_pos + Vector2(52 * knockback_dir, 0),
-		0.18
+		start_pos + Vector2(65 * knockback_dir, 0),
+		0.22
 	).set_trans(Tween.TRANS_BOUNCE)
 
 	# Bounce 2
 	tween.tween_property(
 		self,
 		"position",
-		start_pos + Vector2(68 * knockback_dir, -10),
-		0.14
+		start_pos + Vector2(82 * knockback_dir, -12),
+		0.18
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 	tween.tween_property(
 		self,
 		"position",
-		start_pos + Vector2(82 * knockback_dir, 0),
-		0.16
-	).set_trans(Tween.TRANS_BOUNCE)
-
-	# Bounce 3
-	tween.tween_property(
-		self,
-		"position",
-		start_pos + Vector2(92 * knockback_dir, -4),
-		0.12
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
-	tween.tween_property(
-		self,
-		"position",
-		start_pos + Vector2(100 * knockback_dir, 0),
-		0.14
+		start_pos + Vector2(95 * knockback_dir, 0),
+		0.20
 	).set_trans(Tween.TRANS_BOUNCE)
 
 	await tween.finished
@@ -274,7 +248,7 @@ func die() -> void:
 	# =====================================================
 	# DRAMATIC PAUSE
 	# =====================================================
-	await get_tree().create_timer(0.15).timeout
+	await get_tree().create_timer(0.2).timeout
 
 	# =====================================================
 	# BLINK

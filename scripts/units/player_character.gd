@@ -39,6 +39,7 @@ func get_max_lives() -> int:
 	
 func _ready():
 	# placed player
+	team = Team.PLAYER
 	z_index = 10
 	grid_pos = Vector2i(1, 2)
 	optimize_particles = GPUParticles2D.new()

@@ -223,48 +223,40 @@ func shoot():
 	attack_count += 1
 
 	if attack_count % 3 == 0:
-		await shoot_double()
+		await shoot_special()
 	else:
-		await shoot_single()
+		await shoot_bounce()
 
 	await get_tree().create_timer(attack_recovery).timeout
 
 	attack_locked = false
 	movement_locked = false
-	
-func shoot_single():
+
+func shoot_bounce():
+
 	var projectile = EnemyThrowProjectile.instantiate()
 
-	var spawn_pos = ProjectileThrowPoint.global_position
-	projectile.global_position = spawn_pos
+	get_tree().current_scene.add_child(projectile)
 
-	projectile.direction = Vector2.LEFT
+	projectile.global_position = ProjectileThrowPoint.global_position
+
 	projectile.damage = attack_power
 
-	get_tree().current_scene.add_child(projectile)
+	projectile.throw_bounce()
 	
-func shoot_double():
-	print("SPECIAL ATTACK!")
-
-	var spawn_pos = ProjectileThrowPoint.global_position
+func shoot_special():
 
 	var projectile = EnemyThrowProjectile.instantiate()
-	projectile.global_position = spawn_pos
-	projectile.direction = Vector2.LEFT
-	projectile.damage = attack_power + 5
+
 	get_tree().current_scene.add_child(projectile)
 
-	await get_tree().create_timer(0.15).timeout
+	projectile.global_position = ProjectileThrowPoint.global_position
 
-	if is_dead:
-		return
+	projectile.damage = attack_power + 10
 
-	projectile = EnemyThrowProjectile.instantiate()
-	projectile.global_position = spawn_pos
-	projectile.direction = Vector2.LEFT
-	projectile.damage = attack_power + 5
-	get_tree().current_scene.add_child(projectile)
-	
+	await projectile.throw_special(
+		player_character.grid_pos
+	)
 # ============================================================
 # STUN
 # ============================================================

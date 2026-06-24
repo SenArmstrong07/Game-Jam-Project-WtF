@@ -39,6 +39,7 @@ func get_max_lives() -> int:
 	
 func _ready():
 	# placed player
+	add_to_group("player")
 	team = Team.PLAYER
 	z_index = 10
 	grid_pos = Vector2i(1, 2)
@@ -115,7 +116,7 @@ func _unhandled_input(event):
 
 	if move_dir == Vector2i.ZERO:
 		return
-	var new_pos = grid_pos + move_dir
+	var new_pos: Vector2i = grid_pos + move_dir
 	
 	if battle_scene.blocked_tiles.has(new_pos):
 		return

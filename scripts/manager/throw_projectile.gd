@@ -1,34 +1,263 @@
 extends Area2D
 
-var direction := Vector2.LEFT
-var speed := 500.0
 var damage := 10
 
-var hit := false
+var bounce_count := 0
+var max_bounces := 5
+
+var is_special := false
+var special_target_tile := Vector2i.ZERO
+
+const TILE_SIZE := 64
+
+var hit_targets := []
+
+# First throw is highest, then smaller bounces
+var bounce_heights := [
+	80.0,
+	50.0,
+	30.0,
+	15.0
+]
 
 func _ready():
-	body_entered.connect(_on_body_entered)
 	add_to_group("enemy_projectiles")
 
-func _process(delta):
-	var battle = get_tree().get_first_node_in_group("battle_scene")
 
-	if battle and battle.current_phase != Battlescene.BattlePhase.BATTLE:
+# ============================================================
+# ENTRY POINT
+# ============================================================
+
+func throw_bounce():
+
+	global_position = snap_to_tile_center(global_position)
+
+	var first_tile = global_position + Vector2(-TILE_SIZE, 0)
+
+	await bounce_to_tile(
+		first_tile,
+		bounce_heights[0],
+		0.40
+	)
+
+	on_land(global_position)
+
+	bounce()
+
+
+# ============================================================
+# BOUNCE LOOP
+# ============================================================
+
+func bounce():
+
+	if bounce_count >= max_bounces:
+		await disappear()
 		return
 
-	position += direction * speed * delta
+	var next_pos = snap_to_tile_center(global_position) + Vector2(-TILE_SIZE, 0)
+	bounce_count += 1
 
-func _on_body_entered(body):
-	if hit:
+	var height = bounce_heights[
+		min(bounce_count, bounce_heights.size() - 1)
+	]
+
+	await bounce_to_tile(
+		next_pos,
+		height,
+		0.30
+	)
+
+	on_land(global_position)
+
+	landing_squash()
+
+	bounce()
+
+
+# ============================================================
+# SPECIAL THROW
+# ============================================================
+
+func throw_special(target_tile: Vector2i):
+
+	is_special = true
+	special_target_tile = target_tile
+
+	var target_pos = Vector2(
+		target_tile.x * TILE_SIZE + TILE_SIZE * 0.5,
+		target_tile.y * TILE_SIZE + TILE_SIZE * 0.5
+	)
+
+	await bounce_to_tile(
+		target_pos,
+		140.0,
+		0.55
+	)
+
+	on_special_land(target_pos)
+
+
+func on_special_land(tile_pos: Vector2):
+
+	hit_player_at_position(tile_pos, 64.0)
+
+	spawn_tile_effect(tile_pos)
+
+	await disappear()
+
+
+# ============================================================
+# CORE HIT LOGIC (FIXED SYSTEM)
+# ============================================================
+
+func hit_player_at_position(pos: Vector2, radius := 40.0):
+
+	var player = get_tree().get_first_node_in_group("player")
+	if player == null:
 		return
 
-	print("Hit: ", body.name)
+	if player in hit_targets:
+		return
 
-	if body is Unit:
-		if body.is_dead:
-			queue_free()
-			return
+	if pos.distance_to(player.global_position) <= radius:
+		player.take_damage(damage)
+		hit_targets.append(player)
 
-		body.take_damage(damage)
 
-	queue_free() 
+func on_land(pos: Vector2):
+
+	hit_player_at_position(pos, 40.0)
+	show_tile_warning(pos)
+
+
+# ============================================================
+# TILE EFFECTS
+# ============================================================
+
+func spawn_tile_effect(tile_pos: Vector2):
+
+	var fx := ColorRect.new()
+	fx.size = Vector2(TILE_SIZE, TILE_SIZE)
+	fx.position = tile_pos - Vector2(TILE_SIZE / 2, TILE_SIZE / 2)
+	fx.color = Color(1, 0.2, 0.2, 0.5)
+
+	get_tree().current_scene.add_child(fx)
+
+	fx.scale = Vector2(0.6, 0.6)
+
+	var tween = create_tween()
+	tween.set_parallel()
+
+	tween.tween_property(fx, "scale", Vector2(1.3, 1.3), 0.15)
+	tween.tween_property(fx, "modulate:a", 0.0, 0.25)
+
+	await tween.finished
+	fx.queue_free()
+
+
+func show_tile_warning(tile_pos: Vector2):
+
+	var marker := ColorRect.new()
+	marker.size = Vector2(TILE_SIZE, TILE_SIZE)
+	marker.color = Color(1, 0, 0, 0.45)
+	marker.position = tile_pos - Vector2(TILE_SIZE / 2, TILE_SIZE / 2)
+
+	get_tree().current_scene.add_child(marker)
+
+	var tween = create_tween()
+	tween.set_loops(3)
+
+	tween.tween_property(marker, "modulate:a", 0.9, 0.06)
+	tween.tween_property(marker, "modulate:a", 0.15, 0.06)
+
+	await tween.finished
+
+	if is_instance_valid(marker):
+		marker.queue_free()
+
+
+# ============================================================
+# MOVEMENT
+# ============================================================
+
+func bounce_to_tile(target_pos: Vector2, arc_height: float, duration: float) -> void:
+
+	var start_pos = global_position
+	var elapsed := 0.0
+
+	while elapsed < duration:
+
+		await get_tree().process_frame
+		elapsed += get_process_delta_time()
+
+		var t = clamp(elapsed / duration, 0.0, 1.0)
+
+		global_position = start_pos.lerp(target_pos, t)
+
+		var arc = sin(t * PI) * arc_height
+		global_position.y -= arc
+
+	global_position = target_pos
+
+
+# ============================================================
+# FEEL
+# ============================================================
+
+func landing_squash():
+
+	scale = Vector2(1.25, 0.75)
+
+	var tween = create_tween()
+	tween.tween_property(self, "scale", Vector2.ONE, 0.10)
+
+
+# ============================================================
+# CLEANUP
+# ============================================================
+
+func disappear():
+
+	var tween = create_tween()
+	tween.set_parallel()
+
+	tween.tween_property(self, "position:y", position.y + 32, 0.40)
+	tween.tween_property(self, "scale", Vector2(0.7, 0.2), 0.40)
+	tween.tween_property(self, "modulate:a", 0.0, 0.40)
+
+	await tween.finished
+	queue_free()
+
+
+# ============================================================
+# UTILITY
+# ============================================================
+
+func snap_to_tile_center(pos: Vector2) -> Vector2:
+	return Vector2(
+		floor(pos.x / TILE_SIZE) * TILE_SIZE + TILE_SIZE * 0.5,
+		floor(pos.y / TILE_SIZE) * TILE_SIZE + TILE_SIZE * 0.5
+	)
+
+func hit_player_at_tile(tile_pos: Vector2):
+
+	var player = get_tree().get_first_node_in_group("player")
+	if player == null:
+		return
+
+	if player in hit_targets:
+		return
+
+	# convert player to grid
+	var player_tile = player.grid_pos
+
+	# convert impact to grid
+	var impact_tile = Vector2i(
+		int(tile_pos.x / TILE_SIZE),
+		int(tile_pos.y / TILE_SIZE)
+	)
+
+	if player_tile == impact_tile:
+		player.take_damage(damage)
+		hit_targets.append(player)

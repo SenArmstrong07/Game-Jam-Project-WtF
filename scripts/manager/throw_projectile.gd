@@ -97,9 +97,18 @@ func throw_special(target_tile: Vector2i):
 
 func on_special_land(tile_pos: Vector2):
 
+	var offsets = [
+		Vector2.ZERO,
+		Vector2(TILE_SIZE, 0),
+		Vector2(-TILE_SIZE, 0),
+		Vector2(0, TILE_SIZE),
+		Vector2(0, -TILE_SIZE)
+	]
+
 	spawn_plus_tile_effect(tile_pos)
 
-	hit_player_at_position(tile_pos, 40.0)
+	for offset in offsets:
+		hit_player_at_tile(tile_pos + offset)
 
 	await disappear()
 	

@@ -5,7 +5,6 @@ class_name Battlescene
 @onready var enemy_hitpoint: Marker2D = $CommonBug/CommonBugMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
 
-
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
 const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
@@ -15,7 +14,7 @@ const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 @onready var grid = $Grid
 @onready var player: Unit = $PlayerCharacter
 var enemies: Array[Unit] = []
-@export var max_selected_chips := 3
+@export var max_selected_chips := 5
 var battle_scene: BattleBase
 # PLAYER ONLY uses chips now
 var player_deck: ChipDeck
@@ -136,14 +135,13 @@ func _start_preparation_phase() -> void:
 
 	phase_changed.emit(current_phase)
 
-	player_hand = player_deck.draw_hand(5)
+	player_hand = player_deck.draw_hand(10)
 
 	selected_chips.clear()
 	current_chip_index = 0
 	player_chip_index = 0
 
 	_update_ui()
-
 
 func _handle_preparation_input() -> void:
 	if player_hand.is_empty():
@@ -158,10 +156,16 @@ func _handle_preparation_input() -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		var chip = player_hand[player_chip_index]
 
-		if selected_chips.has(chip):
-			return
-
 		selected_chips.append(chip)
+
+		# Remove only from the current hand
+		player_hand.remove_at(player_chip_index)
+
+		# Keep cursor valid
+		if player_hand.is_empty():
+			player_chip_index = 0
+		else:
+			player_chip_index = clamp(player_chip_index, 0, player_hand.size() - 1)
 
 		if selected_chips.size() >= max_selected_chips:
 			_start_battle_phase()

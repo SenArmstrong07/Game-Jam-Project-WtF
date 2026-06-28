@@ -80,8 +80,6 @@ func take_damage(amount: int, damage_type: Unit.DamageType = Unit.DamageType.NEU
 	if lives <= 0:
 		die()
 
-
-
 #Converts grid coordinates to pixel position
 func grid_to_world(cell: Vector2i) -> Vector2:
 	return Vector2(

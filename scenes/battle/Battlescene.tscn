@@ -15,7 +15,6 @@ shader = ExtResource("3_1uck2")
 
 [node name="Battlescene" type="Node2D" unique_id=1208126284]
 script = ExtResource("1_sx6bk")
-max_selected_chips = 3
 
 [node name="BattlePhaseUI" parent="." unique_id=1182309003 instance=ExtResource("2_g4sxx")]
 

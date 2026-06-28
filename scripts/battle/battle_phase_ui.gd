@@ -1,6 +1,7 @@
 extends CanvasLayer
 
-@onready var hand_container: HBoxContainer = %PlayerHand
+@onready var hand_container: HBoxContainer = %PlayerHandBox
+
 @onready var selected_container: HBoxContainer = $PanelContainer/VBoxContainer/SelectedContainer
 
 @onready var chip_name_label: Label = %ChipNameLabel

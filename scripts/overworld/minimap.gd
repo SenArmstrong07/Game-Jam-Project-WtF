@@ -217,6 +217,8 @@ func _on_minimap_gui_input(event: InputEvent) -> void:
 		# Open the world map UI
 		print("[MINIMAP] CLICK DETECTED")
 		_open_world_map()
+		#lock player movement first when overworld ui map is opened
+		player.controls_locked = true
 
 
 func _open_world_map() -> void:

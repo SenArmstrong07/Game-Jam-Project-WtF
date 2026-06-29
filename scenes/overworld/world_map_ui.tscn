@@ -1,48 +1,33 @@
 [gd_scene format=3 uid="uid://c8hfgm6oi0hv"]
 
-[ext_resource type="Script" uid="uid://dqxq6qjfb8a3" path="res://scripts/overworld/world_map_ui.gd" id="1_world_map"]
+[ext_resource type="Script" uid="uid://vgl5brfpwr2j" path="res://scripts/overworld/world_map_ui.gd" id="1_world_map"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_83lhe"]
 font_size = 32
-font_color = Color(1, 1, 1, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_vd3vq"]
 font_size = 14
 font_color = Color(0.8, 0.8, 0.8, 1)
 
-[node name="WorldMapUI" type="CanvasLayer" uid="uid://c8hfgm6oi0hv"]
+[node name="WorldMapUI" type="CanvasLayer" unique_id=1659064179]
 layer = 128
 
-[node name="Background" type="ColorRect" parent="." uid="uid://rjcqr3qkgqkq"]
+[node name="Background" type="ColorRect" parent="." unique_id=1675155144]
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-color = Color(0, 0, 0, 0.7)
 mouse_filter = 1
+color = Color(0, 0, 0, 0.7)
 
-[node name="MapContainer" type="Control" parent="." uid="uid://t63lhh7q5n9c"]
+[node name="MapContainer" type="Control" parent="." unique_id=716626397]
+layout_mode = 3
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 script = ExtResource("1_world_map")
 
-[node name="UI" type="VBoxContainer" parent="MapContainer" uid="uid://bvfcklrm7fpa"]
-anchors_preset = 10
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
+[node name="UI" type="VBoxContainer" parent="MapContainer" unique_id=1383920252]
+layout_mode = 0
 anchor_bottom = 1.0
 offset_left = 20.0
 offset_top = 20.0
@@ -50,13 +35,15 @@ offset_right = 320.0
 offset_bottom = -20.0
 mouse_filter = 2
 
-[node name="Title" type="Label" parent="MapContainer/UI" uid="uid://dptd0sxpk7rb"]
+[node name="Title" type="Label" parent="MapContainer/UI" unique_id=2030298044]
 custom_minimum_size = Vector2(280, 40)
+layout_mode = 2
 text = "World Map"
 label_settings = SubResource("LabelSettings_83lhe")
 
-[node name="Instructions" type="Label" parent="MapContainer/UI" uid="uid://vabq6r3n9tdr"]
+[node name="Instructions" type="Label" parent="MapContainer/UI" unique_id=1067033143]
 custom_minimum_size = Vector2(280, 60)
+layout_mode = 2
 text = "Click on an island to teleport.
 Right-click or ESC to close."
 label_settings = SubResource("LabelSettings_vd3vq")

@@ -5,6 +5,7 @@ extends CharacterBody2D
 @export var friction := 1000.0
 
 var last_direction := Vector2.DOWN
+var controls_locked: bool = false
 var frontlayer: TileMapLayer
 
 func _ready() -> void:
@@ -14,6 +15,10 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	# Don't allow movement until world generation is complete
 	if frontlayer and not frontlayer.is_world_ready:
+		return
+	if controls_locked:
+		#locks player movement when Scenes load some stuff
+		velocity = Vector2.ZERO
 		return
 	
 	var input_dir := Input.get_vector(

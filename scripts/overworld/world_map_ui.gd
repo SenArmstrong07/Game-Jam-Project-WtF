@@ -68,6 +68,8 @@ func _ready() -> void:
 		return
 	
 	print("[WORLD_MAP] Ready - scanning tiles...")
+	
+	
 	# Pre-scan all land tiles and group into islands
 	_scan_all_land_tiles()
 	print("[WORLD_MAP] Scanned ", land_tiles.size(), " land tiles, grouping into islands...")
@@ -448,6 +450,9 @@ func _close_map() -> void:
 )
 	hovered_island.clear()
 	hovered_tile = Vector2i.ZERO
+	
+	#unlock player movement here
+	player.controls_locked = false
 
 	set_process(false)
 	set_process_input(false)

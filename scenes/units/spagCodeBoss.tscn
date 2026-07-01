@@ -86,16 +86,17 @@ height = 96.0
 script = ExtResource("1_vww3g")
 
 [node name="BossSC_Sprite" type="AnimatedSprite2D" parent="." unique_id=815644950]
-position = Vector2(17.999996, -66)
+position = Vector2(21.999996, -59.000004)
 scale = Vector2(2.5156248, 2.6750002)
 sprite_frames = SubResource("SpriteFrames_7nrbm")
 animation = &"ATTACK"
 autoplay = "IDLE"
-frame_progress = 0.11680037
+frame_progress = 0.4599244
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=715328508]
-position = Vector2(-30, -66)
+position = Vector2(-25, -65)
 shape = SubResource("CapsuleShape2D_cq3a5")
 
-[node name="BossMarker2D" type="Marker2D" parent="." unique_id=719587077]
-position = Vector2(-41, -82)
+[node name="HitPoint" type="Marker2D" parent="." unique_id=719587077]
+position = Vector2(-41.000004, -82)
+scale = Vector2(1.0000001, 1.0000001)

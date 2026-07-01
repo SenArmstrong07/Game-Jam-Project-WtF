@@ -226,11 +226,11 @@ scale = Vector2(2.03125, 1.4)
 sprite_frames = SubResource("SpriteFrames_7nrbm")
 animation = &"UP_AND_DOWN"
 autoplay = "IDLE"
-frame_progress = 0.02774892
+frame_progress = 0.8174702
 
 [node name="TrojanCollision" type="CollisionShape2D" parent="." unique_id=646183877]
 position = Vector2(0, -16.25)
 shape = SubResource("RectangleShape2D_qtgru")
 
-[node name="TrojanMarker" type="Marker2D" parent="." unique_id=270826756]
+[node name="HitPoint" type="Marker2D" parent="." unique_id=270826756]
 position = Vector2(-18, -27)

@@ -2,7 +2,8 @@ extends Unit
 
 
 @onready var battle_scene: BattleBase = get_parent()
-@onready var trojan_marker: Marker2D = $TrojanMarker
+@onready var trojan_marker: Marker2D = $HitPoint
+
 @onready var player_character: Unit = $"../PlayerCharacter"
 @onready var anim_player: AnimatedSprite2D = $TrojanSprite
 
@@ -59,63 +60,69 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 func _process(delta):
 	if battle_scene.current_phase != BattleBase.BattlePhase.BATTLE:
 		return
-	if movement_locked:
-	# still allow smooth interpolation ONLY
-		position = position.move_toward(target_position, move_speed * delta)
 
-		if moving and position.distance_to(target_position) < 1.0:
-			position = target_position
-			moving = false
-	# =========================
-	# STUN TIMER ONLY
-	# =========================
-	if stunned:
-		stun_timer -= delta
-	if stun_timer <= 0:
-		stunned = false
-
-		# restore color
-		if stun_tween:
-			stun_tween.kill()
-			stun_tween = null
-
-		modulate = original_modulate
-
-	# =========================
-	# ALWAYS MOVE TOWARD TILE
-	# =========================
-	position = position.move_toward(target_position, move_speed * delta)
-
-	# If still stunned → stop AI decisions here
-	if stunned:
+	if is_dead:
 		return
 
-	# =========================
-	# NORMAL AI BELOW
-	# =========================
+	# ==========================================
+	# Handle stun
+	# ==========================================
+	if stunned:
+		stun_timer -= delta
 
-	follow_timer += delta
-	shoot_timer += delta
+		if stun_timer <= 0.0:
+			stunned = false
 
-	if position.distance_to(target_position) < 1.0:
-		position = target_position
+			if stun_tween:
+				stun_tween.kill()
+				stun_tween = null
 
-	if !moving and follow_timer >= follow_interval:
-		follow_timer = 0.0
-		random_move()
+			modulate = original_modulate
 
-	if shoot_timer >= shoot_interval and not attack_locked:
-		shoot_timer = 0.0
-
-		if can_shoot_player():
-			perform_attack()
-			
+	# ==========================================
+	# Smooth movement
+	# ==========================================
 	position = position.move_toward(target_position, move_speed * delta)
 
 	if moving and position.distance_to(target_position) < 1.0:
 		position = target_position
 		moving = false
 
+	# Don't think while stunned
+	if stunned:
+		return
+
+	# Timers should ALWAYS run
+	follow_timer += delta
+	shoot_timer += delta
+
+	# Don't choose a new move while locked
+	if !movement_locked and !moving and follow_timer >= follow_interval:
+		follow_timer = 0.0
+		random_move()
+
+	# Don't start another attack while attacking
+	if !attack_locked and shoot_timer >= shoot_interval:
+		shoot_timer = 0.0
+
+		if can_shoot_player():
+			perform_attack()
+
+	# ==========================================
+	# Movement
+	# ==========================================
+	if !moving and follow_timer >= follow_interval:
+		follow_timer = 0.0
+		random_move()
+
+	# ==========================================
+	# Attack
+	# ==========================================
+	if shoot_timer >= shoot_interval:
+		shoot_timer = 0.0
+
+		if can_shoot_player():
+			perform_attack()
 # ============================================================
 # CORE MOVEMENT (LANE CONTROL AI)
 # ============================================================
@@ -198,9 +205,11 @@ func perform_attack():
 
 	await get_tree().create_timer(attack_recovery).timeout
 
+	_unlock_attack()
+
+func _unlock_attack():
 	attack_locked = false
 	movement_locked = false
-	
 # ============================================================
 # SHOOT LOGIC
 # ============================================================

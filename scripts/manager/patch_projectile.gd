@@ -11,23 +11,25 @@ func _ready():
 	particles.emitting = true
 
 func _process(delta):
-	if target == null:
+	if !is_instance_valid(target):
 		queue_free()
 		return
 
-	var dir = global_position.direction_to(target.global_position)
+	var target_pos := target.global_position
 
-	# Smoothly rotate toward target
-	rotation = lerp_angle(
-		rotation,
-		dir.angle(),
-		8.0 * delta
-	)
+	var hit_point := target.find_child("HitPoint", true, false)
+	if is_instance_valid(hit_point):
+		target_pos = hit_point.global_position
 
-	# Move toward target
+	var dir = global_position.direction_to(target_pos)
+
+	rotation = lerp_angle(rotation, dir.angle(), 8.0 * delta)
 	global_position += dir * speed * delta
 
-	# Hit target
-	if global_position.distance_to(target.global_position) < 10:
-		target.take_damage(damage, Unit.DamageType.NEUTRAL, chip)
+	if global_position.distance_to(target_pos) < 10:
+		if is_instance_valid(target):
+			target.take_damage(damage, Unit.DamageType.NEUTRAL, chip)
+
 		queue_free()
+		set_process(false) # stop immediately
+		return

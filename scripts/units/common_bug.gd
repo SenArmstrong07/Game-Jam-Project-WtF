@@ -5,7 +5,8 @@ const EnemyBasicProjectile = preload("res://scenes/Attacks/enemy_basic_projectil
 
 @onready var player_character: Unit = $"../PlayerCharacter"
 @onready var battle_scene: BattleBase = get_parent()
-@onready var ProjectileShootPoint: Marker2D = $CommonBugMarker
+@onready var ProjectileShootPoint: Marker2D = $HitPoint
+
 
 const GRID_WIDTH := 4
 const GRID_HEIGHT := 4

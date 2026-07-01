@@ -14,6 +14,9 @@ var is_hurt := false
 var team: Team
 var is_dead: bool = false
 var action_locked := false
+
+func get_projectile_target() -> Vector2:
+	return global_position
 # ============================================================
 # GRID POSITION (IMPORTANT: SINGLE SOURCE OF TRUTH)
 # ============================================================

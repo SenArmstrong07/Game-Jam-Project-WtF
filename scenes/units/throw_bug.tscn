@@ -206,5 +206,5 @@ sprite_frames = SubResource("SpriteFrames_8jovo")
 autoplay = "default"
 frame_progress = 0.8977252
 
-[node name="throwbugMarkr" type="Marker2D" parent="." unique_id=1919250889]
+[node name="HitPoint" type="Marker2D" parent="." unique_id=1919250889]
 position = Vector2(-24, -32)

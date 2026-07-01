@@ -5,7 +5,8 @@ const EnemyThrowProjectile = preload("res://scenes/Attacks/Throw_Projectile.tscn
 
 @onready var player_character: Unit = $"../PlayerCharacter"
 @onready var battle_scene: BattleBase = get_parent()
-@onready var ProjectileThrowPoint: Marker2D = $throwbugMarkr
+@onready var ProjectileThrowPoint: Marker2D = $HitPoint
+
 
 const GRID_WIDTH := 4
 const GRID_HEIGHT := 4

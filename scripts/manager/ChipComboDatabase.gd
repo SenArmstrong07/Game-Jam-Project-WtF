@@ -4,7 +4,7 @@ class_name ChipComboDatabase
 var combos := {
 	"DELETE+DELETE": Chip.new(
 		"REFORMAT",
-		100,
+		60,
 		999,
 		"Massive delete attack.",
 		Chip.AttackType.COMBO

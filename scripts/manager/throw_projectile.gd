@@ -219,7 +219,7 @@ func bounce_to_tile(target_pos: Vector2, arc_height: float, duration: float) -> 
 
 	while elapsed < duration:
 
-		await get_tree().process_frame
+		await get_tree().create_timer(0.0).timeout
 		elapsed += get_process_delta_time()
 
 		var t = clamp(elapsed / duration, 0.0, 1.0)

@@ -21,7 +21,7 @@ func delete_marker():
 
 func _ready() -> void:
 	# Get reference to minimap script to access camera and player
-	var minimap_node = get_tree().root.get_child(0).get_node_or_null("Minimap")
+	var minimap_node = get_tree().get_first_node_in_group("minimap")
 	if minimap_node:
 		minimap_script = minimap_node
 

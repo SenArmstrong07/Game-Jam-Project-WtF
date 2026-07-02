@@ -18,12 +18,13 @@ const SCANNER_SPEED: float = 250.0
 const SCANNER_BEAM_HEIGHT: float = 80.0
 
 func _ready() -> void:
+	add_to_group("worldmap_ui")
 	# Get references
 	print("[WORLD MAP SCRIPT ATTACHED TO:]", self)
 	print("CLASS:", get_class())
-	var root = get_tree().root.get_child(0)
-	if not root:
-		print("[WORLD_MAP] Error: Could not find root scene")
+	var root = _find_overworld_root()
+	if not is_instance_valid(root):
+		print("[WORLD_MAP] Error: Could not find overworld root scene")
 		queue_free()
 		return
 	
@@ -87,6 +88,24 @@ func _ready() -> void:
 	# Draw the map
 	queue_redraw()
 	print("[WORLD_MAP] Map ready and drawn")
+
+func _find_overworld_root() -> Node:
+	var current_root = get_tree().current_scene
+	if is_instance_valid(current_root):
+		if current_root.has_node("TileNode/front") and current_root.has_node("OverworldPlayer"):
+			return current_root
+		if current_root.is_in_group("overworld_scene"):
+			return current_root
+
+	var grouped_root = get_tree().get_first_node_in_group("overworld_scene")
+	if is_instance_valid(grouped_root):
+		return grouped_root
+
+	for child in get_tree().root.get_children():
+		if is_instance_valid(child) and child.has_node("TileNode/front") and child.has_node("OverworldPlayer"):
+			return child
+
+	return null
 
 func _scan_all_land_tiles() -> void:
 	"""Scan all tiles within world bounds and store land tile positions."""

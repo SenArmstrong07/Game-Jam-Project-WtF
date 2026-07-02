@@ -30,6 +30,7 @@ var battle_active: bool = false
 var combo_database := ChipComboDatabase.new()
 var combo_mode := false
 var first_combo_chip: Chip = null
+var encounter = SignalBus.current_encounter
 
 signal phase_changed(new_phase: BattlePhase)
 signal player_chip_selected(chip: Chip)
@@ -52,8 +53,20 @@ func _ready() -> void:
 	# IMPORTANT: store enemies properly
 	enemies.clear()
 
-	for pos in enemy_spawn_positions:
-		spawn_enemy(pos)
+	#NOTE KAY BIG BEN:
+	#I'm currently in the process of tidying up yung transition from
+	#overworld to battle scene on an encounter.
+	#kung gusto mo magtest ng battle scene w/o overworld...
+	#iunhighlight mo nalang yung first for loop dito
+
+	#For testing: Spawning 2 enemies by default
+	#for pos in enemy_spawn_positions:
+		#spawn_enemy(pos)
+	
+	#Test with overworld: 
+	#How we spawn enemies based on encounter:
+	for i in encounter.enemy_count:
+		spawn_enemy(enemy_spawn_positions[i])
 
 	_start_preparation_phase()
 

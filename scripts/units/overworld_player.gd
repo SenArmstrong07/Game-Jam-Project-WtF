@@ -9,6 +9,7 @@ var controls_locked: bool = false
 var frontlayer: TileMapLayer
 
 func _ready() -> void:
+	add_to_group("player")
 	# Get reference to frontlayer to check if world is ready
 	frontlayer = get_parent().get_node("TileNode/front")
 

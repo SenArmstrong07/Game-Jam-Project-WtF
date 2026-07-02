@@ -13,8 +13,6 @@ var grid_pos: Vector2i
 @onready var overlay_fx: ColorRect = $OverlayFX
 @onready var lifetime_timer: Timer = $LifetimeTimer
 
-
-
 func _ready():
 	# =========================
 	# TILE (GROUND LAYER)
@@ -44,7 +42,6 @@ func _ready():
 	lifetime_timer.wait_time = duration
 	lifetime_timer.start()
 
-
 func _process(delta):
 	# pulsing glow effect
 	var pulse = abs(sin(Time.get_ticks_msec() * 0.01))
@@ -61,8 +58,7 @@ func _process(delta):
 
 
 func _on_lifetime_timer_timeout():
-	firewall_destroyed.emit(grid_pos)
-	queue_free()
+	await destroy()
 
 
 func _on_area_2d_area_entered(area):
@@ -72,5 +68,39 @@ func _on_area_2d_area_entered(area):
 		hp -= 1
 
 		if hp <= 0:
-			firewall_destroyed.emit(grid_pos)
-			queue_free()
+			await destroy()
+
+func destroy():
+
+	lifetime_timer.stop()
+	set_process(false)
+
+	var tween = create_tween()
+
+	# Blink like a dying fire
+	for i in range(4):
+		tween.tween_property(fire_anim, "modulate:a", 0.15, 0.06)
+		tween.tween_property(fire_anim, "modulate:a", 1.0, 0.06)
+
+	# Final fade
+	tween.set_parallel()
+
+	tween.tween_property(fire_anim, "modulate:a", 0.0, 0.25)
+	tween.tween_property(tile_fx, "modulate:a", 0.0, 0.25)
+	tween.tween_property(overlay_fx, "modulate:a", 0.0, 0.25)
+
+	await tween.finished
+
+	firewall_destroyed.emit(grid_pos)
+	queue_free()
+	
+func play_spawn():
+
+	scale = Vector2(0.2, 0.2)
+	modulate.a = 0.0
+
+	var tween = create_tween()
+	tween.set_parallel()
+
+	tween.tween_property(self, "scale", Vector2.ONE, 0.25)
+	tween.tween_property(self, "modulate:a", 1.0, 0.25)

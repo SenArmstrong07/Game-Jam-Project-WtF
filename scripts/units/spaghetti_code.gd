@@ -113,21 +113,7 @@ func _process(delta):
 		attack_timer = 0.0
 		attack_locked = true
 
-		if basic_attack_count >= 3:
-			basic_attack_count = 0
-
-			if randf() < 0.5:
-				await jump_slam()
-			else:
-				await throw_barrage()
-
-			await get_tree().create_timer(1.0).timeout
-
-		else:
-			shoot_spread()
-			basic_attack_count += 1
-
-		attack_locked = false
+		start_attack()
 
 # ============================================================
 #  BOSS ATTACK
@@ -147,7 +133,7 @@ func jump_slam():
 	)
 
 	target -= sprite_offset
-
+	
 	show_jump_warning(target_tile)
 
 	# =========================
@@ -202,8 +188,7 @@ func jump_slam():
 	impact.tween_property(self, "rotation", 0.0, 0.1)
 
 	slam_damage(target_tile)
-
-	# screen shake (optional but highly recommended)
+	break_slam_tiles(target_tile) 
 	screen_shake(10.0)
 
 	await impact.finished
@@ -220,7 +205,28 @@ func jump_slam():
 
 	jumping = false
 	attack_locked = false
-	
+
+func break_slam_tiles(center: Vector2i):
+
+	var tiles = [
+		center,
+		center + Vector2i.RIGHT,
+		center + Vector2i.DOWN,
+		center + Vector2i(1, 1)
+	]
+
+	for tile in tiles:
+		battle_scene.break_tile(tile)
+
+	# Push player away if standing on a broken tile
+	if player_character.grid_pos in tiles:
+		push_player_out(tiles)
+
+	await get_tree().create_timer(3.0).timeout
+
+	for tile in tiles:
+		battle_scene.restore_tile(tile)
+				
 func show_jump_warning(tile: Vector2i):
 
 	var tiles = [
@@ -256,7 +262,46 @@ func show_jump_warning(tile: Vector2i):
 		)
 
 	await get_tree().create_timer(0.6).timeout
-	
+
+func push_player_out(broken_tiles: Array):
+
+	var directions = [
+		Vector2i.LEFT,
+		Vector2i.RIGHT,
+		Vector2i.UP,
+		Vector2i.DOWN
+	]
+
+	for dir in directions:
+
+		var test = player_character.grid_pos + dir
+
+		# Stay inside player's arena
+		if test.x < 0 or test.x > 3:
+			continue
+
+		if test.y < 0 or test.y > 3:
+			continue
+
+		if battle_scene.is_tile_walkable(test):
+
+			player_character.grid_pos = test
+			player_character.target_position = player_character.grid_to_world(test)
+			player_character.moving = true
+			var tween = create_tween()
+			tween.tween_property(
+				player_character,
+				"position",
+				player_character.grid_to_world(test),
+				0.18
+			).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+			await tween.finished
+
+			player_character.moving = false
+
+			return
+				
 func is_grid_tile(tile: Vector2i) -> bool:
 	if tile.y < 0 or tile.y >= GRID_HEIGHT:
 		return false
@@ -270,7 +315,25 @@ func is_grid_tile(tile: Vector2i) -> bool:
 		return true
 
 	return false
-		
+
+func start_attack():
+
+	if basic_attack_count >= 3:
+		basic_attack_count = 0
+
+		if randf() < 1:
+			await jump_slam()
+		else:
+			await throw_barrage()
+
+		await get_tree().create_timer(1.0).timeout
+
+	else:
+		basic_attack_count += 1
+		await shoot_spread()
+
+	attack_locked = false
+	
 func slam_damage(tile: Vector2i):
 
 	var player = get_tree().get_first_node_in_group("player")
@@ -286,25 +349,39 @@ func slam_damage(tile: Vector2i):
 
 	if player.grid_pos in hit_tiles:
 		player.take_damage(attack_power + 20)
-
+		player.play_slam_hit()
+		
 func screen_shake(intensity := 8.0):
-	var cam = get_viewport().get_camera_2d()
+	var tree := get_tree()
+	if tree == null:
+		return
+
+	var cam := tree.get_first_node_in_group("Camera") as Camera2D
+	if cam == null:
+		cam = get_viewport().get_camera_2d()
+
 	if cam == null:
 		return
 
-	var original = cam.position
+	var original := cam.position
 
 	for i in range(6):
+		if !is_inside_tree():
+			break
+
 		cam.position = original + Vector2(
 			randf_range(-intensity, intensity),
 			randf_range(-intensity, intensity)
 		)
-		await get_tree().create_timer(0.02).timeout
+
+		await tree.create_timer(0.02).timeout
 
 	cam.position = original
 			
 func throw_barrage():
-
+	anim_player.play("ATTACK")
+	await get_tree().create_timer(0.25).timeout
+	
 	var rows = [0,1,2,3]
 	rows.shuffle()
 
@@ -320,12 +397,16 @@ func throw_barrage():
 		projectile.throw_bounce()
 
 		await get_tree().create_timer(0.20).timeout
-
+		anim_player.play("IDLE")
 	# Wait for the last bounce attack to mostly finish
 	await get_tree().create_timer(2.0).timeout
-
-
+	
 func shoot_spread():
+
+	anim_player.play("ATTACK")
+
+	await get_tree().create_timer(0.25).timeout
+
 	var safe_row := randi_range(0, 3)
 
 	for row in range(4):
@@ -340,11 +421,12 @@ func shoot_spread():
 
 		projectile.direction = Vector2.LEFT
 		projectile.damage = attack_power
-
-		# Boss controls projectile velocity
 		projectile.speed = projectile_speed
 
-
+	
+	await get_tree().create_timer(0.25).timeout
+	anim_player.play("IDLE")
+	
 func shoot_row(row: int):
 	var projectile = ENEMY_BASIC_PROJECTILE.instantiate()
 

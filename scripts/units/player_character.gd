@@ -94,59 +94,60 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 func _unhandled_input(event):
 	if battle_scene.current_phase != battle_scene.BattlePhase.BATTLE:
 		return
+
 	if movement_locked:
 		return
-		
+
 	if moving:
 		return
 
 	move_dir = Vector2i.ZERO
 
 	if event.is_action_pressed("ui_right"):
-		move_dir = Vector2i(1, 0)
+		move_dir = Vector2i.RIGHT
 		facing = Vector2i.RIGHT
+
 	elif event.is_action_pressed("ui_left"):
-		move_dir = Vector2i(-1, 0)
+		move_dir = Vector2i.LEFT
 		facing = Vector2i.LEFT
+
 	elif event.is_action_pressed("ui_down"):
-		move_dir = Vector2i(0, 1)
+		move_dir = Vector2i.DOWN
 		facing = Vector2i.DOWN
+
 	elif event.is_action_pressed("ui_up"):
-		move_dir = Vector2i(0, -1)
+		move_dir = Vector2i.UP
 		facing = Vector2i.UP
 
 	if move_dir == Vector2i.ZERO:
 		return
-	var new_pos: Vector2i = grid_pos + move_dir
-	
-	if battle_scene.blocked_tiles.has(new_pos):
-		return
-	
-	#grids boundary limits
+
+	var new_pos = grid_pos + move_dir
+
+	# Stay inside player grid
 	new_pos.x = clamp(new_pos.x, 0, PLAYER_WIDTH - 1)
 	new_pos.y = clamp(new_pos.y, 0, PLAYER_HEIGHT - 1)
-	#player movement
-	if battle_scene.blocked_tiles.has(new_pos):
+
+	# Don't walk onto broken or blocked tiles
+	if !battle_scene.is_tile_walkable(new_pos):
 		return
 
-	if new_pos != grid_pos:
-		grid_pos = new_pos
+	grid_pos = new_pos
+	grid_x = grid_pos.x
+	grid_y = grid_pos.y
 
-		grid_x = grid_pos.x
-		grid_y = grid_pos.y
+	target_position = grid_to_world(grid_pos)
+	moving = true
 
-		target_position = grid_to_world(grid_pos)
-		moving = true
-
-		if move_dir == Vector2i.RIGHT:
-			anim_player.play("Move_right")
-		elif move_dir == Vector2i.LEFT:
-			anim_player.play("Move_left")
-		elif move_dir == Vector2i.UP:
-			anim_player.play("Move_up")
-		elif move_dir == Vector2i.DOWN:
-			anim_player.play("Move_Down")
-
+	if move_dir == Vector2i.RIGHT:
+		anim_player.play("Move_right")
+	elif move_dir == Vector2i.LEFT:
+		anim_player.play("Move_left")
+	elif move_dir == Vector2i.UP:
+		anim_player.play("Move_up")
+	elif move_dir == Vector2i.DOWN:
+		anim_player.play("Move_Down")
+		
 #movement loop		
 func _process(delta):
 	if moving:
@@ -309,3 +310,28 @@ func apply_stun(duration: float):
 	anim_player.modulate = Color.WHITE
 
 	print("PLAYER RECOVERED")
+
+func play_slam_hit():
+
+	var start_pos = position
+
+	var tween = create_tween()
+	tween.set_parallel()
+
+	# Squash
+	tween.tween_property(self, "scale", Vector2(1.45, 0.50), 0.08)
+
+	# Push down slightly
+	tween.tween_property(self, "position:y", start_pos.y + 6, 0.08)
+
+	await tween.finished
+
+	tween = create_tween()
+	tween.set_parallel()
+
+	# Recover
+	tween.tween_property(self, "scale", Vector2.ONE, 0.12)\
+		.set_trans(Tween.TRANS_BACK)\
+		.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(self, "position:y", start_pos.y, 0.12)

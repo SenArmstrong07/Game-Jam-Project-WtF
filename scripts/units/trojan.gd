@@ -121,8 +121,27 @@ func move_to_player(target_tile: Vector2i) -> bool:
 
 	var target := target_tile + Vector2i.RIGHT
 
-	if !battle_scene.is_tile_free(target):
-		return false
+	target.x = clamp(target.x, 0, GRID_WIDTH - 1)
+	target.y = clamp(target.y, 0, GRID_HEIGHT - 1)
+
+	var choices = [
+		target_tile + Vector2i.RIGHT,
+		target_tile + Vector2i.LEFT,
+		target_tile + Vector2i.UP,
+		target_tile + Vector2i.DOWN
+	]
+
+	for pos in choices:
+
+		if pos.x < 0 or pos.x >= GRID_WIDTH:
+			continue
+
+		if pos.y < 0 or pos.y >= GRID_HEIGHT:
+			continue
+
+		if battle_scene.is_tile_free(pos):
+			target = pos
+			break
 
 	moving = true
 	movement_locked = true
@@ -288,9 +307,6 @@ func throw_trap():
 # STUN
 # ============================================================
 func _on_player_stunned(tile: Vector2i):
-
-	if attack_locked:
-		return
 
 	var reached := await move_to_player(tile)
 

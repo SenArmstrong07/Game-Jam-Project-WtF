@@ -355,7 +355,8 @@ func use_chip(chip: Chip):
 			use_quarantine(chip)
 			
 		Chip.AttackType.WALL:
-			use_firewall(chip)
+			if !use_firewall(chip):
+				return
 		
 		Chip.AttackType.HEAL:
 			use_backup(chip)
@@ -446,26 +447,40 @@ func get_closest_enemy() -> Unit:
 
 	return best
 	
-func use_firewall(chip: Chip):
-	z_index = 10
+func use_firewall(chip: Chip) -> bool:
+
+	var firewall_tile = player.grid_pos + Vector2i.RIGHT
+
+	# Can't place on destroyed tiles
+	if !battle_scene.is_tile_walkable(firewall_tile):
+		return false
+
+	# Already a firewall here
+	if battle_scene.firewalls.has(firewall_tile):
+		return false
+
 	var firewall = FIREWALL.instantiate()
 	get_tree().current_scene.add_child(firewall)
-
-	# tile directly in front of player
-	var firewall_tile = player.grid_pos + Vector2i.RIGHT
 
 	firewall.grid_pos = firewall_tile
 	firewall.position = player.grid_to_world(firewall_tile)
 
+	battle_scene.firewalls[firewall_tile] = firewall
 	blocked_tiles.append(firewall_tile)
 
 	firewall.firewall_destroyed.connect(_on_firewall_destroyed)
 
-	print("FIREWALL deployed at ", firewall_tile)
-	
+	firewall.play_spawn()
+
+	return true
+			
 func _on_firewall_destroyed(tile: Vector2i):
+
 	blocked_tiles.erase(tile)
 
+	if battle_scene.firewalls.has(tile):
+		battle_scene.firewalls.erase(tile)
+		
 func use_reformat(chip: Chip):
 
 	var projectile = REFORMAT_PROJECTILE.instantiate()

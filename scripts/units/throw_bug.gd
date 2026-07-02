@@ -74,15 +74,15 @@ func _process(delta):
 	# =========================
 	if stunned:
 		stun_timer -= delta
-	if stun_timer <= 0:
-		stunned = false
+		if stun_timer <= 0:
+			stunned = false
 
-		# restore color
-		if stun_tween:
-			stun_tween.kill()
-			stun_tween = null
+			# restore color
+			if stun_tween:
+				stun_tween.kill()
+				stun_tween = null
 
-		modulate = original_modulate
+			modulate = original_modulate
 
 	# =========================
 	# ALWAYS MOVE TOWARD TILE
@@ -288,6 +288,7 @@ func apply_stun(duration: float):
 
 	stun_tween.tween_property(self, "modulate", Color(1, 1, 0.4), 0.1)
 	stun_tween.tween_property(self, "modulate", Color(1, 1, 0.9), 0.1)
+
 func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
 	var delta = new_pos - old_pos
 	if is_hurt:

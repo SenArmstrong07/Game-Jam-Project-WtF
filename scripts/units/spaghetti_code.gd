@@ -223,30 +223,54 @@ func jump_slam():
 	
 func show_jump_warning(tile: Vector2i):
 
-	var marker := ColorRect.new()
+	var tiles = [
+		tile,
+		tile + Vector2i.RIGHT,
+		tile + Vector2i.DOWN,
+		tile + Vector2i(1, 1)
+	]
 
-	marker.size = Vector2(TILE_SIZE * 2, TILE_SIZE * 2)
+	for t in tiles:
 
-	# Top-left of the 2x2 warning area
-	marker.position = Vector2(
-		tile.x * TILE_SIZE,
-		tile.y * TILE_SIZE
-	)
+		if !is_grid_tile(t):
+			continue
 
-	marker.color = Color(1, 0, 0, 0.45)
+		var marker := ColorRect.new()
+		marker.size = Vector2(TILE_SIZE, TILE_SIZE)
+		marker.position = Vector2(
+			t.x * TILE_SIZE,
+			t.y * TILE_SIZE
+		)
+		marker.color = Color(1, 0, 0, 0.45)
 
-	get_tree().current_scene.add_child(marker)
+		get_tree().current_scene.add_child(marker)
 
-	var tween = marker.create_tween()
-	tween.set_loops(5)
-	tween.tween_property(marker, "modulate:a", 1.0, 0.08)
-	tween.tween_property(marker, "modulate:a", 0.2, 0.08)
+		var tween = marker.create_tween()
+		tween.set_loops(5)
+		tween.tween_property(marker, "modulate:a", 1.0, 0.08)
+		tween.tween_property(marker, "modulate:a", 0.2, 0.08)
+
+		tween.finished.connect(func():
+			if is_instance_valid(marker):
+				marker.queue_free()
+		)
 
 	await get_tree().create_timer(0.6).timeout
+	
+func is_grid_tile(tile: Vector2i) -> bool:
+	if tile.y < 0 or tile.y >= GRID_HEIGHT:
+		return false
 
-	if is_instance_valid(marker):
-		marker.queue_free()
-			
+	# Player side (0-3)
+	if tile.x >= 0 and tile.x < GRID_WIDTH:
+		return true
+
+	# Enemy side (4-7)
+	if tile.x >= X_OFFSET and tile.x < X_OFFSET + GRID_WIDTH:
+		return true
+
+	return false
+		
 func slam_damage(tile: Vector2i):
 
 	var player = get_tree().get_first_node_in_group("player")

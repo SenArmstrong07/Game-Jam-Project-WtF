@@ -8,7 +8,10 @@ var max_bounces := 5
 var is_special := false
 var special_target_tile := Vector2i.ZERO
 
+const ARENA_WIDTH := 8
+const ARENA_HEIGHT := 4
 const TILE_SIZE := 64
+const X_OFFSET := 4
 
 var hit_targets := []
 
@@ -124,11 +127,15 @@ func spawn_plus_tile_effect(center_pos: Vector2):
 
 	for offset in offsets:
 
+		var pos = center_pos + offset
+
+		if !is_tile_in_grid(pos):
+			continue
+
 		var fx := ColorRect.new()
 
 		fx.size = Vector2(TILE_SIZE, TILE_SIZE)
-		fx.position = center_pos + offset - Vector2(TILE_SIZE / 2, TILE_SIZE / 2)
-
+		fx.position = pos - Vector2(TILE_SIZE / 2, TILE_SIZE / 2)
 		fx.color = Color(1.0, 0.2, 0.2, 0.6)
 
 		get_tree().current_scene.add_child(fx)
@@ -145,6 +152,9 @@ func spawn_plus_tile_effect(center_pos: Vector2):
 # ============================================================
 
 func hit_player_at_position(pos: Vector2, radius := 40.0):
+
+	if !is_inside_tree():
+		return
 
 	var player = get_tree().get_first_node_in_group("player")
 	if player == null:
@@ -188,26 +198,33 @@ func spawn_tile_effect(tile_pos: Vector2):
 	await tween.finished
 	fx.queue_free()
 
-
 func show_tile_warning(tile_pos: Vector2):
+	if !is_tile_in_grid(tile_pos):
+		return
+
+	if !is_inside_tree():
+		return
+
+	var tree := get_tree()
+	if tree == null or tree.current_scene == null:
+		return
 
 	var marker := ColorRect.new()
 	marker.size = Vector2(TILE_SIZE, TILE_SIZE)
 	marker.color = Color(1, 0, 0, 0.45)
 	marker.position = tile_pos - Vector2(TILE_SIZE / 2, TILE_SIZE / 2)
 
-	get_tree().current_scene.add_child(marker)
+	tree.current_scene.add_child(marker)
 
 	var tween = marker.create_tween()
 	tween.set_loops(3)
 	tween.tween_property(marker, "modulate:a", 0.9, 0.06)
 	tween.tween_property(marker, "modulate:a", 0.15, 0.06)
 
-	await get_tree().create_timer(0.4).timeout
+	await tree.create_timer(0.4).timeout
 
 	if is_instance_valid(marker):
 		marker.queue_free()
-
 # ============================================================
 # MOVEMENT
 # ============================================================
@@ -216,19 +233,25 @@ func bounce_to_tile(target_pos: Vector2, arc_height: float, duration: float) -> 
 	var elapsed := 0.0
 
 	while elapsed < duration:
-		await get_tree().process_frame
-
 		if !is_inside_tree():
 			return
 
+		var tree: SceneTree = get_tree()
+		if tree == null:
+			return
+
+		await tree.process_frame
+
 		elapsed += get_process_delta_time()
 
-		var t = clamp(elapsed / duration, 0.0, 1.0)
+		var t: float = clamp(elapsed / duration, 0.0, 1.0)
 
 		global_position = start_pos.lerp(target_pos, t)
 		global_position.y -= sin(t * PI) * arc_height
 
-	global_position = target_pos
+	if is_inside_tree():
+		global_position = target_pos
+	
 # ============================================================
 # CLEANUP
 # ============================================================
@@ -277,3 +300,14 @@ func hit_player_at_tile(tile_pos: Vector2):
 	if player_tile == impact_tile:
 		player.take_damage(damage)
 		hit_targets.append(player)
+
+func is_tile_in_grid(world_pos: Vector2) -> bool:
+	var tile := Vector2i(
+		floor(world_pos.x / TILE_SIZE),
+		floor(world_pos.y / TILE_SIZE)
+	)
+
+	return (
+		tile.x >= 0 and tile.x < ARENA_WIDTH and
+		tile.y >= 0 and tile.y < ARENA_HEIGHT
+	)

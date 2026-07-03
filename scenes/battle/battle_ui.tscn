@@ -23,6 +23,9 @@
 [ext_resource type="Texture2D" uid="uid://s7lpwy4c5mjr" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/8.png" id="16_8ct8k"]
 [ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="22_s0e4k"]
 [ext_resource type="Texture2D" uid="uid://bcrcexqahk8qi" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/7.png" id="23_k6hmf"]
+[ext_resource type="Texture2D" uid="uid://du6r6kjrlesh" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo2.png" id="24_8ct8k"]
+[ext_resource type="Script" uid="uid://cwnu4crlhgpjc" path="res://scripts/manager/move_shuffle.gd" id="24_te8l4"]
+[ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="25_s0e4k"]
 
 [sub_resource type="Theme" id="Theme_1y54r"]
 Label/constants/outline_size = 7
@@ -754,3 +757,137 @@ theme_override_font_sizes/font_size = 23
 text = "COMBINE"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MOVE_SHUFFLE" type="Control" parent="." unique_id=232846515]
+layout_mode = 3
+anchor_left = 0.96900004
+anchor_top = 0.47200003
+anchor_right = 1.0
+anchor_bottom = 0.528
+offset_left = -1.3200684
+offset_top = 0.15997314
+offset_right = -1.0
+offset_bottom = -0.16000366
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("24_te8l4")
+
+[node name="HAND_DECK" type="NinePatchRect" parent="MOVE_SHUFFLE" unique_id=2093031616]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -2.5500002
+anchor_top = -4.5
+anchor_right = 1.7270001
+anchor_bottom = 5.3
+offset_left = 1.0000076
+offset_top = 392.0
+offset_right = 221.93193
+offset_bottom = 171.06995
+grow_horizontal = 0
+grow_vertical = 2
+rotation = -1.5707964
+texture = ExtResource("24_8ct8k")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MOVE_SHUFFLE" unique_id=2003345172]
+layout_mode = 0
+offset_left = -80.0
+offset_top = -165.0
+offset_right = -5.0
+offset_bottom = 195.0
+
+[node name="SLOT" type="NinePatchRect" parent="MOVE_SHUFFLE/VBoxContainer" unique_id=329221961]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("25_s0e4k")
+
+[node name="1ST" type="TextureRect" parent="MOVE_SHUFFLE/VBoxContainer/SLOT" unique_id=1767566621]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.040000003
+anchor_top = 0.051000003
+anchor_right = 0.96000004
+anchor_bottom = 0.94900006
+offset_top = 0.031999826
+offset_bottom = -0.03200531
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SLOT2" type="NinePatchRect" parent="MOVE_SHUFFLE/VBoxContainer" unique_id=947757814]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("25_s0e4k")
+
+[node name="2ND" type="TextureRect" parent="MOVE_SHUFFLE/VBoxContainer/SLOT2" unique_id=1438146009]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.0
+offset_top = -31.0
+offset_right = 34.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SLOT3" type="NinePatchRect" parent="MOVE_SHUFFLE/VBoxContainer" unique_id=887928682]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("25_s0e4k")
+
+[node name="3RD" type="TextureRect" parent="MOVE_SHUFFLE/VBoxContainer/SLOT3" unique_id=1992519762]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -33.5
+offset_top = -31.0
+offset_right = 33.5
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SLOT4" type="NinePatchRect" parent="MOVE_SHUFFLE/VBoxContainer" unique_id=414049493]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("25_s0e4k")
+
+[node name="4TH" type="TextureRect" parent="MOVE_SHUFFLE/VBoxContainer/SLOT4" unique_id=1152186533]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -33.5
+offset_top = -30.5
+offset_right = 33.5
+offset_bottom = 30.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SLOT5" type="NinePatchRect" parent="MOVE_SHUFFLE/VBoxContainer" unique_id=1481201949]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("25_s0e4k")
+
+[node name="5TH" type="TextureRect" parent="MOVE_SHUFFLE/VBoxContainer/SLOT5" unique_id=2055944364]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.0
+offset_top = -31.5
+offset_right = 34.0
+offset_bottom = 31.5
+grow_horizontal = 2
+grow_vertical = 2

@@ -24,6 +24,7 @@ var player_deck: ChipDeck
 var player_hand: Array[Chip] = []
 
 var selected_chips: Array[Chip] = []
+
 var current_chip_index := 0
 var player_chip_index: int = 0
 var turn_locked := false
@@ -38,6 +39,7 @@ var encounter = SignalBus.current_encounter
 
 signal phase_changed(new_phase: BattlePhase)
 signal player_chip_selected(chip: Chip)
+
 signal battle_ended(winner: Unit)
 var player_attack_locked := false
 @export var player_attack_delay := 0.4
@@ -45,7 +47,7 @@ var player_attack_locked := false
 var selecting_buttons := false
 @onready var player_ui = $PLAYER_HP_BATTLE_UI/PLAYER_LIVES
 @onready var battle_preperations =  $PLAYER_HP_BATTLE_UI/BATTLE_PREPERATIONS
-
+@onready var move_shuffle = $PLAYER_HP_BATTLE_UI/MOVE_SHUFFLE
 
 #put new vector to add enemy
 var enemy_spawn_positions := [
@@ -211,7 +213,7 @@ func _start_preparation_phase() -> void:
 	print("=== PREPARATION PHASE ===")
 
 	current_phase = BattlePhase.PREPARATION
-	
+	move_shuffle.visible = false
 	player_ui.visible = false
 	
 	phase_changed.emit(current_phase)
@@ -223,6 +225,7 @@ func _start_preparation_phase() -> void:
 	player_chip_index = 0
 
 	_update_ui()
+
 func move_cursor_right():
 	if player_hand.is_empty():
 		return
@@ -418,23 +421,55 @@ func can_select_chip(chip: Chip) -> bool:
 # ============================================================
 # BATTLE PHASE
 # ============================================================
+func next_chip():
 
+	if selected_chips.is_empty():
+		return
+
+	current_chip_index = (current_chip_index + 1) % selected_chips.size()
+
+	_apply_current_chip()
+
+
+func previous_chip():
+
+	if selected_chips.is_empty():
+		return
+
+	current_chip_index = (current_chip_index - 1 + selected_chips.size()) % selected_chips.size()
+
+	_apply_current_chip()
+
+
+func _apply_current_chip():
+
+	var chip := selected_chips[current_chip_index]
+
+	player.attack_range = chip.range_tile
+	player.attack_power = chip.power
+
+	move_shuffle.update_chip_display(selected_chips, current_chip_index)
+	
 func _start_battle_phase() -> void:
 	get_tree().paused = false
 
 	current_phase = BattlePhase.BATTLE
 	battle_active = true
 	current_chip_index = 0
-	
+	move_shuffle.visible = true
 	player_ui.visible = true
 	update_player_ui()
-	
-	var first_chip := selected_chips[0]
-	player.attack_range = first_chip.range_tile
-	player.attack_power = first_chip.power
+
+	if !selected_chips.is_empty():
+		var chip := selected_chips[current_chip_index]
+
+		player.attack_range = chip.range_tile
+		player.attack_power = chip.power
+
+		move_shuffle.update_chip_display(selected_chips, current_chip_index)
 
 	_update_ui()
-
+	
 func _handle_battle_input() -> void:
 	if player_attack_locked:
 		return
@@ -444,18 +479,30 @@ func _handle_battle_input() -> void:
 
 	if current_chip_index >= selected_chips.size():
 		return
+		
+	if Input.is_action_just_pressed("next_chip"):
+		next_chip()
+		return
 
+	if Input.is_action_just_pressed("previous_chip"):
+		previous_chip()
+		return
+		
 	if Input.is_action_just_pressed("select"):
 
 		player_attack_locked = true
-
 		var chip = selected_chips[current_chip_index]
 
 		use_chip(chip)
 
 		print("Used chip: ", chip.name)
 
-		current_chip_index += 1
+		selected_chips.remove_at(current_chip_index)
+
+		if current_chip_index >= selected_chips.size():
+			current_chip_index = max(selected_chips.size() - 1, 0)
+
+		move_shuffle.update_chip_display(selected_chips, current_chip_index)
 
 		await get_tree().create_timer(player_attack_delay).timeout
 

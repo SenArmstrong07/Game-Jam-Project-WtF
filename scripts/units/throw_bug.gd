@@ -26,7 +26,7 @@ var follow_timer := 0.0
 var follow_interval := 0.25
 
 var shoot_timer := 0.0
-var shoot_interval := 1.0
+var shoot_interval := 0.5
 
 var stunned := false
 var stun_timer := 0.0
@@ -61,47 +61,40 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 		cell.y * TILE_SIZE + TILE_SIZE / 2.0
 	)
 	
-
 func _process(delta):
+
+	if !is_instance_valid(battle_scene):
+		return
+
 	if battle_scene.current_phase != BattleBase.BattlePhase.BATTLE:
 		return
-	if movement_locked:
-	# still allow smooth interpolation ONLY
-		position = position.move_toward(target_position, move_speed * delta)
-		return
-	# =========================
-	# STUN TIMER ONLY
-	# =========================
+
+	# Always move toward target
+	position = position.move_toward(target_position, move_speed * delta)
+
+	# Handle stun
 	if stunned:
 		stun_timer -= delta
+
 		if stun_timer <= 0:
 			stunned = false
 
-			# restore color
 			if stun_tween:
 				stun_tween.kill()
 				stun_tween = null
 
 			modulate = original_modulate
 
-	# =========================
-	# ALWAYS MOVE TOWARD TILE
-	# =========================
-	position = position.move_toward(target_position, move_speed * delta)
-
-	# If still stunned → stop AI decisions here
-	if stunned:
 		return
 
-	# =========================
-	# NORMAL AI BELOW
-	# =========================
+	# If attacking, don't make new AI decisions
+	if movement_locked:
+		return
 
 	follow_timer += delta
 	shoot_timer += delta
 	lane_timer += delta
 
-	# switch lane direction
 	if lane_timer >= lane_switch_interval:
 		lane_timer = 0.0
 		lane_direction *= -1
@@ -110,17 +103,17 @@ func _process(delta):
 		follow_timer = 0.0
 		follow_player()
 
-	if shoot_timer >= shoot_interval and not attack_locked:
+	if shoot_timer >= shoot_interval and !attack_locked:
 		shoot_timer = 0.0
 
 		if can_shoot_player():
 			shoot()
-
+			
 # ============================================================
 # CORE MOVEMENT (LANE CONTROL AI)
 # ============================================================
 func follow_player():
-	if player_character == null:
+	if !is_instance_valid(player_character):
 		return
 
 	var old_grid_pos = grid_pos
@@ -134,24 +127,16 @@ func follow_player():
 	var move_axis := randi() % 2
 	var next_pos := grid_pos
 
-	# vertical
+	# -----------------------------
+	# Decide desired movement
+	# -----------------------------
 	if move_axis == 0:
 		if my_row < player_row:
 			next_pos.y += 1
 		elif my_row > player_row:
 			next_pos.y -= 1
-		else:
-			next_pos.y += [-1, 1].pick_random()
-
-	# horizontal
 	else:
-		var target_col := player_col + 1
-
-		if int(Time.get_ticks_msec() / 700) % 2 == 0:
-			target_col = player_col + 1
-		else:
-			target_col = player_col + 2
-
+		var target_col := player_col + (1 if Time.get_ticks_msec() / 700 % 2 == 0 else 2)
 		target_col = clamp(target_col, 0, GRID_WIDTH - 1)
 
 		if my_col < target_col:
@@ -159,32 +144,46 @@ func follow_player():
 		elif my_col > target_col:
 			next_pos.x -= 1
 
-	# ❗ HARD BLOCK: ONLY ONE AUTHORITY
+	# Clamp BEFORE checking
+	next_pos.x = clamp(next_pos.x, 0, GRID_WIDTH - 1)
+	next_pos.y = clamp(next_pos.y, 0, GRID_HEIGHT - 1)
+
+	# If blocked, try nearby tiles
+	if !battle_scene.is_tile_free(next_pos):
+
+		var alternatives = [
+			grid_pos + Vector2i.UP,
+			grid_pos + Vector2i.DOWN,
+			grid_pos + Vector2i.LEFT,
+			grid_pos + Vector2i.RIGHT
+		]
+
+		alternatives.shuffle()
+
+		for pos in alternatives:
+
+			pos.x = clamp(pos.x, 0, GRID_WIDTH - 1)
+			pos.y = clamp(pos.y, 0, GRID_HEIGHT - 1)
+
+			if battle_scene.is_tile_free(pos):
+				next_pos = pos
+				break
+
+	# Move
 	if battle_scene.is_tile_free(next_pos):
 
-		# release old tile
 		battle_scene.occupied_tiles.erase(grid_pos)
 
-		# reserve new tile IMMEDIATELY
 		grid_pos = next_pos
+
 		battle_scene.occupied_tiles[grid_pos] = true
-
-	# update visuals ALWAYS
-	play_move_animation(old_grid_pos, grid_pos)
-	target_position = grid_to_world(grid_pos)
-
-	# ----------------------------------------------------
-	# FINAL SAFETY CLAMPS 
-	# ----------------------------------------------------
-	grid_pos.x = clamp(grid_pos.x, 0, GRID_WIDTH - 1)
-	grid_pos.y = clamp(grid_pos.y, 0, GRID_HEIGHT - 1)
-	play_move_animation(old_grid_pos, grid_pos)
 
 	grid_x = grid_pos.x
 	grid_y = grid_pos.y
 
 	target_position = grid_to_world(grid_pos)
-	
+
+	play_move_animation(old_grid_pos, grid_pos)
 # ============================================================
 # SHOOT LOGIC
 # ============================================================
@@ -223,6 +222,9 @@ func shoot():
 	if attack_locked:
 		return
 
+	if !is_instance_valid(player_character):
+		return
+
 	attack_locked = true
 	movement_locked = true
 
@@ -231,13 +233,17 @@ func shoot():
 	if attack_count % 3 == 0:
 		await shoot_special()
 	else:
-		await shoot_bounce()
+		shoot_bounce()
 
 	await get_tree().create_timer(attack_recovery).timeout
 
+	# Safety in case the enemy died during the attack
+	if !is_instance_valid(self):
+		return
+
 	attack_locked = false
 	movement_locked = false
-
+	
 func shoot_bounce():
 
 	var projectile = EnemyThrowProjectile.instantiate()
@@ -257,12 +263,11 @@ func shoot_special():
 	get_tree().current_scene.add_child(projectile)
 
 	projectile.global_position = ProjectileThrowPoint.global_position
-
 	projectile.damage = attack_power + 10
 
-	await projectile.throw_special(
-		player_character.grid_pos
-	)
+	projectile.throw_special(player_character.grid_pos)
+
+	await get_tree().create_timer(0.6).timeout
 # ============================================================
 # STUN
 # ============================================================

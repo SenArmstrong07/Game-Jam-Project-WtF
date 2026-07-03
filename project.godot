@@ -15,6 +15,11 @@ run/main_scene="uid://dlpal1rn4sjjg"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+SignalBus="*uid://d154sxpgm1121"
+EncounterTransition="*uid://dctjndm0mt2iq"
+
 [display]
 
 window/size/viewport_width=1280

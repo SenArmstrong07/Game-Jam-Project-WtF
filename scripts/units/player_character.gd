@@ -77,6 +77,9 @@ func take_damage(amount: int, damage_type: Unit.DamageType = Unit.DamageType.NEU
 	# Check if hit connects (even if "1 hit = 1 life", we could add dodge chance)
 	lives -= 1
 	play_hurt()
+	
+	if battle_scene:
+		battle_scene.update_player_ui()
 
 	print("Hit! Lives remaining: ", lives)
 	
@@ -223,6 +226,8 @@ func heal(amount: int):
 	lives = min(lives + amount, max_lives)
 
 	play_heal()
+	if battle_scene:
+		battle_scene.update_player_ui()
 
 	print("Lives: ", lives, "/", max_lives)
 

@@ -1,0 +1,130 @@
+[gd_scene format=3 uid="uid://sy7w0ntech8w"]
+
+[ext_resource type="Script" uid="uid://e06myi56im5r" path="res://scripts/UI/player_lives.gd" id="1_0qfdl"]
+[ext_resource type="Texture2D" uid="uid://dytno7rkyslsu" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/FrameMap.png" id="1_ib2kh"]
+[ext_resource type="Texture2D" uid="uid://bhnre5btuttrj" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_08.png" id="2_elpkr"]
+[ext_resource type="FontFile" uid="uid://ctgejobb4njpx" path="res://assets/fonts/ARCADECLASSIC.TTF" id="3_bgiko"]
+[ext_resource type="Texture2D" uid="uid://s3rfrypuprmf" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar1.png" id="4_elpkr"]
+[ext_resource type="Texture2D" uid="uid://cokfbpbenej0b" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar2.png" id="5_bgiko"]
+[ext_resource type="Texture2D" uid="uid://6bqf2oti8idw" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar3.png" id="6_xm0oj"]
+[ext_resource type="Texture2D" uid="uid://dlwekwnpuhyvk" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar4.png" id="7_0qfdl"]
+
+[sub_resource type="Theme" id="Theme_1y54r"]
+Label/constants/outline_size = 7
+Label/font_sizes/font_size = 70
+Label/fonts/font = ExtResource("3_bgiko")
+
+[node name="BATTLE_UI" type="CanvasLayer" unique_id=1987469340]
+
+[node name="PLAYER_LIVES" type="Control" parent="." unique_id=1158733095]
+layout_mode = 3
+anchor_right = 0.17400001
+anchor_bottom = 0.076000005
+offset_right = 12.551987
+offset_bottom = 6.751995
+script = ExtResource("1_0qfdl")
+
+[node name="HP_BAR_BG" type="NinePatchRect" parent="PLAYER_LIVES" unique_id=1745255607]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.21400002
+anchor_right = 2.0700002
+anchor_bottom = 1.3570001
+offset_left = 1.0
+offset_top = 5.015999
+offset_right = 0.08996582
+offset_bottom = 0.0079956055
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_ib2kh")
+region_rect = Rect2(0, 162.7418, 94.99985, 89.65782)
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Player_Life_Counter" type="NinePatchRect" parent="PLAYER_LIVES" unique_id=1114795994]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.075
+anchor_top = 0.061000004
+anchor_right = 0.5
+anchor_bottom = 1.7140001
+offset_top = 0.01099968
+offset_right = 1.0
+offset_bottom = 0.01399231
+texture = ExtResource("2_elpkr")
+
+[node name="MarginContainer" type="MarginContainer" parent="PLAYER_LIVES/Player_Life_Counter" unique_id=93457247]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HitPoints" type="Label" parent="PLAYER_LIVES/Player_Life_Counter/MarginContainer" unique_id=1173464301]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_1y54r")
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HPBar" type="HBoxContainer" parent="PLAYER_LIVES/Player_Life_Counter" unique_id=1065113719]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0270001
+anchor_top = 0.23300001
+anchor_right = 4.578
+anchor_bottom = 0.71900004
+offset_left = 0.028816223
+offset_top = 0.0039539337
+offset_right = 0.023529053
+offset_bottom = 0.014442444
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="LifeBar1" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=2025470841]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_elpkr")
+expand_mode = 1
+flip_v = true
+
+[node name="LifeBar2" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=52738636]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("5_bgiko")
+expand_mode = 1
+flip_h = true
+flip_v = true
+
+[node name="LifeBar3" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=986638547]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("6_xm0oj")
+expand_mode = 1
+flip_h = true
+flip_v = true
+
+[node name="LifeBar4" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=1305779742]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("6_xm0oj")
+expand_mode = 1
+flip_h = true
+flip_v = true
+
+[node name="LifeBar5" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=429661327]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("7_0qfdl")
+expand_mode = 1
+flip_v = true

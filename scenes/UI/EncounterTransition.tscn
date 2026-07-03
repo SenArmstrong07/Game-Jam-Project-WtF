@@ -2,19 +2,21 @@
 
 [ext_resource type="Script" uid="uid://dctjndm0mt2iq" path="res://scripts/UI/encounter_transition.gd" id="1_sihfp"]
 [ext_resource type="Shader" uid="uid://bg3thr2yuie5v" path="res://scripts/UI/transition_shader.gdshader" id="2_vp24l"]
+[ext_resource type="Shader" uid="uid://chnli3ktxcdjp" path="res://scripts/UI/reconstruct_shader.gdshader" id="3_1r7hd"]
+[ext_resource type="Script" uid="uid://ckoc7bhw8lj1t" path="res://scripts/UI/battle_reconstruction_overlay.gd" id="4_hbgfg"]
+[ext_resource type="Script" uid="uid://c3x6agve7fhk6" path="res://scripts/UI/battle_transition_overlay.gd" id="5_yxi5m"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1r7hd"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hbgfg"]
+shader = ExtResource("3_1r7hd")
+shader_parameter/pixel_size = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yxi5m"]
 shader = ExtResource("2_vp24l")
 shader_parameter/glitch_strength = 0.0
 shader_parameter/block_size = 80.0
 
 [node name="EncounterTransition" type="CanvasLayer" unique_id=510118405]
 script = ExtResource("1_sihfp")
-
-[node name="OverworldShot" type="TextureRect" parent="." unique_id=1919127759]
-material = SubResource("ShaderMaterial_1r7hd")
-offset_right = 40.0
-offset_bottom = 40.0
 
 [node name="Flash" type="ColorRect" parent="." unique_id=1972372626]
 offset_left = -19.0
@@ -31,3 +33,24 @@ offset_bottom = 724.0
 color = Color(0, 0, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=820209970]
+
+[node name="ReconstructionOverlay" type="ColorRect" parent="." unique_id=1899841330]
+material = SubResource("ShaderMaterial_hbgfg")
+offset_left = -210.0
+offset_top = -198.0
+offset_right = 1496.0
+offset_bottom = 893.0
+script = ExtResource("4_hbgfg")
+
+[node name="GlitchOverlay" type="ColorRect" parent="." unique_id=1687937731]
+material = SubResource("ShaderMaterial_yxi5m")
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_yxi5m")
+
+[node name="OverworldShot" type="TextureRect" parent="." unique_id=437705358]
+modulate = Color(1, 1, 1, 0)
+offset_left = -127.0
+offset_top = -130.0
+offset_right = 1305.0
+offset_bottom = 797.0

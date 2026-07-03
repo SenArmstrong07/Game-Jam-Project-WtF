@@ -73,9 +73,18 @@ func _on_battle_trigger_body_entered(body: Node2D) -> void:
 
 
 func trigger_battle() -> void:
-	SignalBus.start_battle(self)
-	# TODO: Implement actual battle scene transition here
+	# Save the current overworld before leaving it
+	var cybermap = get_tree().get_first_node_in_group("Cybermap")
 
+	if cybermap:
+		cybermap.store_overworld_state()
+
+	SignalBus.start_battle(self)
+
+func disappear() -> void:
+	if has_signal("died"):
+		emit_signal("died")
+	queue_free()
 
 func pick_new_patrol_target() -> void:
 	# Pick a random point within patrol radius

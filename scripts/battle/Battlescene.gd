@@ -12,7 +12,8 @@ const FIREWALL = preload("uid://x8y5dkw5aur6")
 const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
 
-@onready var glitch_overlay: ColorRect = $TransitionOverlay/GlitchOverlay
+
+
 @onready var grid = $Grid
 @onready var player: Unit = $PlayerCharacter
 var enemies: Array[Unit] = []
@@ -45,18 +46,8 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
-	#New approach: Let the battlescene handle the glitch in effect
-	#=========TRANSITION STUFF=============================#
-	var mat := glitch_overlay.material as ShaderMaterial
-	glitch_overlay.visible = true
-	mat.set_shader_parameter("glitch_strength", 1.0)
-	glitch_overlay.modulate.a = 0.35
-	await $TransitionOverlay/GlitchOverlay.play_glitch_in()
-	#======================================================#
-	
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
-
 	player.unit_died.connect(_on_unit_died)
 
 	# IMPORTANT: store enemies properly
@@ -76,8 +67,9 @@ func _ready() -> void:
 	#How we spawn enemies based on encounter:
 	for i in encounter.enemy_count:
 		spawn_enemy(enemy_spawn_positions[i])
-
+	print("BattleScene READY FINISHED")
 	_start_preparation_phase()
+	
 
 func find_battle_scene() -> BattleBase:
 	var node = self
@@ -539,6 +531,14 @@ func _on_unit_died(unit: Unit) -> void:
 	await get_tree().create_timer(1.0).timeout
 	get_tree().reload_current_scene()
 
+func end_battle() -> void:
+	SignalBus.return_to_overworld()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_O:
+		print("[BATTLE] O pressed - simulating return to overworld")
+		end_battle()
+
 func _check_win_condition():
 	# remove invalid references
 	enemies = enemies.filter(func(e):
@@ -558,7 +558,8 @@ func _check_win_condition():
 				e.queue_free()
 
 		await get_tree().create_timer(0.5).timeout
-		get_tree().reload_current_scene()
+		# Proceed to reconstruction + return to overworld
+		end_battle()
 		
 func get_alive_enemies() -> Array:
 	return enemies.filter(func(e):

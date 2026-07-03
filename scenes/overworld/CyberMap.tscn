@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://b8uwoo3tcjryd" path="res://scenes/overworld/minimap.tscn" id="4_01jcn"]
 [ext_resource type="PackedScene" uid="uid://bp7rq1s1rj2x8" path="res://scenes/overworld/loading_screen.tscn" id="5_loading"]
 [ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="6_ojrtv"]
+[ext_resource type="Script" uid="uid://bckhqp8t0oqkg" path="res://scripts/overworld/cyber_map.gd" id="7_xw8qz"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pmfpv"]
 shader = ExtResource("6_ojrtv")
@@ -60,6 +61,7 @@ tile_size = Vector2i(64, 64)
 sources/0 = SubResource("TileSetAtlasSource_udnr2")
 
 [node name="CyberMap" type="Node2D" unique_id=833708849]
+script = ExtResource("7_xw8qz")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=350550884]
 
@@ -89,3 +91,8 @@ script = ExtResource("2_udnr2")
 [node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
 
 [node name="LoadingScreen" parent="." unique_id=1500000010 instance=ExtResource("5_loading")]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1500000011]
+
+[node name="SimulateRemoveEnemy" type="Button" parent="UI" unique_id=1500000012]
+text = "Simulate nearest enemy removal"

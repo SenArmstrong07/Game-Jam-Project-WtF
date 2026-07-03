@@ -15,6 +15,10 @@ run/main_scene="uid://dlpal1rn4sjjg"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/resizable=false
+
 [input]
 
 combo_select={

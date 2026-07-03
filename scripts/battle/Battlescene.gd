@@ -36,6 +36,7 @@ signal player_chip_selected(chip: Chip)
 signal battle_ended(winner: Unit)
 var player_attack_locked := false
 @export var player_attack_delay := 0.4
+@onready var player_ui = $BATTLE_UI/PLAYER_LIVES
 
 #put new vector to add enemy
 var enemy_spawn_positions := [
@@ -46,7 +47,7 @@ var enemy_spawn_positions := [
 func _ready() -> void:
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
-
+	update_player_ui()
 	player.unit_died.connect(_on_unit_died)
 
 	# IMPORTANT: store enemies properly
@@ -110,6 +111,17 @@ func _update_ui() -> void:
 		total_max,
 		combo_mode,
 		first_combo_chip
+	)
+
+func update_player_ui():
+	print("Updating player UI")
+
+	if player_ui == null:
+		print("player_ui is null")
+		return
+
+	player_ui.update_player_lives(
+		player.get_lives()
 	)
 	
 func spawn_enemy(pos: Vector2i) -> void:

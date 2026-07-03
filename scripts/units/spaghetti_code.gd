@@ -321,7 +321,7 @@ func start_attack():
 	if basic_attack_count >= 3:
 		basic_attack_count = 0
 
-		if randf() < 1:
+		if randf() < 0.5:
 			await jump_slam()
 		else:
 			await throw_barrage()

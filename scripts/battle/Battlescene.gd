@@ -13,6 +13,7 @@ const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
 
 @onready var glitch_overlay: ColorRect = $TransitionOverlay/GlitchOverlay
+
 @onready var grid = $Grid
 @onready var player: Unit = $PlayerCharacter
 var enemies: Array[Unit] = []
@@ -56,6 +57,8 @@ func _ready() -> void:
 	#New approach: Let the battlescene handle the glitch in effect
 	#=========TRANSITION STUFF=============================#
 	var mat := glitch_overlay.material as ShaderMaterial
+	print(glitch_overlay)
+	print(glitch_overlay.material)
 	glitch_overlay.visible = true
 	mat.set_shader_parameter("glitch_strength", 1.0)
 	glitch_overlay.modulate.a = 0.35
@@ -70,8 +73,15 @@ func _ready() -> void:
 	# IMPORTANT: store enemies properly
 	enemies.clear()
 
-	for pos in enemy_spawn_positions:
-		spawn_enemy(pos)
+	if encounter != null:
+		for i in range(encounter.enemy_count):
+			if i < enemy_spawn_positions.size():
+				spawn_enemy(enemy_spawn_positions[i])
+	else:
+		# Running the battle scene directly for testing
+		#For testing: Spawning 2 enemies by default
+		for pos in enemy_spawn_positions:
+			spawn_enemy(pos)
 	
 	battle_preperations.select_button.pressed.connect(_on_select_pressed)
 	battle_preperations.unselect_button.pressed.connect(_on_unselect_pressed)
@@ -80,15 +90,11 @@ func _ready() -> void:
 	#overworld to battle scene on an encounter.
 	#kung gusto mo magtest ng battle scene w/o overworld...
 	#iunhighlight mo nalang yung first for loop dito
-
-	#For testing: Spawning 2 enemies by default
-	#for pos in enemy_spawn_positions:
-		#spawn_enemy(pos)
 	
 	#Test with overworld: 
 	#How we spawn enemies based on encounter:
-	for i in encounter.enemy_count:
-		spawn_enemy(enemy_spawn_positions[i])
+	#for i in range(encounter.enemy_count):
+		#spawn_enemy(enemy_spawn_positions[i])
 
 	_start_preparation_phase()
 

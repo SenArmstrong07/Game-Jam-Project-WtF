@@ -8,21 +8,11 @@ shader = ExtResource("2_vp24l")
 shader_parameter/glitch_strength = 0.0
 shader_parameter/block_size = 80.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_vp24l"]
-shader = ExtResource("2_vp24l")
-shader_parameter/glitch_strength = 0.0
-shader_parameter/block_size = 80.0
-
 [node name="EncounterTransition" type="CanvasLayer" unique_id=510118405]
 script = ExtResource("1_sihfp")
 
 [node name="OverworldShot" type="TextureRect" parent="." unique_id=1919127759]
 material = SubResource("ShaderMaterial_1r7hd")
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="BattleShot" type="TextureRect" parent="." unique_id=1374724549]
-material = SubResource("ShaderMaterial_vp24l")
 offset_right = 40.0
 offset_bottom = 40.0
 

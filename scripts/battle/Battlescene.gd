@@ -12,7 +12,7 @@ const FIREWALL = preload("uid://x8y5dkw5aur6")
 const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
 
-
+@onready var glitch_overlay: ColorRect = $TransitionOverlay/GlitchOverlay
 @onready var grid = $Grid
 @onready var player: Unit = $PlayerCharacter
 var enemies: Array[Unit] = []
@@ -45,6 +45,15 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
+	#New approach: Let the battlescene handle the glitch in effect
+	#=========TRANSITION STUFF=============================#
+	var mat := glitch_overlay.material as ShaderMaterial
+	glitch_overlay.visible = true
+	mat.set_shader_parameter("glitch_strength", 1.0)
+	glitch_overlay.modulate.a = 0.35
+	await $TransitionOverlay/GlitchOverlay.play_glitch_in()
+	#======================================================#
+	
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
 
@@ -93,6 +102,8 @@ func _process(delta: float) -> void:
 func is_tile_free(tile: Vector2i) -> bool:
 	return not occupied_tiles.has(tile)
 	
+
+
 # ============================================================
 # PREPARATION PHASE
 # ============================================================

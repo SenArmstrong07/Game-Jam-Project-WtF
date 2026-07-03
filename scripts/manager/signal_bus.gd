@@ -21,4 +21,3 @@ func _change_to_battle():
 	await EncounterTransition.transition_to_battle(
 		"res://scenes/battle/BattleScene.tscn"
 	)
-	SignalBus.in_transition = false

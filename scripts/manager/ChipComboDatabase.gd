@@ -1,13 +1,20 @@
 extends Resource
 class_name ChipComboDatabase
 
+const REFORMAT_ICON = preload("res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_37.png")
+
+
+
 var combos := {
 	"DELETE+DELETE": Chip.new(
-		"REFORMAT",
+		"RESET",
 		60,
 		999,
-		"Massive delete attack.",
-		Chip.AttackType.COMBO
+		"Performs a full system reset, forcefully erasing corrupted processes and dealing massive damage to a single target.",
+		Chip.AttackType.COMBO,
+		{},
+		[],
+		REFORMAT_ICON
 	)
 }
 

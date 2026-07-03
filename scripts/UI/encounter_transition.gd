@@ -6,6 +6,7 @@ const GLITCH_IN_TIME := 0.6
 const GLITCH_HOLD_TIME := 0.6
 @onready var overworld_shot: TextureRect = $OverworldShot
 
+
 @onready var flash: ColorRect = $Flash
 @onready var fade: ColorRect = $Fade
 

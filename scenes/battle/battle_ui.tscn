@@ -2,50 +2,152 @@
 
 [ext_resource type="Script" uid="uid://e06myi56im5r" path="res://scripts/UI/player_lives.gd" id="1_0qfdl"]
 [ext_resource type="Texture2D" uid="uid://dytno7rkyslsu" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/FrameMap.png" id="1_ib2kh"]
+[ext_resource type="Texture2D" uid="uid://o7ek3g0lgsse" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_80.png" id="2_0qfdl"]
 [ext_resource type="Texture2D" uid="uid://bhnre5btuttrj" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_08.png" id="2_elpkr"]
 [ext_resource type="FontFile" uid="uid://ctgejobb4njpx" path="res://assets/fonts/ARCADECLASSIC.TTF" id="3_bgiko"]
+[ext_resource type="Texture2D" uid="uid://kyv8ikn0084b" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_79.png" id="3_yyma0"]
 [ext_resource type="Texture2D" uid="uid://s3rfrypuprmf" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar1.png" id="4_elpkr"]
 [ext_resource type="Texture2D" uid="uid://cokfbpbenej0b" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar2.png" id="5_bgiko"]
 [ext_resource type="Texture2D" uid="uid://6bqf2oti8idw" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar3.png" id="6_xm0oj"]
 [ext_resource type="Texture2D" uid="uid://dlwekwnpuhyvk" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/2 Bars/HealthBar4.png" id="7_0qfdl"]
+[ext_resource type="Texture2D" uid="uid://c1sbbjj87fdq0" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Interface windows.png" id="10_bgmau"]
+[ext_resource type="Script" uid="uid://bc1nk1ag1eb5w" path="res://scripts/UI/battle_preperations.gd" id="10_kelpk"]
+[ext_resource type="FontFile" uid="uid://c6xphvc02b7si" path="res://assets/fonts/toxigenesis bd.otf" id="10_p0yp4"]
+[ext_resource type="Texture2D" uid="uid://drux2wyowrnld" path="res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_29.png" id="12_5fm1g"]
+[ext_resource type="Texture2D" uid="uid://de5j7v4uncupn" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/1.png" id="12_eybqm"]
+[ext_resource type="Texture2D" uid="uid://k6bup5mpedke" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/3.png" id="12_ye46k"]
+[ext_resource type="Texture2D" uid="uid://df78m5frio2ob" path="res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_26.png" id="13_6anrm"]
+[ext_resource type="Texture2D" uid="uid://cbx4s1tq6djt2" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/2.png" id="13_k6hmf"]
+[ext_resource type="Texture2D" uid="uid://cm0xkqxpro8l" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_10.png" id="13_m3fv2"]
+[ext_resource type="Texture2D" uid="uid://bu2bwlb8l3pq0" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_02.png" id="14_6anrm"]
+[ext_resource type="Texture2D" uid="uid://s7lpwy4c5mjr" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/8.png" id="16_8ct8k"]
+[ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="22_s0e4k"]
+[ext_resource type="Texture2D" uid="uid://bcrcexqahk8qi" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/7.png" id="23_k6hmf"]
 
 [sub_resource type="Theme" id="Theme_1y54r"]
 Label/constants/outline_size = 7
 Label/font_sizes/font_size = 70
 Label/fonts/font = ExtResource("3_bgiko")
 
-[node name="BATTLE_UI" type="CanvasLayer" unique_id=1987469340]
+[sub_resource type="Theme" id="Theme_p0yp4"]
+Label/fonts/font = ExtResource("10_p0yp4")
+RichTextLabel/fonts/normal_font = ExtResource("10_p0yp4")
+
+[sub_resource type="Theme" id="Theme_ye46k"]
+default_font_size = 12
+Label/font_sizes/font_size = 14
+
+[sub_resource type="LabelSettings" id="LabelSettings_67kud"]
+font = ExtResource("3_bgiko")
+font_size = 40
+
+[sub_resource type="Theme" id="Theme_0jxkp"]
+Label/colors/font_shadow_color = Color(0, 0, 0, 0.80784315)
+Label/font_sizes/font_size = 31
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m3fv2"]
+bg_color = Color(0.25882354, 0.7647059, 0.12156863, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p0yp4"]
+bg_color = Color(0.2155793, 0.6902243, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 15
+shadow_color = Color(0, 0.20392157, 0, 0.6)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kelpk"]
+bg_color = Color(0.07653644, 0.5194062, 2.8878452e-07, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.08341359, 0.24317884, 0.03571545, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="Theme" id="Theme_kelpk"]
+Button/font_sizes/font_size = 31
+Button/fonts/font = ExtResource("3_bgiko")
+Button/styles/hover = SubResource("StyleBoxFlat_m3fv2")
+Button/styles/normal = SubResource("StyleBoxFlat_p0yp4")
+Button/styles/pressed = SubResource("StyleBoxFlat_kelpk")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6anrm"]
+bg_color = Color(0.98854727, 0.22103566, 0.16878176, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cq3a5"]
+bg_color = Color(0.72519225, 0.14186329, 0.12118558, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 15
+shadow_color = Color(0.3372549, 0, 0, 0.4509804)
+shadow_size = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ye46k"]
+bg_color = Color(0.64900243, 0.15628988, 0.037425026, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.07450981, 0.09411765, 1)
+border_blend = true
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="Theme" id="Theme_7nrbm"]
+Button/font_sizes/font_size = 31
+Button/fonts/font = ExtResource("3_bgiko")
+Button/styles/hover = SubResource("StyleBoxFlat_6anrm")
+Button/styles/normal = SubResource("StyleBoxFlat_cq3a5")
+Button/styles/pressed = SubResource("StyleBoxFlat_ye46k")
+
+[node name="PLAYER_HP_BATTLE_UI" type="CanvasLayer" unique_id=1987469340]
 
 [node name="PLAYER_LIVES" type="Control" parent="." unique_id=1158733095]
 layout_mode = 3
-anchor_right = 0.17400001
-anchor_bottom = 0.076000005
-offset_right = 12.551987
-offset_bottom = 6.751995
+anchor_top = -0.008
+anchor_right = 0.20400001
+anchor_bottom = 0.085
+offset_left = 1.0
+offset_top = 5.184
+offset_right = -0.008010864
+offset_bottom = 4.919998
 script = ExtResource("1_0qfdl")
 
-[node name="HP_BAR_BG" type="NinePatchRect" parent="PLAYER_LIVES" unique_id=1745255607]
+[node name="HPBarContainer" type="NinePatchRect" parent="PLAYER_LIVES" unique_id=1979406554]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.21400002
-anchor_right = 2.0700002
-anchor_bottom = 1.3570001
-offset_left = 1.0
-offset_top = 5.015999
-offset_right = 0.08996582
-offset_bottom = 0.0079956055
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_ib2kh")
-region_rect = Rect2(0, 162.7418, 94.99985, 89.65782)
-patch_margin_left = 5
-patch_margin_top = 5
-patch_margin_right = 5
-patch_margin_bottom = 5
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
+anchor_top = 0.16100001
+anchor_right = 2.1130002
+anchor_bottom = 1.5000001
+offset_left = 2.0
+offset_top = -1.0160007
+offset_right = 5.930969
+offset_bottom = -1.0000076
+texture = ExtResource("2_0qfdl")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 15
+patch_margin_bottom = 15
 
-[node name="Player_Life_Counter" type="NinePatchRect" parent="PLAYER_LIVES" unique_id=1114795994]
+[node name="Player_Life_Counter" type="NinePatchRect" parent="PLAYER_LIVES" unique_id=768213345]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = -1
@@ -58,7 +160,7 @@ offset_right = 1.0
 offset_bottom = 0.01399231
 texture = ExtResource("2_elpkr")
 
-[node name="MarginContainer" type="MarginContainer" parent="PLAYER_LIVES/Player_Life_Counter" unique_id=93457247]
+[node name="MarginContainer" type="MarginContainer" parent="PLAYER_LIVES/Player_Life_Counter" unique_id=324226684]
 clip_contents = true
 layout_mode = 1
 anchors_preset = 15
@@ -67,7 +169,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HitPoints" type="Label" parent="PLAYER_LIVES/Player_Life_Counter/MarginContainer" unique_id=1173464301]
+[node name="HitPoints" type="Label" parent="PLAYER_LIVES/Player_Life_Counter/MarginContainer" unique_id=748395414]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
@@ -76,29 +178,29 @@ text = "5"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HPBar" type="HBoxContainer" parent="PLAYER_LIVES/Player_Life_Counter" unique_id=1065113719]
+[node name="HPBar" type="HBoxContainer" parent="PLAYER_LIVES/Player_Life_Counter" unique_id=1153420223]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0270001
 anchor_top = 0.23300001
-anchor_right = 4.578
+anchor_right = 4.644
 anchor_bottom = 0.71900004
-offset_left = 0.028816223
+offset_left = 6.028816
 offset_top = 0.0039539337
-offset_right = 0.023529053
+offset_right = -0.017120361
 offset_bottom = 0.014442444
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="LifeBar1" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=2025470841]
+[node name="LifeBar1" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=453094673]
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("4_elpkr")
 expand_mode = 1
 flip_v = true
 
-[node name="LifeBar2" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=52738636]
+[node name="LifeBar2" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=1893349935]
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("5_bgiko")
@@ -106,7 +208,7 @@ expand_mode = 1
 flip_h = true
 flip_v = true
 
-[node name="LifeBar3" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=986638547]
+[node name="LifeBar3" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=1055067039]
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("6_xm0oj")
@@ -114,7 +216,7 @@ expand_mode = 1
 flip_h = true
 flip_v = true
 
-[node name="LifeBar4" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=1305779742]
+[node name="LifeBar4" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=1626079774]
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("6_xm0oj")
@@ -122,9 +224,533 @@ expand_mode = 1
 flip_h = true
 flip_v = true
 
-[node name="LifeBar5" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=429661327]
+[node name="LifeBar5" type="TextureRect" parent="PLAYER_LIVES/Player_Life_Counter/HPBar" unique_id=947568340]
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("7_0qfdl")
 expand_mode = 1
 flip_v = true
+
+[node name="NinePatchRect" type="NinePatchRect" parent="PLAYER_LIVES/Player_Life_Counter" unique_id=2056407562]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.99500006
+anchor_bottom = 1.0
+offset_left = -0.9749985
+offset_top = -1.427
+offset_right = -0.042381287
+offset_bottom = 1.0019989
+texture = ExtResource("3_yyma0")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 19
+patch_margin_bottom = 15
+
+[node name="BATTLE_PREPERATIONS" type="Control" parent="." unique_id=392991665]
+layout_mode = 3
+anchor_left = 0.386
+anchor_top = 0.149
+anchor_right = 0.984
+anchor_bottom = 0.92800003
+offset_left = -0.08001709
+offset_top = -0.2800064
+offset_right = 0.47998047
+offset_bottom = -0.16003418
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_p0yp4")
+script = ExtResource("10_kelpk")
+
+[node name="MULTICLOR_WIRE" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=400517595]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.052
+anchor_bottom = 0.071
+offset_left = 271.0
+offset_top = 517.0
+offset_right = 292.168
+offset_bottom = 581.169
+rotation = -1.0576695
+texture = ExtResource("12_eybqm")
+
+[node name="RED_WIRE_DECOR" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=1490874251]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.55700004
+anchor_top = 0.55300003
+anchor_right = 0.61
+anchor_bottom = 0.624
+offset_left = 1.3379822
+offset_top = -4.233032
+offset_right = 0.73999023
+offset_bottom = 4.9360046
+texture = ExtResource("13_k6hmf")
+
+[node name="WIRE_DECOR" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=138453950]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.21200001
+anchor_top = 0.36
+anchor_right = -0.053000003
+anchor_bottom = 0.48700002
+offset_left = 64.393166
+offset_top = 205.62898
+offset_right = 35.692356
+offset_bottom = 250.01004
+rotation = -2.2479842
+texture = ExtResource("12_ye46k")
+
+[node name="BG_SCREEN" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=959889661]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.14
+anchor_top = -0.075
+anchor_right = 0.41900003
+anchor_bottom = 0.9250001
+offset_left = 20.239998
+offset_top = 0.07500076
+offset_right = 0.04598999
+offset_bottom = 0.07495117
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_ib2kh")
+region_rect = Rect2(1, 165, 94, 87)
+
+[node name="BLUE_WIRE_DECOR" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=769627663]
+layout_mode = 0
+offset_left = -108.0
+offset_top = 459.0
+offset_right = -31.0
+offset_bottom = 570.0
+texture = ExtResource("16_8ct8k")
+
+[node name="DESCRIPTION_BG" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=20376871]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.09900001
+anchor_top = -0.023000002
+anchor_right = 0.37500003
+anchor_bottom = 0.52400005
+offset_left = 13.834007
+offset_top = 1.9030008
+offset_right = 13.7499695
+offset_bottom = 2.0359802
+texture = ExtResource("10_bgmau")
+region_rect = Rect2(1339, 734, 243, 227)
+
+[node name="TITLE" type="Label" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG" unique_id=301051871]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.047000002
+anchor_top = 0.042000003
+anchor_right = 0.95600003
+anchor_bottom = 0.16900001
+offset_left = -0.061000824
+offset_top = 0.10599899
+offset_right = -0.028015137
+offset_bottom = 0.116996765
+grow_horizontal = 2
+theme = SubResource("Theme_ye46k")
+text = "MODULE"
+label_settings = SubResource("LabelSettings_67kud")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_trim_flags = 0
+justification_flags = 0
+
+[node name="HSeparator" type="HSeparator" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG" unique_id=1781399578]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.041
+anchor_top = 0.14
+anchor_right = 0.95300007
+anchor_bottom = 0.15300001
+offset_left = 0.116999626
+offset_top = 4.0200005
+offset_right = 0.06097412
+offset_bottom = 4.0289955
+
+[node name="MOVE_DESCRIPTION" type="RichTextLabel" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG" unique_id=663851808]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 179.0
+offset_right = 326.0
+offset_bottom = 265.0
+text = "LOREM IPSUMERS YEY MOSQUOTO LEBIDO YEY KARAMA POOLCIE AREST THIS MAN HELOS IN MADNES"
+
+[node name="HSeparator2" type="HSeparator" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG" unique_id=1193276166]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.041
+anchor_top = 0.14
+anchor_right = 0.95300007
+anchor_bottom = 0.15300001
+offset_left = 0.8049879
+offset_top = 109.600006
+offset_right = 0.7489624
+offset_bottom = 109.60899
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG" unique_id=862404809]
+layout_mode = 1
+offset_left = 18.0
+offset_top = 53.0
+offset_right = 343.0
+offset_bottom = 153.0
+theme_override_constants/separation = 65
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG/HBoxContainer" unique_id=244481054]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="MODULE_NAME" type="Label" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG/HBoxContainer/VBoxContainer" unique_id=1336634497]
+layout_mode = 2
+theme = SubResource("Theme_0jxkp")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.80784315)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 2
+text = "MODULE NAMERS"
+
+[node name="MODULE_DAMAGE" type="Label" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG/HBoxContainer/VBoxContainer" unique_id=75319741]
+layout_mode = 2
+text = "POWER: 10"
+
+[node name="MODULE_RANGE" type="Label" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG/HBoxContainer/VBoxContainer" unique_id=2058731525]
+layout_mode = 2
+text = "RANGE: 999"
+
+[node name="MOVE_ICON" type="TextureRect" parent="BATTLE_PREPERATIONS/DESCRIPTION_BG/HBoxContainer" unique_id=655957062]
+layout_mode = 2
+texture = ExtResource("12_5fm1g")
+expand_mode = 2
+
+[node name="MODULE_DECK" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=818488735]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.087000005
+anchor_top = 0.53300005
+anchor_right = 0.393
+anchor_bottom = 0.873
+offset_left = -0.35799408
+offset_top = -0.013031006
+offset_right = -0.037994385
+offset_bottom = 0.24697876
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_bgmau")
+region_rect = Rect2(1337, 733, 245, 230)
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
+
+[node name="GridContainer" type="GridContainer" parent="BATTLE_PREPERATIONS/MODULE_DECK" unique_id=1755825957]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -69.0
+offset_right = 170.0
+offset_bottom = 69.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 5
+
+[node name="Player_deck_slot_1" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=1269754853]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_2" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=1495988449]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_3" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=2092765923]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_4" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=675592015]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_5" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=1015953670]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_6" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=12153901]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_7" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=586321944]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_8" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=1593920784]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_9" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=839103604]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="Player_deck_slot_10" type="TextureRect" parent="BATTLE_PREPERATIONS/MODULE_DECK/GridContainer" unique_id=967957258]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="BUTTON_BG" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=1999993779]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.453
+anchor_top = 0.60800004
+anchor_right = 0.74
+anchor_bottom = 0.99300003
+offset_left = -2.9980164
+offset_top = 4.9119873
+offset_right = -3.8400269
+offset_bottom = 4.927002
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_ib2kh")
+region_rect = Rect2(1, 165, 94, 87)
+
+[node name="BUTTON_CONTAINERS" type="VBoxContainer" parent="BATTLE_PREPERATIONS" unique_id=1583823903]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.47700003
+anchor_top = 0.69900006
+anchor_right = 0.70600003
+anchor_bottom = 0.89500004
+offset_left = -0.38204956
+offset_top = -0.13903809
+offset_right = 0.20397949
+offset_bottom = -0.09503174
+theme_override_constants/separation = 28
+
+[node name="SELECT_BUTTON" type="Button" parent="BATTLE_PREPERATIONS/BUTTON_CONTAINERS" unique_id=1769828235]
+layout_mode = 2
+theme = SubResource("Theme_kelpk")
+theme_override_constants/align_to_largest_stylebox = 3
+text = "CONFIRM"
+icon = ExtResource("13_m3fv2")
+
+[node name="UNSELECT_BUTTON" type="Button" parent="BATTLE_PREPERATIONS/BUTTON_CONTAINERS" unique_id=1323889206]
+layout_mode = 2
+theme = SubResource("Theme_7nrbm")
+theme_override_constants/h_separation = 4
+theme_override_constants/align_to_largest_stylebox = 3
+text = "WAIT"
+icon = ExtResource("14_6anrm")
+
+[node name="SELECTED_BG" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=174007769]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.49100003
+anchor_top = -0.112
+anchor_right = 0.64400005
+anchor_bottom = 0.578
+offset_left = 5.893982
+offset_top = -13.167999
+offset_right = 5.6959534
+offset_bottom = -13.257996
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_ib2kh")
+region_rect = Rect2(1, 165, 94, 87)
+
+[node name="CONTAINER" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SELECTED_BG" unique_id=545271511]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.162
+anchor_top = 0.072000004
+anchor_right = 0.924
+anchor_bottom = 0.94600004
+offset_left = -1.9540005
+offset_top = -6.864002
+offset_right = -5.2599792
+offset_bottom = 4.4179993
+texture = ExtResource("10_bgmau")
+region_rect = Rect2(1335, 733, 249, 231)
+
+[node name="SIDE_CONTAINER" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER" unique_id=406635600]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -1.0400001
+anchor_top = -0.063
+anchor_right = 1.3980001
+anchor_bottom = 1.0350001
+offset_left = 209.28195
+offset_top = 0.01976204
+offset_right = 383.7956
+offset_bottom = -183.7985
+rotation = -4.712389
+texture = ExtResource("22_s0e4k")
+
+[node name="GridContainer" type="GridContainer" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER" unique_id=995974851]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.116000004
+anchor_top = 0.043
+anchor_right = 0.92
+anchor_bottom = 0.95800006
+offset_left = 3.0416288
+offset_top = 0.9706383
+offset_right = 3.0198212
+offset_bottom = 1.15979
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = -1
+
+[node name="MOVE_SLOT_1" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=1235873222]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="MOVE_SLOT_2" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=1355307478]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="MOVE_SLOT_3" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=177813042]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="MOVE_SLOT_4" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=167298736]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="MOVE_SLOT_5" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=1799329937]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_6anrm")
+expand_mode = 1
+
+[node name="COMBINE_BG" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=1997127247]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.33400002
+anchor_top = 0.469
+anchor_right = -0.127
+anchor_bottom = 0.934
+offset_left = -0.1559906
+offset_top = -0.10900879
+offset_right = 0.2820053
+offset_bottom = 0.026000977
+texture = ExtResource("1_ib2kh")
+region_rect = Rect2(-1, 162, 98, 93)
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="CASE_1" type="NinePatchRect" parent="BATTLE_PREPERATIONS/COMBINE_BG" unique_id=1873981408]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.289
+anchor_top = 0.5
+anchor_right = 0.68600005
+anchor_bottom = 0.75500005
+offset_left = 0.048999786
+offset_top = -86.5
+offset_right = -0.07400513
+offset_bottom = -88.05501
+texture = ExtResource("2_elpkr")
+
+[node name="COMBINE_SELECTED_1" type="TextureRect" parent="BATTLE_PREPERATIONS/COMBINE_BG/CASE_1" unique_id=699738577]
+layout_mode = 0
+offset_right = 62.0
+offset_bottom = 65.0
+
+[node name="CASE_2" type="NinePatchRect" parent="BATTLE_PREPERATIONS/COMBINE_BG" unique_id=1788801193]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.30800003
+anchor_top = 0.536
+anchor_right = 0.68600005
+anchor_bottom = 0.785
+offset_left = -1.9720039
+offset_top = 0.104003906
+offset_right = -0.07400513
+offset_bottom = 0.114990234
+texture = ExtResource("2_elpkr")
+
+[node name="COMBINE_SELECTED_2" type="TextureRect" parent="BATTLE_PREPERATIONS/COMBINE_BG/CASE_2" unique_id=1574436618]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 3.0
+offset_right = 60.0
+offset_bottom = 63.0
+
+[node name="BLUE_WIRE_2" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=1862356954]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.73200005
+anchor_top = 0.804
+anchor_right = 0.81600004
+anchor_bottom = 0.96300006
+offset_left = 0.28796387
+offset_top = -0.044006348
+offset_right = -0.056030273
+offset_bottom = -0.24304199
+texture = ExtResource("23_k6hmf")
+
+[node name="COMBINE_TITLE" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=300411129]
+layout_mode = 0
+offset_left = -259.0
+offset_top = 170.0
+offset_right = -95.0
+offset_bottom = 268.0
+texture = ExtResource("22_s0e4k")
+
+[node name="Label" type="Label" parent="BATTLE_PREPERATIONS/COMBINE_TITLE" unique_id=1347024019]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.055000003
+anchor_top = 0.163
+anchor_right = 0.95100003
+anchor_bottom = 0.541
+offset_left = -0.020000458
+offset_top = 0.026000023
+offset_right = 0.035995483
+offset_bottom = -0.018001556
+theme_override_font_sizes/font_size = 23
+text = "COMBINE"
+horizontal_alignment = 1
+vertical_alignment = 1

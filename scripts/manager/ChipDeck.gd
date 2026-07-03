@@ -1,6 +1,13 @@
 extends Resource
 class_name ChipDeck
 
+const DELETE_ICON = preload("res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_06.png")
+const PATCH_ICON = preload("res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_23.png")
+const QUARANTINE_ICON = preload("res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_12.png")
+const FIREWALL_ICON = preload("res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_18.png")
+const BACKUP_ICON = preload("res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_36.png")
+const OPTIMIZE_ICON = preload("res://assets/ui/Free-Skill-32x32-Icons-for-Cyberpunk-Game/1 Icons/1/Skillicon1_21.png")
+
 var deck: Array[Chip] = []
 
 func _init() -> void:
@@ -19,11 +26,12 @@ func _initialize_deck() -> void:
 				"Forcefully terminates a target process and purges it from active system memory.",
 				Chip.AttackType.PROJECTILE,
 				{},
-				["DELETE"]
+				["DELETE"],
+				DELETE_ICON
 			)
 		)
 
-	# PATCH x3
+	# PATCH 
 	for i in range(3):
 		deck.append(
 			Chip.new(
@@ -34,7 +42,9 @@ func _initialize_deck() -> void:
 				Chip.AttackType.HOMING,
 				{
 					"CommonBug": Unit.DamageType.SUPER_EFFECTIVE
-				}
+				},
+				[],
+				PATCH_ICON
 			)
 		)
 
@@ -42,12 +52,12 @@ func _initialize_deck() -> void:
 	for i in range(2):
 		deck.append(
 			Chip.new(
-				"Quarantine",
+				"Isolation",
 				5,
 				999,
 				"Isolates malicious threads and temporarily suspends their execution cycle.",
 				Chip.AttackType.STUN_PROJECTILE,
-				{}
+				{},[],QUARANTINE_ICON
 			)
 		)
 
@@ -60,7 +70,7 @@ func _initialize_deck() -> void:
 				1,
 				"Deploys a defensive network barrier that intercepts and blocks incoming hostile data packets.",
 				Chip.AttackType.WALL,
-				{}
+				{}, [],FIREWALL_ICON
 			)
 		)
 
@@ -73,7 +83,7 @@ func _initialize_deck() -> void:
 				0,
 				"Restores system integrity by rolling back corrupted state and recovering 1 health unit.",
 				Chip.AttackType.HEAL,
-				{}
+				{}, [], BACKUP_ICON
 			)
 		)
 
@@ -86,7 +96,7 @@ func _initialize_deck() -> void:
 				0,
 				"Runs system optimization routines, increasing processing throughput and attack efficiency for a short duration.",
 				Chip.AttackType.BUFF,
-				{}
+				{}, [], OPTIMIZE_ICON
 			)
 		)
 

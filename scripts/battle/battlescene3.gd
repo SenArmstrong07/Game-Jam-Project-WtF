@@ -30,6 +30,9 @@ var battle_active: bool = false
 var combo_database := ChipComboDatabase.new()
 var combo_mode := false
 var first_combo_chip: Chip = null
+var second_combo_chip: Chip = null
+var pending_combo: Chip = null
+const DECK_COLUMNS := 5
 
 signal phase_changed(new_phase: BattlePhase)
 signal player_chip_selected(chip: Chip)
@@ -37,15 +40,20 @@ signal battle_ended(winner: Unit)
 var player_attack_locked := false
 @export var player_attack_delay := 0.4
 
+var selecting_buttons := false
+@onready var player_ui = $PLAYER_HP_BATTLE_UI/PLAYER_LIVES
+@onready var battle_preperations =  $PLAYER_HP_BATTLE_UI/BATTLE_PREPERATIONS
+
 #put new vector to add enemy
 var enemy_spawn_positions := [
 	Vector2i(1, 2)
 ]
 
+
 func _ready() -> void:
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
-
+	update_player_ui()
 	player.unit_died.connect(_on_unit_died)
 
 	# IMPORTANT: store enemies properly
@@ -53,9 +61,33 @@ func _ready() -> void:
 
 	for pos in enemy_spawn_positions:
 		spawn_enemy(pos)
+	
+	battle_preperations.select_button.pressed.connect(_on_select_pressed)
+	battle_preperations.unselect_button.pressed.connect(_on_unselect_pressed)
 
 	_start_preparation_phase()
 
+func _on_select_pressed():
+
+	selecting_buttons = false
+	_start_battle_phase()
+
+
+func _on_unselect_pressed():
+
+	selecting_buttons = false
+
+	if !selected_chips.is_empty():
+		var chip = selected_chips.pop_back()
+		player_hand.append(chip)
+		player_chip_index = player_hand.size() - 1
+
+	# Remove keyboard focus from the buttons
+	battle_preperations.select_button.release_focus()
+	battle_preperations.unselect_button.release_focus()
+
+	_update_ui()
+	
 func find_battle_scene() -> BattleBase:
 	var node = self
 
@@ -82,33 +114,34 @@ func is_tile_free(tile: Vector2i) -> bool:
 # ============================================================
 # PREPARATION PHASE
 # ============================================================
-func _update_ui() -> void:
-	if ui == null:
+func _update_ui():
+
+	if battle_preperations == null:
 		return
 
-	ui.visible = current_phase == BattlePhase.PREPARATION
+	battle_preperations.visible = current_phase == BattlePhase.PREPARATION
 
 	if current_phase != BattlePhase.PREPARATION:
 		return
 
-	var total_hp := 0
-	var total_max := 0
-
-	for e in enemies:
-		total_hp += e.hp
-		total_max += e.max_hp
-
-	ui.update_ui(
+	battle_preperations.update_ui(
 		player_hand,
 		selected_chips,
 		player_chip_index,
-		max_selected_chips,
-		player.get_lives(),
-		player.get_max_lives(),
-		total_hp,
-		total_max,
 		combo_mode,
-		first_combo_chip
+		first_combo_chip,
+		pending_combo
+	)
+
+func update_player_ui():
+	print("Updating player UI")
+
+	if player_ui == null:
+		print("player_ui is null")
+		return
+
+	player_ui.update_player_lives(
+		player.get_lives()
 	)
 	
 func spawn_enemy(pos: Vector2i) -> void:
@@ -144,7 +177,9 @@ func _start_preparation_phase() -> void:
 	print("=== PREPARATION PHASE ===")
 
 	current_phase = BattlePhase.PREPARATION
-
+	
+	player_ui.visible = false
+	
 	phase_changed.emit(current_phase)
 
 	player_hand = player_deck.draw_hand(10)
@@ -154,40 +189,61 @@ func _start_preparation_phase() -> void:
 	player_chip_index = 0
 
 	_update_ui()
-	
 func move_cursor_right():
-	if !combo_mode:
-		player_chip_index = (player_chip_index + 1) % player_hand.size()
+	if player_hand.is_empty():
 		return
 
-	var start = player_chip_index
+	player_chip_index = (player_chip_index + 1) % player_hand.size()
 
-	while true:
-		player_chip_index = (player_chip_index + 1) % player_hand.size()
-
-		if first_combo_chip.can_combine_with(player_hand[player_chip_index]):
-			return
-
-		if player_chip_index == start:
-			return
 
 func move_cursor_left():
-	if !combo_mode:
-		player_chip_index = (player_chip_index - 1 + player_hand.size()) % player_hand.size()
+	if player_hand.is_empty():
 		return
 
-	var start = player_chip_index
+	player_chip_index = (player_chip_index - 1 + player_hand.size()) % player_hand.size()
 
-	while true:
-		player_chip_index = (player_chip_index - 1 + player_hand.size()) % player_hand.size()
 
-		if first_combo_chip.can_combine_with(player_hand[player_chip_index]):
-			return
+func move_cursor_down():
+	if player_hand.is_empty():
+		return
 
-		if player_chip_index == start:
-			return
-			
+	var new_index = player_chip_index + DECK_COLUMNS
+
+	if new_index < player_hand.size():
+		player_chip_index = new_index
+
+
+func move_cursor_up():
+	if player_hand.is_empty():
+		return
+
+	var new_index = player_chip_index - DECK_COLUMNS
+
+	if new_index >= 0:
+		player_chip_index = new_index
+				
 func _handle_preparation_input() -> void:
+	# ----------------------------------
+	# If a combo is waiting to be accepted
+	# ----------------------------------
+	if selecting_buttons:
+		return
+		
+	if pending_combo != null:
+
+		if Input.is_action_just_pressed("ui_accept"):
+
+			selected_chips.append(pending_combo)
+			pending_combo = null
+
+			if selected_chips.size() >= max_selected_chips:
+				selecting_buttons = true
+				battle_preperations.select_button.grab_focus()
+				_update_ui()
+				return
+
+		return
+
 	if player_hand.is_empty():
 		return
 
@@ -201,6 +257,15 @@ func _handle_preparation_input() -> void:
 	if Input.is_action_just_pressed("ui_left"):
 		move_cursor_left()
 		_update_ui()
+
+	if Input.is_action_just_pressed("ui_down"):
+		move_cursor_down()
+		_update_ui()
+
+	if Input.is_action_just_pressed("ui_up"):
+		move_cursor_up()
+		_update_ui()
+
 	# ----------------------------------
 	# Cancel Combo Mode
 	# ----------------------------------
@@ -209,14 +274,31 @@ func _handle_preparation_input() -> void:
 		first_combo_chip = null
 		_update_ui()
 		return
+	
+	if Input.is_action_just_pressed("remove_chip"):
+
+		if !selected_chips.is_empty():
+
+			var chip = selected_chips.pop_back()
+			player_hand.append(chip)
+
+			# Select the returned chip
+			player_chip_index = player_hand.size() - 1
+
+			_update_ui()
+
+		return
 
 	# ----------------------------------
-	# SPACE = Normal Chip Selection
+	# SPACE = Select Chip
 	# ----------------------------------
 	if Input.is_action_just_pressed("ui_accept"):
+
 		var chip = player_hand[player_chip_index]
 
-		# Finish combo if we're in combo mode
+		# ==========================
+		# Finish Combo
+		# ==========================
 		if combo_mode:
 
 			if chip == first_combo_chip:
@@ -232,21 +314,31 @@ func _handle_preparation_input() -> void:
 				print("No combo exists.")
 				return
 
+			# Remove both chips from the hand
 			player_hand.erase(first_combo_chip)
 			player_hand.erase(chip)
 
-			selected_chips.append(combo)
-
-			print(combo.name, " created!")
+			# Show combo in the info panel
+			pending_combo = combo
 
 			combo_mode = false
 			first_combo_chip = null
 
-		# Normal chip selection
-		else:
+			if player_hand.is_empty():
+				player_chip_index = 0
+			else:
+				player_chip_index = clamp(player_chip_index, 0, player_hand.size() - 1)
 
-			selected_chips.append(chip)
-			player_hand.remove_at(player_chip_index)
+			print(combo.name, " created!")
+
+			_update_ui()
+			return
+
+		# ==========================
+		# Normal Chip Selection
+		# ==========================
+		selected_chips.append(chip)
+		player_hand.remove_at(player_chip_index)
 
 		if player_hand.is_empty():
 			player_chip_index = 0
@@ -254,13 +346,16 @@ func _handle_preparation_input() -> void:
 			player_chip_index = clamp(player_chip_index, 0, player_hand.size() - 1)
 
 		if selected_chips.size() >= max_selected_chips:
-			_start_battle_phase()
+			selecting_buttons = true
+			battle_preperations.select_button.grab_focus()
+			_update_ui()
+			return
 
 		_update_ui()
 		return
 
 	# ----------------------------------
-	# ENTER = Combo Selection
+	# ENTER = Begin Combo Selection
 	# ----------------------------------
 	if Input.is_action_just_pressed("combo_select"):
 
@@ -276,8 +371,7 @@ func _handle_preparation_input() -> void:
 		print("Choose another chip to combine with ", chip.name)
 
 		_update_ui()
-		return
-	
+		
 func can_select_chip(chip: Chip) -> bool:
 	if !combo_mode:
 		return true
@@ -297,7 +391,10 @@ func _start_battle_phase() -> void:
 	current_phase = BattlePhase.BATTLE
 	battle_active = true
 	current_chip_index = 0
-
+	
+	player_ui.visible = true
+	update_player_ui()
+	
 	var first_chip := selected_chips[0]
 	player.attack_range = first_chip.range_tile
 	player.attack_power = first_chip.power

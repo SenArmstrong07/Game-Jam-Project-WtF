@@ -3,6 +3,10 @@ extends Control
 @onready var hit_points: Label = $Player_Life_Counter/MarginContainer/HitPoints
 @onready var hp_bar: HBoxContainer = $Player_Life_Counter/HPBar
 
+
+func _ready():
+	visible = false
+	
 # Call this whenever the player's HP changes
 func update_player_lives(current_lives: int) -> void:
 	# Number text
@@ -13,6 +17,6 @@ func update_player_lives(current_lives: int) -> void:
 		var heart = hp_bar.get_child(i)
 
 		if i < current_lives:
-			heart.visible = true
+			heart.modulate = Color.WHITE
 		else:
-			heart.visible = false
+			heart.modulate = Color(1.0, 0.604, 0.596, 0.416) # faded

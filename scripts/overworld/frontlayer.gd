@@ -41,6 +41,10 @@ var generation_started = false  # Guard to ensure generation only happens ONCE
 
 
 func _ready():
+	add_to_group("frontlayer")
+	var overworld_root = get_parent().get_parent()
+	if is_instance_valid(overworld_root):
+		overworld_root.add_to_group("overworld_scene")
 	#create random seeds
 	moisture.seed = randi()
 	temperature.seed = randi()

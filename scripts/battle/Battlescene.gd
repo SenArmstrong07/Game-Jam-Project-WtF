@@ -12,7 +12,7 @@ const FIREWALL = preload("uid://x8y5dkw5aur6")
 const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
 
-
+@onready var glitch_overlay: ColorRect = $TransitionOverlay/GlitchOverlay
 @onready var grid = $Grid
 @onready var player: Unit = $PlayerCharacter
 var enemies: Array[Unit] = []
@@ -30,6 +30,7 @@ var battle_active: bool = false
 var combo_database := ChipComboDatabase.new()
 var combo_mode := false
 var first_combo_chip: Chip = null
+var encounter = SignalBus.current_encounter
 
 signal phase_changed(new_phase: BattlePhase)
 signal player_chip_selected(chip: Chip)
@@ -45,6 +46,15 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
+	#New approach: Let the battlescene handle the glitch in effect
+	#=========TRANSITION STUFF=============================#
+	var mat := glitch_overlay.material as ShaderMaterial
+	glitch_overlay.visible = true
+	mat.set_shader_parameter("glitch_strength", 1.0)
+	glitch_overlay.modulate.a = 0.35
+	await $TransitionOverlay/GlitchOverlay.play_glitch_in()
+	#======================================================#
+	
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
 	update_player_ui()
@@ -53,8 +63,20 @@ func _ready() -> void:
 	# IMPORTANT: store enemies properly
 	enemies.clear()
 
-	for pos in enemy_spawn_positions:
-		spawn_enemy(pos)
+	#NOTE KAY BIG BEN:
+	#I'm currently in the process of tidying up yung transition from
+	#overworld to battle scene on an encounter.
+	#kung gusto mo magtest ng battle scene w/o overworld...
+	#iunhighlight mo nalang yung first for loop dito
+
+	#For testing: Spawning 2 enemies by default
+	#for pos in enemy_spawn_positions:
+		#spawn_enemy(pos)
+	
+	#Test with overworld: 
+	#How we spawn enemies based on encounter:
+	for i in encounter.enemy_count:
+		spawn_enemy(enemy_spawn_positions[i])
 
 	_start_preparation_phase()
 
@@ -81,6 +103,8 @@ func _process(delta: float) -> void:
 func is_tile_free(tile: Vector2i) -> bool:
 	return not occupied_tiles.has(tile)
 	
+
+
 # ============================================================
 # PREPARATION PHASE
 # ============================================================

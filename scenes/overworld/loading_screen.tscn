@@ -1,14 +1,12 @@
 [gd_scene format=3 uid="uid://bp7rq1s1rj2x8"]
 
-[ext_resource type="Script" uid="uid://d8ug3jgmfn4w1" path="res://scripts/overworld/loading_screen.gd" id="1_loading"]
+[ext_resource type="Script" uid="uid://b43gjying1v5m" path="res://scripts/overworld/loading_screen.gd" id="1_loading"]
 
 [node name="LoadingScreen" type="CanvasLayer" unique_id=1234567890]
 script = ExtResource("1_loading")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1234567891]
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -32,10 +30,8 @@ grow_vertical = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Generating world..."
-alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="VBoxContainer" unique_id=1234567894]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
-max_value = 100.0

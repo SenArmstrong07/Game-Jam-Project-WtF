@@ -5,8 +5,9 @@ extends CanvasLayer
 var frontlayer: TileMapLayer
 
 func _ready() -> void:
+	add_to_group("loadingscreen")
 	# Get reference to frontlayer
-	frontlayer = get_tree().root.get_child(0).get_node("TileNode/front")
+	frontlayer = get_tree().get_first_node_in_group("frontlayer")
 	
 	if frontlayer:
 		# Connect to world generation signals

@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://jnyme5is58f3"]
+
+[ext_resource type="Script" uid="uid://dctjndm0mt2iq" path="res://scripts/UI/encounter_transition.gd" id="1_sihfp"]
+[ext_resource type="Shader" uid="uid://bg3thr2yuie5v" path="res://scripts/UI/transition_shader.gdshader" id="2_vp24l"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1r7hd"]
+shader = ExtResource("2_vp24l")
+shader_parameter/glitch_strength = 0.0
+shader_parameter/block_size = 80.0
+
+[node name="EncounterTransition" type="CanvasLayer" unique_id=510118405]
+script = ExtResource("1_sihfp")
+
+[node name="OverworldShot" type="TextureRect" parent="." unique_id=1919127759]
+material = SubResource("ShaderMaterial_1r7hd")
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Flash" type="ColorRect" parent="." unique_id=1972372626]
+offset_left = -19.0
+offset_top = -41.0
+offset_right = 1188.0
+offset_bottom = 677.0
+color = Color(1, 1, 1, 0)
+
+[node name="Fade" type="ColorRect" parent="." unique_id=792041666]
+offset_left = -65.0
+offset_top = -82.0
+offset_right = 1220.0
+offset_bottom = 724.0
+color = Color(0, 0, 0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=820209970]

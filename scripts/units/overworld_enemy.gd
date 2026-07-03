@@ -18,6 +18,7 @@ var patrol_timer : float = 0.0
 var patrol_change_interval : float = 3.0  # Change target every 3 seconds
 
 func _ready() -> void:
+	add_to_group("overworldmob")
 	# Set patrol center to spawn position
 	patrol_center = position
 	pick_new_patrol_target()
@@ -72,7 +73,7 @@ func _on_battle_trigger_body_entered(body: Node2D) -> void:
 
 
 func trigger_battle() -> void:
-	print("TRANSITION TO BATTLE")
+	SignalBus.start_battle(self)
 	# TODO: Implement actual battle scene transition here
 
 

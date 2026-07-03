@@ -6,9 +6,15 @@
 [ext_resource type="PackedScene" uid="uid://bd000x17iehe0" path="res://scenes/units/player_character.tscn" id="2_g3tu8"]
 [ext_resource type="PackedScene" uid="uid://sy7w0ntech8w" path="res://scenes/battle/battle_ui.tscn" id="2_hwwhr"]
 [ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="3_1uck2"]
+[ext_resource type="Script" uid="uid://c3x6agve7fhk6" path="res://scripts/ui/battle_transition_overlay.gd" id="3_3m5xf"]
 [ext_resource type="PackedScene" uid="uid://cqk87mlrchf2c" path="res://scenes/units/Unit.tscn" id="3_g3tu8"]
 [ext_resource type="Texture2D" uid="uid://bysu6mfntht4l" path="res://assets/ui/Battle_BG.png" id="4_1uck2"]
 [ext_resource type="PackedScene" uid="uid://eexfwe7w37sf" path="res://scenes/battle/battle_bgm.tscn" id="9_3m02u"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3m5xf"]
+shader = ExtResource("2_hwwhr")
+shader_parameter/glitch_strength = 0.0
+shader_parameter/block_size = 80.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1uck2"]
 shader = ExtResource("3_1uck2")
@@ -17,6 +23,19 @@ shader = ExtResource("3_1uck2")
 script = ExtResource("1_sx6bk")
 
 [node name="PLAYER_HP_BATTLE_UI" parent="." unique_id=912230315 instance=ExtResource("2_hwwhr")]
+[node name="TransitionOverlay" type="CanvasLayer" parent="." unique_id=1227047308]
+
+[node name="GlitchOverlay" type="ColorRect" parent="TransitionOverlay" unique_id=1715965438]
+material = SubResource("ShaderMaterial_3m5xf")
+offset_left = -511.0
+offset_top = -272.0
+offset_right = 987.0
+offset_bottom = 620.0
+script = ExtResource("3_3m5xf")
+
+[node name="BattlePhaseUI" parent="." unique_id=1182309003 instance=ExtResource("2_g4sxx")]
+
+[node name="BATTLE_UI" parent="." unique_id=912230315 instance=ExtResource("2_hwwhr")]
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1800903184]
 texture_filter = 1

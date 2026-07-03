@@ -32,11 +32,12 @@ var tile_colors = {
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	add_to_group("minimap")
 	# Get reference to player
-	player = get_tree().root.get_child(0).get_node("OverworldPlayer")
+	player = get_tree().get_first_node_in_group("player")
 	
 	# Get reference to frontlayer and connect to enemy_spawned signal
-	frontlayer = get_tree().root.get_child(0).get_node("TileNode/front")
+	frontlayer = get_tree().get_first_node_in_group("frontlayer")
 	if frontlayer:
 		frontlayer.enemy_spawned.connect(_on_enemy_spawned)
 	

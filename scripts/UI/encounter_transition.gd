@@ -4,6 +4,7 @@ signal finished
 const GLITCH_OUT_TIME := 0.4
 const GLITCH_IN_TIME := 0.6
 const GLITCH_HOLD_TIME := 0.6
+const RETURN_FADE_TIME := 0.4
 @onready var overworld_shot: TextureRect = $OverworldShot
 @onready var glitch_overlay: ColorRect = $GlitchOverlay
 @onready var reconstruction_overlay: ColorRect = $ReconstructionOverlay
@@ -15,6 +16,12 @@ func _ready() -> void:
 	visible = false
 	# Ensure this CanvasLayer renders above other layers
 	self.layer = 100
+	# Draw order: screenshot first, fade next, glitch overlay on top.
+	overworld_shot.z_index = 0
+	fade.z_index = 1
+	glitch_overlay.z_index = 2
+	reconstruction_overlay.z_index = 3
+	flash.z_index = 4
 	print("[EncounterTransition] ready; layer=", self.layer)
 
 
@@ -53,6 +60,8 @@ func capture_screen(target: TextureRect):
 func play_out():
 
 	glitch_overlay.visible = true
+	fade.visible = true
+	fade.modulate.a = 0.0
 	glitch_overlay.modulate.a = 0.35
 	var mat := glitch_overlay.material as ShaderMaterial
 	if mat == null:
@@ -106,6 +115,11 @@ func transition_to_battle(battlescene: String):
 	#then capture overworld shot
 	capture_screen(overworld_shot)
 	
+	# Bind the screenshot to the glitch shader so the effect is visible.
+	var glitch_mat := glitch_overlay.material as ShaderMaterial
+	if glitch_mat != null and overworld_shot.texture != null:
+		glitch_mat.set_shader_parameter("screen_texture", overworld_shot.texture)
+	
 	# Make sure the screenshot is what is currently displayed.
 	overworld_shot.visible = true
 	
@@ -151,12 +165,42 @@ func transition_to_overworld():
 	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw
 
-	await reconstruction_overlay.play_in()
-	
+	await play_return_fade()
+
 	reset()
 
 	visible = false
 	finished.emit()
+
+func play_return_fade():
+
+	reset()
+	visible = true
+	fade.visible = true
+	fade.modulate.a = 0.0
+
+	var tween_in := create_tween()
+	tween_in.tween_property(
+		fade,
+		"modulate:a",
+		1.0,
+		RETURN_FADE_TIME
+	)
+
+	await tween_in.finished
+
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+
+	var tween_out := create_tween()
+	tween_out.tween_property(
+		fade,
+		"modulate:a",
+		0.0,
+		RETURN_FADE_TIME
+	)
+
+	await tween_out.finished
 	
 func reset():
 

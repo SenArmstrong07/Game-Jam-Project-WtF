@@ -87,6 +87,7 @@ func _ready() -> void:
 	for i in encounter.enemy_count:
 		spawn_enemy(enemy_spawn_positions[i])
 	print("BattleScene READY FINISHED")
+	await get_tree().process_frame
 	_start_preparation_phase()
 
 func _on_select_pressed():

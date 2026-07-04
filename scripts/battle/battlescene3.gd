@@ -65,7 +65,7 @@ func _ready() -> void:
 	
 	battle_preperations.select_button.pressed.connect(_on_select_pressed)
 	battle_preperations.unselect_button.pressed.connect(_on_unselect_pressed)
-
+	await get_tree().process_frame
 	_start_preparation_phase()
 
 func _on_select_pressed():
@@ -176,12 +176,13 @@ func is_enemy_on_tile(pos: Vector2i) -> bool:
 	
 	
 func _start_preparation_phase() -> void:
-	print("=== PREPARATION PHASE ===")
-
 	current_phase = BattlePhase.PREPARATION
-	move_shuffle.visible = false
-	player_ui.visible = false
-	
+
+	player_ui.hide_hp_ui()
+	move_shuffle.hide_bar()
+
+	await get_tree().create_timer(0.35).timeout
+
 	phase_changed.emit(current_phase)
 
 	player_hand = player_deck.draw_hand(10)
@@ -191,6 +192,7 @@ func _start_preparation_phase() -> void:
 	player_chip_index = 0
 
 	_update_ui()
+
 
 func move_cursor_right():
 	if player_hand.is_empty():
@@ -420,17 +422,20 @@ func _start_battle_phase() -> void:
 	current_phase = BattlePhase.BATTLE
 	battle_active = true
 	current_chip_index = 0
-	move_shuffle.visible = true
-	player_ui.visible = true
+
 	update_player_ui()
+	player_ui.show_hp_ui()
 
-	if !selected_chips.is_empty():
-		var chip := selected_chips[current_chip_index]
+	move_shuffle.update_chip_display(
+		selected_chips,
+		current_chip_index
+	)
 
-		player.attack_range = chip.range_tile
-		player.attack_power = chip.power
+	move_shuffle.show_bar()
 
-		move_shuffle.update_chip_display(selected_chips, current_chip_index)
+	var first_chip := selected_chips[0]
+	player.attack_range = first_chip.range_tile
+	player.attack_power = first_chip.power
 
 	_update_ui()
 	

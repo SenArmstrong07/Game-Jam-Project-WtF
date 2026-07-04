@@ -38,7 +38,8 @@ var attack_count := 0
 var lane_direction := 1
 var lane_timer := 0.0
 var lane_switch_interval := 0.6
-
+var displayed_hp := 0
+var hp_tween: Tween
 
 func _ready():
 	z_index = 10
@@ -331,7 +332,34 @@ func play_hurt():
 	is_hurt = false
 
 func update_hp_label():
-	hp_label.text = str(hp)
+
+	if hp_tween:
+		hp_tween.kill()
+
+	# Flash red
+	hp_label.modulate = Color.RED
+
+	hp_tween = create_tween()
+
+	hp_tween.set_parallel(true)
+
+	# Count down
+	hp_tween.tween_method(
+		func(value):
+			displayed_hp = roundi(value)
+			hp_label.text = str(displayed_hp),
+		displayed_hp,
+		hp,
+		0.25
+	)
+
+	# Return to white
+	hp_tween.tween_property(
+		hp_label,
+		"modulate",
+		Color.WHITE,
+		0.25
+	)
 	
 func take_damage(amount: int, damage_type = DamageType.NEUTRAL, chip = null):
 	super.take_damage(amount, damage_type, chip)

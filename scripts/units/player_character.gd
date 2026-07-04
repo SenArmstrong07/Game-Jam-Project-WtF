@@ -33,6 +33,7 @@ var lives: int = 5
 var max_lives: int = 5
 var facing: Vector2i = Vector2i.RIGHT
 var movement_locked := false
+var afterimage_timer := 0.0
 
 func get_lives() -> int:
 	return lives
@@ -150,19 +151,18 @@ func _unhandled_input(event):
 		anim_player.play("Move_up")
 	elif move_dir == Vector2i.DOWN:
 		anim_player.play("Move_Down")
+
+	dash_to_tile(target_position)
 		
 #movement loop		
 func _process(delta):
-	if moving:
-		position = position.move_toward(
-			target_position,
-			move_speed * delta
-		)
 
-		if position.distance_to(target_position) < 1.0:
-			position = target_position
-			moving = false
-			anim_player.play("Idle")
+	if moving:
+		afterimage_timer += delta
+
+		if afterimage_timer >= 0.02:
+			afterimage_timer = 0.0
+			create_dash_afterimage()
 
 func update_animation(input_dir: Vector2):
 	if input_dir == Vector2.ZERO:
@@ -340,3 +340,42 @@ func play_slam_hit():
 		.set_ease(Tween.EASE_OUT)
 
 	tween.tween_property(self, "position:y", start_pos.y, 0.12)
+
+func dash_to_tile(target: Vector2):
+
+	moving = true
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_QUART)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(self, "position", target, 0.08)
+	tween.finished.connect(_on_dash_finished)
+
+func _on_dash_finished():
+	position = target_position
+	moving = false
+	anim_player.play("Idle")
+		
+func create_dash_afterimage():
+
+	var ghost = anim_player.duplicate()
+
+	get_parent().add_child(ghost)
+
+	ghost.global_position = anim_player.global_position
+	ghost.modulate = Color(0.5, 0.9, 1.0, 0.5)
+	ghost.z_index = z_index - 1
+
+	var tween = ghost.create_tween()
+
+	tween.tween_property(
+		ghost,
+		"modulate:a",
+		0.0,
+		0.15
+	)
+
+	await tween.finished
+
+	ghost.queue_free()

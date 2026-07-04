@@ -24,8 +24,13 @@
 [ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="22_s0e4k"]
 [ext_resource type="Texture2D" uid="uid://bcrcexqahk8qi" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/9 Other/1 Decor/7.png" id="23_k6hmf"]
 [ext_resource type="Texture2D" uid="uid://du6r6kjrlesh" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo2.png" id="24_8ct8k"]
+[ext_resource type="Texture2D" uid="uid://kdfiw8hbrxtx" path="res://assets/ui/SimpleKeys/Classic/Light/Spritesheets/SPACE.png" id="24_lrjlg"]
 [ext_resource type="Script" uid="uid://cwnu4crlhgpjc" path="res://scripts/manager/move_shuffle.gd" id="24_te8l4"]
 [ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="25_s0e4k"]
+[ext_resource type="Texture2D" uid="uid://digtxxgp3um2h" path="res://assets/ui/SimpleKeys/Classic/Light/Spritesheets/B.png" id="25_t62lk"]
+[ext_resource type="Texture2D" uid="uid://7id7hr1ej188" path="res://assets/ui/SimpleKeys/Classic/Light/Spritesheets/C.png" id="26_knf1m"]
+[ext_resource type="Texture2D" uid="uid://b5ae4qfmwcb2p" path="res://assets/ui/SimpleKeys/Classic/Light/Spritesheets/Q.png" id="30_6i8xx"]
+[ext_resource type="Texture2D" uid="uid://bcmss2ohl8xd4" path="res://assets/ui/SimpleKeys/Classic/Light/Spritesheets/E.png" id="31_e0vbk"]
 
 [sub_resource type="Theme" id="Theme_1y54r"]
 Label/constants/outline_size = 7
@@ -120,6 +125,116 @@ Button/fonts/font = ExtResource("3_bgiko")
 Button/styles/hover = SubResource("StyleBoxFlat_6anrm")
 Button/styles/normal = SubResource("StyleBoxFlat_cq3a5")
 Button/styles/pressed = SubResource("StyleBoxFlat_ye46k")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n00t7"]
+atlas = ExtResource("24_lrjlg")
+region = Rect2(0, 0, 67, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ejmi"]
+atlas = ExtResource("24_lrjlg")
+region = Rect2(67, 0, 67, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7nrbm"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n00t7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ejmi")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 2.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mc4s3"]
+atlas = ExtResource("25_t62lk")
+region = Rect2(0, 0, 17, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p52d2"]
+atlas = ExtResource("25_t62lk")
+region = Rect2(17, 0, 17, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cq3a5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mc4s3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p52d2")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 2.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0dpdb"]
+atlas = ExtResource("26_knf1m")
+region = Rect2(0, 0, 17, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mavpd"]
+atlas = ExtResource("26_knf1m")
+region = Rect2(17, 0, 17, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1y54r"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0dpdb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mavpd")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 2.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8y6e"]
+atlas = ExtResource("30_6i8xx")
+region = Rect2(0, 0, 17, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ewcu4"]
+atlas = ExtResource("30_6i8xx")
+region = Rect2(17, 0, 17, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qtgru"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8y6e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ewcu4")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 2.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_svjkv"]
+atlas = ExtResource("31_e0vbk")
+region = Rect2(0, 0, 17, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kxmd2"]
+atlas = ExtResource("31_e0vbk")
+region = Rect2(17, 0, 17, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ugp2l"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_svjkv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kxmd2")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 2.0
+}]
 
 [node name="PLAYER_HP_BATTLE_UI" type="CanvasLayer" unique_id=1987469340]
 
@@ -571,99 +686,101 @@ theme_override_constants/align_to_largest_stylebox = 3
 text = "WAIT"
 icon = ExtResource("14_6anrm")
 
-[node name="SELECTED_BG" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=174007769]
-texture_filter = 1
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.49100003
-anchor_top = -0.112
-anchor_right = 0.64400005
-anchor_bottom = 0.578
-offset_left = 5.893982
-offset_top = -13.167999
-offset_right = 5.6959534
-offset_bottom = -13.257996
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_ib2kh")
-region_rect = Rect2(1, 165, 94, 87)
-
-[node name="CONTAINER" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SELECTED_BG" unique_id=545271511]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.162
-anchor_top = 0.072000004
-anchor_right = 0.924
-anchor_bottom = 0.94600004
-offset_left = -1.9540005
-offset_top = -6.864002
-offset_right = -5.2599792
-offset_bottom = 4.4179993
-texture = ExtResource("10_bgmau")
-region_rect = Rect2(1335, 733, 249, 231)
-
-[node name="SIDE_CONTAINER" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER" unique_id=406635600]
+[node name="SIDE_CONTAINER" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=406635600]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = -1.0400001
 anchor_top = -0.063
 anchor_right = 1.3980001
 anchor_bottom = 1.0350001
-offset_left = 209.28195
-offset_top = 0.01976204
-offset_right = 383.7956
-offset_bottom = -183.7985
+offset_left = 1294.6401
+offset_top = -41.656998
+offset_right = -183.43323
+offset_bottom = -473.62592
 rotation = -4.712389
 texture = ExtResource("22_s0e4k")
 
-[node name="GridContainer" type="GridContainer" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER" unique_id=995974851]
+[node name="NinePatchRect" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER" unique_id=57970132]
+layout_mode = 0
+offset_left = 21.0
+offset_top = 13.132568
+offset_right = 378.0853
+offset_bottom = 118.627075
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect" unique_id=928518939]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.116000004
-anchor_top = 0.043
-anchor_right = 0.92
-anchor_bottom = 0.95800006
-offset_left = 3.0416288
-offset_top = 0.9706383
-offset_right = 3.0198212
-offset_bottom = 1.15979
-theme_override_constants/h_separation = 0
-theme_override_constants/v_separation = -1
+anchor_left = -0.002
+anchor_top = 0.43600002
+anchor_right = 0.9850001
+anchor_bottom = 0.5
+offset_left = -0.06312734
+offset_top = 45.33162
+offset_right = -275.87988
+offset_bottom = 391.18292
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.5707964
 
-[node name="MOVE_SLOT_1" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=1235873222]
-texture_filter = 1
-custom_minimum_size = Vector2(64, 64)
+[node name="NinePatchRect" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer" unique_id=1173935768]
 layout_mode = 2
-texture = ExtResource("13_6anrm")
-expand_mode = 1
+size_flags_vertical = 3
+texture = ExtResource("2_elpkr")
 
-[node name="MOVE_SLOT_2" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=1355307478]
-texture_filter = 1
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-texture = ExtResource("13_6anrm")
-expand_mode = 1
+[node name="MOVE_SLOT_1" type="TextureRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer/NinePatchRect" unique_id=30467277]
+layout_mode = 0
+offset_left = 2.4597163
+offset_top = 1.777298
+offset_right = 73.911255
+offset_bottom = 64.839264
 
-[node name="MOVE_SLOT_3" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=177813042]
-texture_filter = 1
-custom_minimum_size = Vector2(64, 64)
+[node name="NinePatchRect2" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer" unique_id=504640372]
 layout_mode = 2
-texture = ExtResource("13_6anrm")
-expand_mode = 1
+size_flags_vertical = 3
+texture = ExtResource("2_elpkr")
 
-[node name="MOVE_SLOT_4" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=167298736]
-texture_filter = 1
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-texture = ExtResource("13_6anrm")
-expand_mode = 1
+[node name="MOVE_SLOT_2" type="TextureRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer/NinePatchRect2" unique_id=1251439391]
+layout_mode = 0
+offset_left = 4.459717
+offset_top = 2.2822418
+offset_right = 74.4057
+offset_bottom = 64.41522
 
-[node name="MOVE_SLOT_5" type="TextureRect" parent="BATTLE_PREPERATIONS/SELECTED_BG/CONTAINER/GridContainer" unique_id=1799329937]
-texture_filter = 1
-custom_minimum_size = Vector2(64, 64)
+[node name="NinePatchRect3" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer" unique_id=828794213]
 layout_mode = 2
-texture = ExtResource("13_6anrm")
-expand_mode = 1
+size_flags_vertical = 3
+texture = ExtResource("2_elpkr")
+
+[node name="MOVE_SLOT_3" type="TextureRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer/NinePatchRect3" unique_id=62386442]
+layout_mode = 0
+offset_left = 2.6069946
+offset_top = 2.043686
+offset_right = 73.68268
+offset_bottom = 65.000015
+
+[node name="NinePatchRect4" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer" unique_id=1168048014]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_elpkr")
+
+[node name="MOVE_SLOT_4" type="TextureRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer/NinePatchRect4" unique_id=8576192]
+layout_mode = 0
+offset_left = 2.968689
+offset_top = 1.8407898
+offset_right = 73.87952
+offset_bottom = 65.03131
+
+[node name="NinePatchRect5" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer" unique_id=1050527870]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_elpkr")
+
+[node name="MOVE_SLOT_5" type="TextureRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER/NinePatchRect/VBoxContainer/NinePatchRect5" unique_id=207815804]
+layout_mode = 0
+offset_left = 2.968689
+offset_top = 1.8721008
+offset_right = 73.45538
+offset_bottom = 65.486755
 
 [node name="COMBINE_BG" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=1997127247]
 layout_mode = 1
@@ -757,6 +874,27 @@ theme_override_font_sizes/font_size = 23
 text = "COMBINE"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SPCE_BAR" type="AnimatedSprite2D" parent="BATTLE_PREPERATIONS" unique_id=2119324463]
+visible = false
+position = Vector2(115, 485.99994)
+scale = Vector2(1.731343, 1.6041673)
+sprite_frames = SubResource("SpriteFrames_7nrbm")
+frame_progress = 0.091035984
+
+[node name="B-BACK" type="AnimatedSprite2D" parent="BATTLE_PREPERATIONS" unique_id=331738182]
+visible = false
+position = Vector2(336.5, -8.809517)
+scale = Vector2(2.1764686, 2.1011896)
+sprite_frames = SubResource("SpriteFrames_cq3a5")
+frame_progress = 0.704696
+
+[node name="C- COMBINE" type="AnimatedSprite2D" parent="BATTLE_PREPERATIONS" unique_id=1360232639]
+visible = false
+position = Vector2(-122.99999, 298)
+scale = Vector2(1.9264693, 1.9687521)
+sprite_frames = SubResource("SpriteFrames_1y54r")
+frame_progress = 0.6400573
 
 [node name="MOVE_SHUFFLE" type="Control" parent="." unique_id=232846515]
 layout_mode = 3
@@ -891,3 +1029,17 @@ offset_right = 34.0
 offset_bottom = 31.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Q - PREV" type="AnimatedSprite2D" parent="MOVE_SHUFFLE" unique_id=1243824814]
+visible = false
+position = Vector2(-30.000061, -195)
+scale = Vector2(1.8897011, 1.9531245)
+sprite_frames = SubResource("SpriteFrames_qtgru")
+frame_progress = 0.17190285
+
+[node name="E -NEXT" type="AnimatedSprite2D" parent="MOVE_SHUFFLE" unique_id=906175863]
+visible = false
+position = Vector2(5, -194.99997)
+scale = Vector2(1.9264687, 1.8750002)
+sprite_frames = SubResource("SpriteFrames_ugp2l")
+frame_progress = 0.7866754

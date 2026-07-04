@@ -186,19 +186,34 @@ func transition_to_overworld() -> void:
 func play_return_fade() -> void:
 	reset()
 	visible = true
-	_set_visible(fade, true)
-	_set_alpha(fade, 0.0)
 
-	var tween_in := create_tween()
-	tween_in.tween_property(fade, "modulate:a", 1.0, RETURN_FADE_TIME)
-	await tween_in.finished
+	_set_visible(glitch_overlay, true)
+	_set_alpha(glitch_overlay, 0.35)
 
-	await get_tree().process_frame
-	await RenderingServer.frame_post_draw
+	if is_instance_valid(glitch_overlay) and glitch_overlay.has_method("play_glitch_in"):
+		await glitch_overlay.play_glitch_in()
+	else:
+		var mat := glitch_overlay.material as ShaderMaterial
+		if mat == null:
+			print("[EncounterTransition] play_return_fade: no material on glitch_overlay")
+		else:
+			mat.set_shader_parameter("glitch_strength", 0.0)
 
-	var tween_out := create_tween()
-	tween_out.tween_property(fade, "modulate:a", 0.0, RETURN_FADE_TIME)
-	await tween_out.finished
+		var tween := create_tween()
+		tween.set_trans(Tween.TRANS_EXPO)
+		tween.set_ease(Tween.EASE_OUT)
+		tween.parallel().tween_method(
+			func(v):
+				if mat != null:
+					mat.set_shader_parameter("glitch_strength", v),
+			1.0,
+			0.0,
+			GLITCH_IN_TIME
+		)
+		tween.parallel().tween_property(glitch_overlay, "modulate:a", 0.0, GLITCH_IN_TIME)
+		await tween.finished
+
+	_set_visible(glitch_overlay, false)
 
 
 func reset() -> void:

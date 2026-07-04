@@ -71,6 +71,17 @@ func _ready() -> void:
 	print("[WORLD_MAP] Ready - scanning tiles...")
 	
 	
+	var saved_map_data: Dictionary = {}
+	if not SignalBus.overworld_state.is_empty() and "world_map_data" in SignalBus.overworld_state:
+		saved_map_data = SignalBus.overworld_state["world_map_data"]
+
+	if saved_map_data.has("land_tiles") and saved_map_data["land_tiles"].size() > 0:
+		_restore_from_map_snapshot(saved_map_data)
+		mouse_filter = Control.MOUSE_FILTER_STOP
+		queue_redraw()
+		print("[WORLD_MAP] Restored map layout from saved overworld state")
+		return
+
 	# Pre-scan all land tiles and group into islands
 	_scan_all_land_tiles()
 	print("[WORLD_MAP] Scanned ", land_tiles.size(), " land tiles, grouping into islands...")
@@ -106,6 +117,36 @@ func _find_overworld_root() -> Node:
 			return child
 
 	return null
+
+func _restore_from_map_snapshot(snapshot: Dictionary) -> void:
+	land_tiles.clear()
+	tile_to_screen.clear()
+	islands.clear()
+
+	if snapshot.has("land_tiles"):
+		for tile in snapshot["land_tiles"]:
+			if tile is Vector2i:
+				land_tiles.append(tile)
+
+	if snapshot.has("islands"):
+		islands.clear()
+		for island_data in snapshot["islands"]:
+			if island_data is Array:
+				var typed_island: Array[Vector2i] = []
+				for tile in island_data:
+					if tile is Vector2i:
+						typed_island.append(tile)
+				if typed_island.size() > 0:
+					islands.append(typed_island)
+
+	for tile_pos in land_tiles:
+		var world_pos = frontlayer.map_to_local(tile_pos)
+		var screen_pos = _world_to_screen(world_pos)
+		tile_to_screen[tile_pos] = screen_pos
+
+	is_island_grouping_complete = true
+	set_process(false)
+
 
 func _scan_all_land_tiles() -> void:
 	"""Scan all tiles within world bounds and store land tile positions."""

@@ -10,6 +10,32 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
+func play_glitch_out() -> void:
+	visible = true
+	modulate.a = 0.35
+
+	var mat := self.material as ShaderMaterial
+	if mat == null:
+		print("[BattleTransitionOverlay] play_glitch_out: no material on self")
+		return
+
+	mat.set_shader_parameter("glitch_strength", 0.0)
+
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_EXPO)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_method(
+		func(v):
+			if mat != null:
+				mat.set_shader_parameter("glitch_strength", v),
+		0.0,
+		1.0,
+		GLITCH_OUT_TIME
+	)
+
+	await tween.finished
+
 func play_glitch_in():
 
 	# Operate on `self` since this script is attached to the glitch overlay

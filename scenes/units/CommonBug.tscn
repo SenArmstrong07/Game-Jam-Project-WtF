@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bg83jayij2hir" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/Enemies/Enemy03/Enemy03_SpriteSheet_RP1 (32x36).png" id="2_be6ei"]
 [ext_resource type="Texture2D" uid="uid://c5noxpj8owfxs" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/Enemies/Enemy03/Enemy03_Idle_RP1 (32x36).png" id="3_r0xy2"]
 [ext_resource type="Texture2D" uid="uid://bsl3vaqfv10si" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/Enemies/Enemy03/Enemy03_Walk_RP1 (32x36).png" id="4_wxf1i"]
+[ext_resource type="FontFile" uid="uid://dl3c76h3ngx1y" path="res://assets/fonts/Nebal.ttf" id="5_r0xy2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_virh6"]
 atlas = ExtResource("2_be6ei")
@@ -166,15 +167,18 @@ autoplay = "Idle"
 frame_progress = 0.56438226
 flip_h = true
 
+[node name="HPLabel" type="Label" parent="." unique_id=1498865313]
+offset_left = 16.0
+offset_top = -73.0
+offset_right = 56.0
+offset_bottom = -50.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_r0xy2")
+theme_override_font_sizes/font_size = 14
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=247407364]
 position = Vector2(-1, -28)
 shape = SubResource("CapsuleShape2D_73l8x")
 
 [node name="HitPoint" type="Marker2D" parent="." unique_id=241895800]
 position = Vector2(-31, -35)
-
-[node name="HPLabel" type="Label" parent="." unique_id=690946564]
-offset_left = 20.0
-offset_top = -50.0
-offset_right = 60.0
-offset_bottom = -27.0

@@ -38,6 +38,8 @@ var stun_timer := 0.0
 
 var move_speed := 220.0
 var moving := false
+var displayed_hp := 0
+var hp_tween: Tween
 
 func _ready():
 	randomize()
@@ -87,9 +89,9 @@ func _process(delta):
 	position = position.move_toward(target_position, move_speed * delta)
 
 	if moving and position.distance_to(target_position) < 1.0:
+
 		position = target_position
 		moving = false
-
 	# Don't think while stunned
 	if stunned:
 		return
@@ -119,10 +121,8 @@ func _process(delta):
 # ============================================================
 func move_to_player(target_tile: Vector2i) -> bool:
 
-	var target := target_tile + Vector2i.RIGHT
-
-	target.x = clamp(target.x, 0, GRID_WIDTH - 1)
-	target.y = clamp(target.y, 0, GRID_HEIGHT - 1)
+	if moving:
+		return false
 
 	var choices = [
 		target_tile + Vector2i.RIGHT,
@@ -131,38 +131,47 @@ func move_to_player(target_tile: Vector2i) -> bool:
 		target_tile + Vector2i.DOWN
 	]
 
+	var target := grid_pos
+
 	for pos in choices:
 
-		if pos.x < 0 or pos.x >= GRID_WIDTH:
-			continue
-
-		if pos.y < 0 or pos.y >= GRID_HEIGHT:
-			continue
+		pos.x = clamp(pos.x, 0, GRID_WIDTH - 1)
+		pos.y = clamp(pos.y, 0, GRID_HEIGHT - 1)
 
 		if battle_scene.is_tile_free(pos):
+
 			target = pos
 			break
 
+	if target == grid_pos:
+		return false
+
 	moving = true
-	movement_locked = true
 
 	battle_scene.occupied_tiles.erase(grid_pos)
-	battle_scene.occupied_tiles[target] = true
 
-	target_position = grid_to_world(target)
+	grid_pos = target
+
+	battle_scene.occupied_tiles[grid_pos] = true
+
+	target_position = grid_to_world(grid_pos)
 
 	while position.distance_to(target_position) > 2.0:
+
+		if !is_inside_tree():
+			return false
+
 		await get_tree().process_frame
 
 	position = target_position
-	grid_pos = target
+
 	moving = false
 
 	return true
 			
 func random_move():
 
-	if moving or movement_locked:
+	if moving:
 		return
 
 	var old_grid_pos = grid_pos
@@ -178,9 +187,7 @@ func random_move():
 
 	for dir in directions:
 
-		var distance = [1, 2].pick_random()
-
-		var next_pos = grid_pos + dir * distance
+		var next_pos = grid_pos + dir
 
 		next_pos.x = clamp(next_pos.x, 0, GRID_WIDTH - 1)
 		next_pos.y = clamp(next_pos.y, 0, GRID_HEIGHT - 1)
@@ -193,35 +200,30 @@ func random_move():
 
 			battle_scene.occupied_tiles[grid_pos] = true
 
-			play_move_animation(old_grid_pos, grid_pos)
-
 			target_position = grid_to_world(grid_pos)
 
-			moving = true
+			play_move_animation(old_grid_pos, grid_pos)
 
-			return	
-	
+			moving = true
+			return
+			
 func perform_attack():
-	print("Attack start")
-	if attack_locked:
+
+	if attack_locked or is_dead:
 		return
 
 	attack_locked = true
-	movement_locked = true
-
-	attack_count += 1
 
 	if randi() % 100 < 65:
-		await throw_trap()
+		throw_trap()
 	else:
 		shoot_projectile()
 
-	if is_inside_tree():
-		await get_tree().create_timer(attack_recovery).timeout
+	await get_tree().create_timer(attack_recovery).timeout
 
-	attack_locked = false
-	movement_locked = false
-	print("Attack end")
+	if is_instance_valid(self):
+		attack_locked = false
+		
 # ============================================================
 # SHOOT LOGIC
 # ============================================================
@@ -271,44 +273,52 @@ func shoot_projectile():
 	
 func throw_trap():
 
-	var trap = TROJAN_THROWABLE.instantiate()
-	var random_tile: Vector2i
 	var candidates: Array[Vector2i] = []
 
-	get_tree().current_scene.add_child(trap)
-	trap.global_position = trojan_marker.global_position
+	for x in range(GRID_WIDTH):
+		for y in range(GRID_HEIGHT):
 
-	# Build a list of available tiles
-	for x in range(4):
-		for y in range(4):
 			var tile := Vector2i(x, y)
 
-			if tile != last_trap_tile and !active_trap_tiles.has(tile):
-				candidates.append(tile)
+			if tile == last_trap_tile:
+				continue
+
+			if active_trap_tiles.has(tile):
+				continue
+
+			candidates.append(tile)
 
 	if candidates.is_empty():
 		return
 
-	random_tile = candidates.pick_random()
+	var random_tile = candidates.pick_random()
 
 	last_trap_tile = random_tile
 	active_trap_tiles.append(random_tile)
 
+	var trap = TROJAN_THROWABLE.instantiate()
+
+	get_tree().current_scene.add_child(trap)
+
+	trap.global_position = trojan_marker.global_position
+
 	trap.player_stunned.connect(_on_player_stunned)
 
-	# Remove the tile when the trap disappears
 	trap.tree_exited.connect(func():
 		active_trap_tiles.erase(random_tile)
 	)
 
-	await trap.throw_to(random_tile)
+	trap.throw_to(random_tile)
 	
-	# ============================================================
+# ============================================================
 # STUN
 # ============================================================
 func _on_player_stunned(tile: Vector2i):
 
-	var reached := await move_to_player(tile)
+	if attack_locked:
+		return
+
+	var reached = await move_to_player(tile)
 
 	if !reached:
 		return
@@ -317,10 +327,9 @@ func _on_player_stunned(tile: Vector2i):
 
 	await get_tree().create_timer(0.15).timeout
 
-	shoot_projectile()
-
-	movement_locked = false
-		
+	if is_instance_valid(self):
+		shoot_projectile()
+			
 func apply_stun(duration: float):
 	print(name, " STUNNED for ", duration)
 
@@ -387,7 +396,34 @@ func play_hurt():
 	is_hurt = false
 
 func update_hp_label():
-	hp_label.text = str(hp)
+
+	if hp_tween:
+		hp_tween.kill()
+
+	# Flash red
+	hp_label.modulate = Color.RED
+
+	hp_tween = create_tween()
+
+	hp_tween.set_parallel(true)
+
+	# Count down
+	hp_tween.tween_method(
+		func(value):
+			displayed_hp = roundi(value)
+			hp_label.text = str(displayed_hp),
+		displayed_hp,
+		hp,
+		0.25
+	)
+
+	# Return to white
+	hp_tween.tween_property(
+		hp_label,
+		"modulate",
+		Color.WHITE,
+		0.25
+	)
 
 func take_damage(amount: int, damage_type = DamageType.NEUTRAL, chip = null):
 	super.take_damage(amount, damage_type, chip)

@@ -25,7 +25,7 @@ func _change_to_battle() -> void:
 	await RenderingServer.frame_post_draw
 
 	await EncounterTransition.transition_to_battle(
-		"res://scenes/battle/BattleScene.tscn"
+		"res://scenes/battle/Battlescene.tscn"
 	)
 
 func return_to_overworld():

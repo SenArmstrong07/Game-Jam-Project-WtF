@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ci3evtk5newx5" path="res://scripts/units/throw_bug.gd" id="1_rcbuq"]
 [ext_resource type="Texture2D" uid="uid://dku4j2euj8wlk" path="res://assets/characters/MeGaMan/Reactor_Man_Enemies/PNG/Reactor_Man_Boss/Reactor_Man_Boss.png" id="1_u7nxg"]
 [ext_resource type="Texture2D" uid="uid://bg20ftlfabn2j" path="res://assets/characters/MeGaMan/Reactor_Man_Enemies/PNG/Reactor_Man_Boss/Reactor_Man_Projectile.png" id="2_u7vpo"]
+[ext_resource type="FontFile" uid="uid://dl3c76h3ngx1y" path="res://assets/fonts/Nebal.ttf" id="4_y4j8t"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u7vpo"]
 atlas = ExtResource("1_u7nxg")
@@ -195,6 +196,16 @@ animation = &"Idle"
 autoplay = "Idle"
 frame_progress = 0.2162435
 
+[node name="HPLabel" type="Label" parent="." unique_id=2137481694]
+texture_filter = 1
+offset_left = 16.0
+offset_top = -73.0
+offset_right = 56.0
+offset_bottom = -50.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_y4j8t")
+theme_override_font_sizes/font_size = 12
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1698014259]
 position = Vector2(0, -23)
 shape = SubResource("CapsuleShape2D_8jovo")
@@ -208,11 +219,3 @@ frame_progress = 0.8977252
 
 [node name="HitPoint" type="Marker2D" parent="." unique_id=1919250889]
 position = Vector2(-24, -32)
-
-[node name="HPLabel" type="Label" parent="." unique_id=2137481694]
-texture_filter = 1
-offset_left = 16.0
-offset_top = -73.0
-offset_right = 56.0
-offset_bottom = -50.0
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)

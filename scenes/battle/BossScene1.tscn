@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://cl2u2fhxlwm5"]
 
 [ext_resource type="Script" uid="uid://c5x7xfesbltr7" path="res://scripts/battle/boss_scene_1.gd" id="1_crujw"]
-[ext_resource type="PackedScene" uid="uid://derk5cxa1jcbg" path="res://scenes/battle/BattlePhaseUI.tscn" id="2_g0cpk"]
 [ext_resource type="PackedScene" uid="uid://cqk87mlrchf2c" path="res://scenes/units/Unit.tscn" id="3_8l8mu"]
+[ext_resource type="PackedScene" uid="uid://sy7w0ntech8w" path="res://scenes/battle/battle_ui.tscn" id="3_g0cpk"]
 [ext_resource type="Shader" uid="uid://cu6ppykun2mr7" path="res://scripts/battle/Battlescene3.gdshader" id="4_vyuyg"]
 [ext_resource type="Texture2D" uid="uid://bysu6mfntht4l" path="res://assets/ui/Battle_BG.png" id="5_f0aoi"]
 [ext_resource type="PackedScene" uid="uid://6hbsmgfnmld0" path="res://scenes/battle/GridMap.tscn" id="6_kyoar"]
@@ -18,7 +18,7 @@ shader_parameter/overlay_strength = 0.5
 [node name="BossScene" type="Node2D" unique_id=1208126284]
 script = ExtResource("1_crujw")
 
-[node name="BattlePhaseUI" parent="." unique_id=1182309003 instance=ExtResource("2_g0cpk")]
+[node name="PLAYER_HP_BATTLE_UI" parent="." unique_id=1987469340 instance=ExtResource("3_g0cpk")]
 
 [node name="Unit" parent="." unique_id=1715206411 instance=ExtResource("3_8l8mu")]
 

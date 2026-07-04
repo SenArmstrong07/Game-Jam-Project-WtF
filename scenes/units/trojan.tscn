@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cpdfwxbdwmh7u" path="res://assets/characters/Glacier_Man_Asset_Pack/Glacier_Man_Enemies/PNG/Glacier_Man/Glacier_Man_Boss_Intro_Animation.png" id="2_7nerk"]
 [ext_resource type="Texture2D" uid="uid://hbjv51o3mdle" path="res://assets/characters/Glacier_Man_Asset_Pack/Glacier_Man_Enemies/PNG/Glacier_Man/Glacier_Man_Boss_Dash_Attack.png" id="3_p287k"]
 [ext_resource type="Texture2D" uid="uid://dqpsilr6fhkpy" path="res://assets/characters/Glacier_Man_Asset_Pack/Glacier_Man_Enemies/PNG/Glacier_Man/Glacier_Man_Boss_Nose_Grab_Attack_Thrusters_On.png" id="4_rqnw5"]
+[ext_resource type="FontFile" uid="uid://dl3c76h3ngx1y" path="res://assets/fonts/Nebal.ttf" id="5_7nerk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rxkyh"]
 atlas = ExtResource("2_7nerk")
@@ -228,17 +229,19 @@ animation = &"UP_AND_DOWN"
 autoplay = "IDLE"
 frame_progress = 0.8174702
 
+[node name="HPLabel" type="Label" parent="." unique_id=1416695269]
+texture_filter = 1
+offset_left = 16.0
+offset_top = -61.0
+offset_right = 56.0
+offset_bottom = -38.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_7nerk")
+theme_override_font_sizes/font_size = 12
+
 [node name="TrojanCollision" type="CollisionShape2D" parent="." unique_id=646183877]
 position = Vector2(0, -16.25)
 shape = SubResource("RectangleShape2D_qtgru")
 
 [node name="HitPoint" type="Marker2D" parent="." unique_id=270826756]
 position = Vector2(-18, -27)
-
-[node name="HPLabel" type="Label" parent="." unique_id=1683070905]
-texture_filter = 1
-offset_left = 10.0
-offset_top = -66.0
-offset_right = 50.0
-offset_bottom = -43.0
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)

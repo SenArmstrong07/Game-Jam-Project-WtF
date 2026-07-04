@@ -92,28 +92,28 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -2.0
-offset_top = -3.0
-offset_right = 1154.0
-offset_bottom = 652.0
+offset_left = -609.0
+offset_top = -414.0
+offset_right = 1727.0
+offset_bottom = 1070.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_uhn2s")
 
 [node name="RAM RANCH" type="Label" parent="." unique_id=1971047319]
-offset_left = 279.0
-offset_top = 75.0
-offset_right = 876.0
-offset_bottom = 181.0
+offset_left = 336.0
+offset_top = 74.0
+offset_right = 933.0
+offset_bottom = 180.0
 theme_override_fonts/font = ExtResource("4_4rgdw")
 theme_override_font_sizes/font_size = 120
 text = "RAM RANCH"
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=943737120]
-offset_left = -263.0
-offset_top = -231.0
-offset_right = 1494.0
-offset_bottom = 855.0
+offset_left = -256.0
+offset_top = -180.0
+offset_right = 1501.0
+offset_bottom = 906.0
 color = Color(0, 0, 0, 0)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2085920688]
@@ -121,10 +121,10 @@ libraries/ = SubResource("AnimationLibrary_uhn2s")
 
 [node name="ClickTag" type="Label" parent="." unique_id=249350370]
 visible = false
-offset_left = 338.0
-offset_top = 410.0
-offset_right = 834.0
-offset_bottom = 494.0
+offset_left = 386.0
+offset_top = 406.0
+offset_right = 882.0
+offset_bottom = 490.0
 theme_override_fonts/font = ExtResource("4_4rgdw")
 theme_override_font_sizes/font_size = 40
 text = "CLICK ANYWHERE TO START"
@@ -139,10 +139,10 @@ offset_bottom = 40.0
 
 [node name="Start" type="TextureButton" parent="Button_Manager" unique_id=855177693]
 layout_mode = 0
-offset_left = 394.0
-offset_top = 279.0
-offset_right = 774.0
-offset_bottom = 354.0
+offset_left = 426.0
+offset_top = 281.0
+offset_right = 806.0
+offset_bottom = 356.0
 texture_normal = ExtResource("5_dhcqh")
 texture_pressed = ExtResource("6_udspj")
 ignore_texture_size = true
@@ -162,10 +162,10 @@ horizontal_alignment = 1
 
 [node name="Settings" type="TextureButton" parent="Button_Manager" unique_id=1892038555]
 layout_mode = 0
-offset_left = 393.0
-offset_top = 411.0
-offset_right = 773.0
-offset_bottom = 481.0
+offset_left = 427.0
+offset_top = 412.0
+offset_right = 807.0
+offset_bottom = 482.0
 texture_normal = ExtResource("5_dhcqh")
 texture_pressed = ExtResource("6_udspj")
 ignore_texture_size = true
@@ -185,10 +185,10 @@ horizontal_alignment = 1
 
 [node name="Quit" type="TextureButton" parent="Button_Manager" unique_id=1245993682]
 layout_mode = 0
-offset_left = 391.0
-offset_top = 540.0
-offset_right = 773.0
-offset_bottom = 607.0
+offset_left = 423.0
+offset_top = 542.0
+offset_right = 805.0
+offset_bottom = 609.0
 texture_normal = ExtResource("5_dhcqh")
 texture_pressed = ExtResource("6_udspj")
 ignore_texture_size = true

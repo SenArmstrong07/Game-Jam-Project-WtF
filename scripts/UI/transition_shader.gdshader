@@ -2,7 +2,7 @@ shader_type canvas_item;
 
 uniform sampler2D screen_texture : hint_screen_texture;
 
-uniform float glitch_strength : hint_range(0.0, 1.0) = 0.0;
+uniform float glitch_strength : hint_range(0.0,1.0)=0.0;
 uniform float block_size = 80.0;
 
 float random(float x)

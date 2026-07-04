@@ -45,10 +45,19 @@ func _ready():
 	var overworld_root = get_parent().get_parent()
 	if is_instance_valid(overworld_root):
 		overworld_root.add_to_group("overworld_scene")
-	#create random seeds
-	moisture.seed = randi()
-	temperature.seed = randi()
-	altitude.seed = randi()
+	# Create or restore random seeds for deterministic world generation
+	if SignalBus.overworld_state.has("terrain_seeds"):
+		var saved_seeds = SignalBus.overworld_state["terrain_seeds"]
+		if saved_seeds.has("moisture"):
+			moisture.seed = saved_seeds["moisture"]
+		if saved_seeds.has("temperature"):
+			temperature.seed = saved_seeds["temperature"]
+		if saved_seeds.has("altitude"):
+			altitude.seed = saved_seeds["altitude"]
+	else:
+		moisture.seed = randi()
+		temperature.seed = randi()
+		altitude.seed = randi()
 	
 	altitude.frequency = 0.01
 	
@@ -157,6 +166,33 @@ func pre_generate_world() -> void:
 	
 	is_world_ready = true
 	world_generation_complete.emit()
+
+	#restore player position
+	if SignalBus.overworld_state.has("player_tile"):
+		player.position = map_to_local(
+			SignalBus.overworld_state["player_tile"]
+		)
+	# Enemy restoration
+	if SignalBus.overworld_state.has("enemies"):
+		var saved_enemies: Array = SignalBus.overworld_state["enemies"]
+
+		if saved_enemies.is_empty():
+			spawn_fixed_enemy_count()
+		else:
+			_spawn_saved_enemy_positions(saved_enemies)
+	else:
+		spawn_fixed_enemy_count()
+		
+		#Check to see if scene is in transition and overworld state isn't empty
+	if SignalBus.in_transition and !SignalBus.overworld_state.is_empty():
+
+		is_world_ready = true
+
+		world_generation_complete.emit()
+
+		return
+	
+
 	print("\n=== WORLD GENERATION COMPLETE (FINITE WORLD) ===")
 	print("Total chunks generated: ", total_chunks)
 	print("World bounds: ±", world_bounds, " chunks")
@@ -165,9 +201,6 @@ func pre_generate_world() -> void:
 	print("All chunks will remain loaded - no dynamic unloading occurs")
 	print("Node count should STABILIZE after this message")
 	print("===================================================\n")
-	
-	# Now spawn a fixed number of enemies
-	spawn_fixed_enemy_count()
 
 
 
@@ -295,6 +328,19 @@ func spawn_fixed_enemy_count() -> void:
 	enemies_spawned_count = spawned
 	print("[SPAWNING] Successfully spawned ", spawned, " enemies (target was ", enemy_count, ")")
 
+func _spawn_saved_enemy_positions(enemy_data: Array) -> void:
+	var spawned = 0
+	for enemy_info in enemy_data:
+		if enemy_info is Dictionary and enemy_info.has("position"):
+			var new_enemy = enemy_scene.instantiate()
+			new_enemy.position = enemy_info["position"]
+			get_parent().add_child.call_deferred(new_enemy)
+			enemy_spawned.emit(new_enemy)
+			spawned += 1
+			print("[SPAWNING] Restored enemy at", enemy_info["position"])
+
+	enemies_spawned_count = spawned
+	print("[SPAWNING] Restored ", spawned, " saved enemies")
 
 func get_world_bounds() -> Rect2:
 	"""Returns the playable world bounds as a Rect2"""

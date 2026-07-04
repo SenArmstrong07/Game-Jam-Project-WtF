@@ -1,223 +1,427 @@
 [gd_scene format=3 uid="uid://cifxh7of05osf"]
 
-[ext_resource type="Script" uid="uid://dcl5qs7m8fqyn" path="res://scripts/UI/title_screen.gd" id="1_uhn2s"]
-[ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="2_4rgdw"]
-[ext_resource type="Texture2D" uid="uid://depai5425qbu6" path="res://assets/tiles/net_world.png" id="2_uhn2s"]
-[ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="4_4rgdw"]
-[ext_resource type="Texture2D" uid="uid://dolq1dercip4d" path="res://assets/ui/BTN_Normal.png" id="5_dhcqh"]
-[ext_resource type="Texture2D" uid="uid://dtogs5j2ld3ov" path="res://assets/ui/BTN_Pressed.png" id="6_udspj"]
-[ext_resource type="Script" uid="uid://csnjimv3ve465" path="res://scripts/UI/start_btn.gd" id="7_udspj"]
-[ext_resource type="Script" uid="uid://ck6ylwxqfvak3" path="res://scripts/UI/settings.gd" id="8_pdu2t"]
-[ext_resource type="Script" uid="uid://ba6t0j637jrtv" path="res://scripts/UI/quit.gd" id="9_mfmar"]
+[ext_resource type="FontFile" uid="uid://3qs05t5mklug" path="res://assets/fonts/CyberformDemo-Oblique.otf" id="2_1v42v"]
+[ext_resource type="Script" uid="uid://bgw7kunp5o75y" path="res://scripts/UI/TitleScreenUI.gd" id="2_b8e31"]
+[ext_resource type="FontFile" uid="uid://c7d7oqgkcat4c" path="res://assets/fonts/Neutora Demo.otf" id="3_h0oma"]
+[ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="4_4rgdw"]
+[ext_resource type="FontFile" uid="uid://ctgejobb4njpx" path="res://assets/fonts/ARCADECLASSIC.TTF" id="5_rdh3f"]
+[ext_resource type="Texture2D" uid="uid://bu2bwlb8l3pq0" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_02.png" id="6_dhcqh"]
+[ext_resource type="AudioStream" uid="uid://7a0bd2o44r6q" path="res://assets/FX/TitleScreen.ogg" id="7_udspj"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_t3uxp"]
-shader = ExtResource("2_4rgdw")
+[sub_resource type="GDScript" id="GDScript_mfmar"]
+script/source = "@tool
+extends Node2D
 
-[sub_resource type="Animation" id="Animation_mfmar"]
-resource_name = "Blink"
-length = 2.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("ClickTag:visible")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.04, 1, 2),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 1,
-"values": [true, false, true]
-}
+@export var background_color := Color(0.03, 0.05, 0.12)
+@export var grid_color := Color(0.0, 0.9, 1.0, 0.45)
 
-[sub_resource type="Animation" id="Animation_uhn2s"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("ColorRect:color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0, 0, 0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("ClickTag:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
+@export var grid_spacing := 48.0
+@export var scroll_speed := 140.0
+@export var line_thickness := 2.0
 
-[sub_resource type="Animation" id="Animation_t3uxp"]
-resource_name = "black_in"
-length = 2.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("ColorRect:color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.6333333, 1.4333333),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0)]
-}
+var scroll := 0.0
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_uhn2s"]
-_data = {
-&"Blink": SubResource("Animation_mfmar"),
-&"RESET": SubResource("Animation_uhn2s"),
-&"black_in": SubResource("Animation_t3uxp")
-}
+class GlowSquare:
+	var pos := Vector2.ZERO
+	var speed := 40.0
+	var size := 8.0
+	var alpha := 0.5
+
+var squares : Array[GlowSquare]
+
+func _ready():
+	generate_squares()
+
+func _enter_tree():
+	if Engine.is_editor_hint():
+		set_process(true)
+		queue_redraw()
+		
+		
+func generate_squares():
+	squares.clear()
+
+	for i in range(40):
+		var s = GlowSquare.new()
+		s.pos = Vector2(
+			randf_range(0, 1152),
+			randf_range(0, 648)
+		)
+		s.speed = randf_range(20, 70)
+		s.size = randf_range(4, 12)
+		s.alpha = randf_range(0.2, 0.7)
+		squares.append(s)
+		
+
+func _process(delta):
+
+	scroll += scroll_speed * delta
+	queue_redraw()
+	var h = get_viewport_rect().size.y
+
+	if scroll > grid_spacing:
+		scroll -= grid_spacing
+
+	for s in squares:
+
+		s.pos.y -= s.speed * delta
+
+		if s.pos.y < -20:
+			s.pos.y = h + 20
+			s.pos.x = randf_range(0, get_viewport_rect().size.x)
+
+	queue_redraw()
+
+func _draw():
+
+	var size = get_viewport_rect().size
+
+	draw_rect(Rect2(Vector2.ZERO, size), background_color)
+
+	# Horizontal grid
+	var y = -grid_spacing + scroll
+
+	while y < size.y + grid_spacing:
+
+		draw_line(
+			Vector2(0, y),
+			Vector2(size.x, y),
+			grid_color,
+			line_thickness
+		)
+
+		y += grid_spacing
+
+	# Vertical grid
+	var x = 0.0
+
+	while x <= size.x:
+
+		draw_line(
+			Vector2(x, 0),
+			Vector2(x, size.y),
+			grid_color,
+			line_thickness
+		)
+
+		x += grid_spacing
+
+	# Floating cyber squares
+	for s in squares:
+
+		draw_rect(
+			Rect2(
+				s.pos,
+				Vector2.ONE * s.size
+			),
+			Color(0.3, 1.0, 1.0, s.alpha)
+		)
+
+	# Scanlines
+	for yy in range(0, int(size.y), 4):
+
+		draw_line(
+			Vector2(0, yy),
+			Vector2(size.x, yy),
+			Color(0, 0, 0, 0.05),
+			1
+		)
+"
+
+[sub_resource type="Theme" id="Theme_h0oma"]
+Label/styles/normal = null
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rdh3f"]
+bg_color = Color(0.8464899, 0.103929885, 0.21833342, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 35.0
+expand_margin_top = 5.0
+expand_margin_right = 35.0
+expand_margin_bottom = 5.0
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mfmar"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_udspj"]
+bg_color = Color(1, 0.18039216, 0.29411766, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 30.0
+expand_margin_top = 3.0
+expand_margin_right = 30.0
+expand_margin_bottom = 3.0
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1v42v"]
+bg_color = Color(0.9970148, 0.46981978, 0.49107265, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 20.0
+expand_margin_top = 3.0
+expand_margin_right = 20.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="Theme" id="Theme_4rgdw"]
+Button/styles/hover = SubResource("StyleBoxFlat_rdh3f")
+Button/styles/hover_pressed = SubResource("StyleBoxFlat_mfmar")
+Button/styles/normal = SubResource("StyleBoxFlat_udspj")
+Button/styles/pressed = SubResource("StyleBoxFlat_1v42v")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pdu2t"]
+bg_color = Color(0.22537696, 0.41681212, 0.8053717, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 35.0
+expand_margin_top = 5.0
+expand_margin_right = 35.0
+expand_margin_bottom = 5.0
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhcqh"]
+bg_color = Color(0.27058825, 0.5764706, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 30.0
+expand_margin_top = 3.0
+expand_margin_right = 30.0
+expand_margin_bottom = 4.0
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h0oma"]
+bg_color = Color(0.37675825, 0.5560744, 0.97013944, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 20.0
+expand_margin_top = 3.0
+expand_margin_right = 20.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="Theme" id="Theme_rdh3f"]
+Button/styles/hover = SubResource("StyleBoxFlat_pdu2t")
+Button/styles/normal = SubResource("StyleBoxFlat_dhcqh")
+Button/styles/pressed = SubResource("StyleBoxFlat_h0oma")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b8e31"]
+bg_color = Color(0.13682574, 0.13682574, 0.13682568, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+expand_margin_left = 5.0
+expand_margin_right = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_soclu"]
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.06879826, 0.06879829, 0.06879823, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="Theme" id="Theme_udspj"]
+Button/styles/hover = SubResource("StyleBoxFlat_b8e31")
+Button/styles/normal = SubResource("StyleBoxFlat_soclu")
 
 [node name="TitleScreen" type="Node2D" unique_id=647713435]
-script = ExtResource("1_uhn2s")
 
-[node name="BackgroundTexture" type="TextureRect" parent="." unique_id=2070715534]
-texture_filter = 1
-texture_repeat = 2
-material = SubResource("ShaderMaterial_t3uxp")
+[node name="TitleScreenUI" type="Control" parent="." unique_id=761161529]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1282.0
+offset_bottom = 720.0
+script = ExtResource("2_b8e31")
+
+[node name="Animated_BG" type="Node2D" parent="TitleScreenUI" unique_id=809498749]
+script = SubResource("GDScript_mfmar")
+
+[node name="TEXT_CONTAINER" type="Control" parent="TitleScreenUI" unique_id=49828716]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="D3" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=1471192289]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 203.5
+offset_top = 130.0
+offset_right = 375.5
+offset_bottom = 245.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.18039216, 0.29411766, 1)
+theme_override_colors/font_shadow_color = Color(0.92156863, 0, 0.18431373, 0.41960785)
+theme_override_colors/font_outline_color = Color(0.48428565, 0, 0.08520817, 1)
+theme_override_constants/line_spacing = 6
+theme_override_constants/paragraph_spacing = 5
+theme_override_constants/shadow_offset_x = 8
+theme_override_constants/shadow_offset_y = 7
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("2_1v42v")
+theme_override_font_sizes/font_size = 120
+text = "d3"
+
+[node name="BU" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=1361502019]
+layout_mode = 0
+offset_left = 220.0
+offset_top = 198.0
+offset_right = 529.0
+offset_bottom = 424.0
+theme_override_colors/font_color = Color(0.27058825, 0.5764706, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.2255058, 0.35418594, 0.66972786, 0.7411765)
+theme_override_colors/font_outline_color = Color(0, 0.22745098, 0.5803922, 1)
+theme_override_constants/line_spacing = 5
+theme_override_constants/paragraph_spacing = 1
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_h0oma")
+theme_override_font_sizes/font_size = 100
+text = "Bu"
+
+[node name="GGED" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=127135908]
+layout_mode = 0
+offset_left = 399.0
+offset_top = 85.0
+offset_right = 1094.0
+offset_bottom = 597.0
+theme = SubResource("Theme_h0oma")
+theme_override_colors/font_shadow_color = Color(0.42352942, 0.45882353, 0.59607846, 0.7764706)
+theme_override_colors/font_outline_color = Color(0.1584723, 0.15847233, 0.1584723, 1)
+theme_override_constants/line_spacing = 1
+theme_override_constants/paragraph_spacing = 3
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_h0oma")
+theme_override_font_sizes/font_size = 204
+text = "GGED
+"
+
+[node name="PRESS_KEY" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=765276795]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.317
+anchor_top = 0.6
+anchor_right = 0.68100005
+anchor_bottom = 0.61700004
+offset_left = 411.32
+offset_top = 403.0
+offset_right = 827.76
+offset_bottom = 436.32
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.99386555, 0.9617563, 0.95173043, 1)
+theme_override_colors/font_shadow_color = Color(0.18534163, 0.0133357495, 0, 0.7411765)
+theme_override_constants/line_spacing = 3
+theme_override_fonts/font = ExtResource("2_1v42v")
+theme_override_font_sizes/font_size = 35
+text = "PRESS SPACE TO START"
+
+[node name="W" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=332589706]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 670.0
+offset_right = 118.0
+offset_bottom = 739.0
+theme_override_colors/font_color = Color(0.94509804, 0.93333334, 0, 0.67058825)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_h0oma")
+theme_override_font_sizes/font_size = 20
+text = "WE"
+
+[node name="T" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=394783415]
+layout_mode = 0
+offset_left = 69.0
+offset_top = 666.0
+offset_right = 120.0
+offset_bottom = 694.0
+rotation = -4.712389
+theme_override_colors/font_color = Color(1, 1, 1, 0.67058825)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_h0oma")
+theme_override_font_sizes/font_size = 10
+text = "THE"
+
+[node name="FREEDOM" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=1250400627]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 690.0
+offset_right = 318.0
+offset_bottom = 759.0
+theme_override_colors/font_color = Color(0.81960785, 0.11764706, 0.1882353, 0.67058825)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_1v42v")
+theme_override_font_sizes/font_size = 30
+text = "FREEDOM"
+
+[node name="MadeFor" type="Label" parent="TitleScreenUI/TEXT_CONTAINER" unique_id=1968948547]
+layout_mode = 0
+offset_left = 821.0
+offset_top = 690.0
+offset_right = 1272.0
+offset_bottom = 718.0
+theme_override_fonts/font = ExtResource("4_4rgdw")
+theme_override_font_sizes/font_size = 30
+text = "Develop For Explicit GameJam 2026"
+
+[node name="Menu_Buttons" type="VBoxContainer" parent="TitleScreenUI" unique_id=393192441]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -609.0
-offset_top = -414.0
-offset_right = 1727.0
-offset_bottom = 1070.0
+offset_left = -77.0
+offset_top = 108.0
+offset_right = 86.0
+offset_bottom = 207.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_uhn2s")
+theme_override_constants/separation = 15
 
-[node name="RAM RANCH" type="Label" parent="." unique_id=1971047319]
-offset_left = 336.0
-offset_top = 74.0
-offset_right = 933.0
-offset_bottom = 180.0
-theme_override_fonts/font = ExtResource("4_4rgdw")
-theme_override_font_sizes/font_size = 120
-text = "RAM RANCH"
+[node name="Continue_button" type="Button" parent="TitleScreenUI/Menu_Buttons" unique_id=979684797]
+layout_mode = 2
+theme = SubResource("Theme_4rgdw")
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_rdh3f")
+theme_override_font_sizes/font_size = 35
+text = "CONTINUE"
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=943737120]
-offset_left = -256.0
-offset_top = -180.0
-offset_right = 1501.0
-offset_bottom = 906.0
-color = Color(0, 0, 0, 0)
+[node name="New_button" type="Button" parent="TitleScreenUI/Menu_Buttons" unique_id=1423623545]
+layout_mode = 2
+theme = SubResource("Theme_rdh3f")
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_rdh3f")
+theme_override_font_sizes/font_size = 35
+text = "NEW GAME"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2085920688]
-libraries/ = SubResource("AnimationLibrary_uhn2s")
+[node name="Exit_button" type="Button" parent="TitleScreenUI/Menu_Buttons" unique_id=362748349]
+layout_mode = 2
+theme = SubResource("Theme_udspj")
+theme_override_constants/icon_max_width = 100
+theme_override_icons/icon = ExtResource("6_dhcqh")
+icon_alignment = 1
 
-[node name="ClickTag" type="Label" parent="." unique_id=249350370]
-visible = false
-offset_left = 386.0
-offset_top = 406.0
-offset_right = 882.0
-offset_bottom = 490.0
-theme_override_fonts/font = ExtResource("4_4rgdw")
-theme_override_font_sizes/font_size = 40
-text = "CLICK ANYWHERE TO START"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Button_Manager" type="Control" parent="." unique_id=768632724]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Start" type="TextureButton" parent="Button_Manager" unique_id=855177693]
-layout_mode = 0
-offset_left = 426.0
-offset_top = 281.0
-offset_right = 806.0
-offset_bottom = 356.0
-texture_normal = ExtResource("5_dhcqh")
-texture_pressed = ExtResource("6_udspj")
-ignore_texture_size = true
-stretch_mode = 0
-script = ExtResource("7_udspj")
-
-[node name="StartLabel" type="Label" parent="Button_Manager/Start" unique_id=1125124962]
-layout_mode = 0
-offset_left = 116.0
-offset_top = 24.0
-offset_right = 283.0
-offset_bottom = 69.0
-theme_override_fonts/font = ExtResource("4_4rgdw")
-theme_override_font_sizes/font_size = 40
-text = "START"
-horizontal_alignment = 1
-
-[node name="Settings" type="TextureButton" parent="Button_Manager" unique_id=1892038555]
-layout_mode = 0
-offset_left = 427.0
-offset_top = 412.0
-offset_right = 807.0
-offset_bottom = 482.0
-texture_normal = ExtResource("5_dhcqh")
-texture_pressed = ExtResource("6_udspj")
-ignore_texture_size = true
-stretch_mode = 0
-script = ExtResource("8_pdu2t")
-
-[node name="SettingsLabel" type="Label" parent="Button_Manager/Settings" unique_id=1880309553]
-layout_mode = 0
-offset_left = 110.0
-offset_top = 21.0
-offset_right = 290.0
-offset_bottom = 66.0
-theme_override_fonts/font = ExtResource("4_4rgdw")
-theme_override_font_sizes/font_size = 40
-text = "SETTINGS"
-horizontal_alignment = 1
-
-[node name="Quit" type="TextureButton" parent="Button_Manager" unique_id=1245993682]
-layout_mode = 0
-offset_left = 423.0
-offset_top = 542.0
-offset_right = 805.0
-offset_bottom = 609.0
-texture_normal = ExtResource("5_dhcqh")
-texture_pressed = ExtResource("6_udspj")
-ignore_texture_size = true
-stretch_mode = 0
-script = ExtResource("9_mfmar")
-
-[node name="QuitLabel" type="Label" parent="Button_Manager/Quit" unique_id=1016089340]
-layout_mode = 0
-offset_left = 113.0
-offset_top = 19.0
-offset_right = 280.0
-offset_bottom = 64.0
-theme_override_fonts/font = ExtResource("4_4rgdw")
-theme_override_font_sizes/font_size = 40
-text = "QUIT"
-horizontal_alignment = 1
-
-[connection signal="mouse_entered" from="Button_Manager/Start" to="Button_Manager/Start" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Button_Manager/Start" to="Button_Manager/Start" method="_on_mouse_exited"]
-[connection signal="pressed" from="Button_Manager/Start" to="." method="_on_start_pressed"]
-[connection signal="mouse_entered" from="Button_Manager/Start/StartLabel" to="Button_Manager/Start" method="_on_start_label_mouse_entered"]
-[connection signal="mouse_exited" from="Button_Manager/Start/StartLabel" to="Button_Manager/Start" method="_on_start_label_mouse_exited"]
-[connection signal="mouse_entered" from="Button_Manager/Settings" to="Button_Manager/Settings" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Button_Manager/Settings" to="Button_Manager/Settings" method="_on_mouse_exited"]
-[connection signal="pressed" from="Button_Manager/Settings" to="." method="_on_settings_pressed"]
-[connection signal="mouse_entered" from="Button_Manager/Settings/SettingsLabel" to="Button_Manager/Settings" method="_on_settings_label_mouse_entered"]
-[connection signal="mouse_exited" from="Button_Manager/Settings/SettingsLabel" to="Button_Manager/Settings" method="_on_settings_label_mouse_exited"]
-[connection signal="mouse_entered" from="Button_Manager/Quit" to="Button_Manager/Quit" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Button_Manager/Quit" to="Button_Manager/Quit" method="_on_mouse_exited"]
-[connection signal="pressed" from="Button_Manager/Quit" to="." method="_on_quit_pressed"]
-[connection signal="mouse_entered" from="Button_Manager/Quit/QuitLabel" to="Button_Manager/Quit" method="_on_quit_label_mouse_entered"]
-[connection signal="mouse_exited" from="Button_Manager/Quit/QuitLabel" to="Button_Manager/Quit" method="_on_quit_label_mouse_exited"]
+[node name="TitleScreenBGM" type="AudioStreamPlayer2D" parent="." unique_id=1286021108]
+stream = ExtResource("7_udspj")
+autoplay = true

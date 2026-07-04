@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bsccs5bu4nmyc" path="res://scripts/units/spaghetti_code.gd" id="1_vww3g"]
 [ext_resource type="Texture2D" uid="uid://w8pwuvaijk64" path="res://assets/characters/Glacier_Man_Asset_Pack/Glacier_Man_Enemies/PNG/Walrus_Bot.png" id="2_lacfg"]
+[ext_resource type="FontFile" uid="uid://dl3c76h3ngx1y" path="res://assets/fonts/Nebal.ttf" id="3_lacfg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dh1tq"]
 atlas = ExtResource("2_lacfg")
@@ -93,6 +94,16 @@ animation = &"ATTACK"
 autoplay = "IDLE"
 frame_progress = 0.777204
 
+[node name="HPLabel" type="Label" parent="." unique_id=2079531193]
+texture_filter = 1
+offset_left = 13.0
+offset_top = -98.0
+offset_right = 53.0
+offset_bottom = -75.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_lacfg")
+theme_override_font_sizes/font_size = 15
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=715328508]
 position = Vector2(-25, -65)
 shape = SubResource("CapsuleShape2D_cq3a5")
@@ -100,11 +111,3 @@ shape = SubResource("CapsuleShape2D_cq3a5")
 [node name="HitPoint" type="Marker2D" parent="." unique_id=719587077]
 position = Vector2(-41.000004, -82)
 scale = Vector2(1.0000001, 1.0000001)
-
-[node name="HPLabel" type="Label" parent="." unique_id=234351203]
-texture_filter = 1
-offset_left = 10.0
-offset_top = -106.0
-offset_right = 50.0
-offset_bottom = -83.0
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)

@@ -97,7 +97,7 @@ func _ready() -> void:
 	#How we spawn enemies based on encounter:
 	#for i in range(encounter.enemy_count):
 		#spawn_enemy(enemy_spawn_positions[i])
-
+	await get_tree().process_frame
 	_start_preparation_phase()
 
 func _on_select_pressed():
@@ -210,12 +210,13 @@ func is_enemy_on_tile(pos: Vector2i) -> bool:
 	return false
 	
 func _start_preparation_phase() -> void:
-	print("=== PREPARATION PHASE ===")
-
 	current_phase = BattlePhase.PREPARATION
-	move_shuffle.visible = false
-	player_ui.visible = false
-	
+
+	player_ui.hide_hp_ui()
+	move_shuffle.hide_bar()
+
+	await get_tree().create_timer(0.35).timeout
+
 	phase_changed.emit(current_phase)
 
 	player_hand = player_deck.draw_hand(10)
@@ -456,17 +457,20 @@ func _start_battle_phase() -> void:
 	current_phase = BattlePhase.BATTLE
 	battle_active = true
 	current_chip_index = 0
-	move_shuffle.visible = true
-	player_ui.visible = true
+
 	update_player_ui()
+	player_ui.show_hp_ui()
 
-	if !selected_chips.is_empty():
-		var chip := selected_chips[current_chip_index]
+	move_shuffle.update_chip_display(
+		selected_chips,
+		current_chip_index
+	)
 
-		player.attack_range = chip.range_tile
-		player.attack_power = chip.power
+	move_shuffle.show_bar()
 
-		move_shuffle.update_chip_display(selected_chips, current_chip_index)
+	var first_chip := selected_chips[0]
+	player.attack_range = first_chip.range_tile
+	player.attack_power = first_chip.power
 
 	_update_ui()
 	
@@ -546,6 +550,7 @@ func use_chip(chip: Chip):
 # ============================================================
 
 func _next_round() -> void:
+	move_shuffle.hide_bar()
 	player.movement_locked = false
 
 	selected_chips.clear()

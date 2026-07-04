@@ -168,7 +168,11 @@ func pre_generate_world() -> void:
 	world_generation_complete.emit()
 
 	#restore player position
-	if SignalBus.overworld_state.has("player_tile"):
+	if SignalBus.overworld_state.has("player_position"):
+		var saved_player_pos = SignalBus.overworld_state["player_position"]
+		if saved_player_pos is Vector2i:
+			player.position = map_to_local(saved_player_pos)
+	elif SignalBus.overworld_state.has("player_tile"):
 		player.position = map_to_local(
 			SignalBus.overworld_state["player_tile"]
 		)
@@ -202,6 +206,67 @@ func pre_generate_world() -> void:
 	print("Node count should STABILIZE after this message")
 	print("===================================================\n")
 
+
+
+func build_world_map_snapshot() -> Dictionary:
+	var land_tiles: Array[Vector2i] = []
+	var world_bounds_rect = get_world_bounds()
+	var min_tile_x = int(world_bounds_rect.position.x / tile_size)
+	var max_tile_x = int((world_bounds_rect.position.x + world_bounds_rect.size.x) / tile_size)
+	var min_tile_y = int(world_bounds_rect.position.y / tile_size)
+	var max_tile_y = int((world_bounds_rect.position.y + world_bounds_rect.size.y) / tile_size)
+
+	for tile_x in range(min_tile_x, max_tile_x + 1):
+		for tile_y in range(min_tile_y, max_tile_y + 1):
+			var altitude = get_altitude(tile_x, tile_y)
+			if altitude >= 0:
+				land_tiles.append(Vector2i(tile_x, tile_y))
+
+	var islands = _group_land_tiles_into_islands(land_tiles)
+	return {
+		"land_tiles": land_tiles,
+		"islands": islands,
+		"world_bounds": world_bounds_rect,
+		"world_size": get_world_size(),
+	}
+
+
+func _group_land_tiles_into_islands(land_tiles: Array[Vector2i]) -> Array:
+	var islands: Array = []
+	var processed: Dictionary = {}
+	var land_set: Dictionary = {}
+
+	for tile in land_tiles:
+		land_set[tile] = true
+
+	for tile in land_tiles:
+		if tile in processed:
+			continue
+
+		var island: Array[Vector2i] = []
+		var queue = [tile]
+
+		while queue.size() > 0:
+			var current = queue.pop_front()
+			if current in processed:
+				continue
+
+			processed[current] = true
+			island.append(current)
+
+			for neighbor in [
+				current + Vector2i.RIGHT,
+				current + Vector2i.LEFT,
+				current + Vector2i.DOWN,
+				current + Vector2i.UP,
+			]:
+				if neighbor in land_set and neighbor not in processed:
+					queue.append(neighbor)
+
+		if island.size() > 0:
+			islands.append(island)
+
+	return islands
 
 
 func find_valid_spawn_tile() -> Vector2:

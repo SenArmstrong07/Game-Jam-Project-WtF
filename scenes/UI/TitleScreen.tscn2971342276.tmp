@@ -1,0 +1,250 @@
+[gd_scene format=3 uid="uid://cifxh7of05osf"]
+
+[ext_resource type="Script" uid="uid://dcl5qs7m8fqyn" path="res://scripts/UI/title_screen.gd" id="1_uhn2s"]
+[ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="2_4rgdw"]
+[ext_resource type="Texture2D" uid="uid://depai5425qbu6" path="res://assets/tiles/net_world.png" id="2_uhn2s"]
+[ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="4_4rgdw"]
+[ext_resource type="Texture2D" uid="uid://dolq1dercip4d" path="res://assets/ui/BTN_Normal.png" id="5_dhcqh"]
+[ext_resource type="Texture2D" uid="uid://dtogs5j2ld3ov" path="res://assets/ui/BTN_Pressed.png" id="6_udspj"]
+[ext_resource type="Script" uid="uid://csnjimv3ve465" path="res://scripts/UI/start_btn.gd" id="7_udspj"]
+[ext_resource type="Script" uid="uid://ck6ylwxqfvak3" path="res://scripts/UI/settings.gd" id="8_pdu2t"]
+[ext_resource type="Script" uid="uid://ba6t0j637jrtv" path="res://scripts/UI/quit.gd" id="9_mfmar"]
+[ext_resource type="Script" uid="uid://d3s5aiwraa2gs" path="res://scripts/UI/Animated_BG.gd" id="10_1v42v"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t3uxp"]
+shader = ExtResource("2_4rgdw")
+
+[sub_resource type="Animation" id="Animation_mfmar"]
+resource_name = "Blink"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ClickTag:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.04, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+
+[sub_resource type="Animation" id="Animation_uhn2s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ClickTag:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_t3uxp"]
+resource_name = "black_in"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.6333333, 1.4333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_uhn2s"]
+_data = {
+&"Blink": SubResource("Animation_mfmar"),
+&"RESET": SubResource("Animation_uhn2s"),
+&"black_in": SubResource("Animation_t3uxp")
+}
+
+[node name="TitleScreen" type="Node2D" unique_id=647713435]
+script = ExtResource("1_uhn2s")
+
+[node name="BackgroundTexture" type="TextureRect" parent="." unique_id=2070715534]
+visible = false
+texture_filter = 1
+texture_repeat = 2
+material = SubResource("ShaderMaterial_t3uxp")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2.0
+offset_top = -3.0
+offset_right = 1330.0
+offset_bottom = 721.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_uhn2s")
+
+[node name="RAM RANCH" type="Label" parent="." unique_id=1971047319]
+visible = false
+offset_left = 279.0
+offset_top = 75.0
+offset_right = 876.0
+offset_bottom = 181.0
+theme_override_fonts/font = ExtResource("4_4rgdw")
+theme_override_font_sizes/font_size = 120
+text = "RAM RANCH"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=943737120]
+visible = false
+offset_left = -263.0
+offset_top = -231.0
+offset_right = 1494.0
+offset_bottom = 855.0
+color = Color(0, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2085920688]
+libraries/ = SubResource("AnimationLibrary_uhn2s")
+
+[node name="ClickTag" type="Label" parent="." unique_id=249350370]
+visible = false
+offset_left = 338.0
+offset_top = 410.0
+offset_right = 834.0
+offset_bottom = 494.0
+theme_override_fonts/font = ExtResource("4_4rgdw")
+theme_override_font_sizes/font_size = 40
+text = "CLICK ANYWHERE TO START"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button_Manager" type="Control" parent="." unique_id=768632724]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Start" type="TextureButton" parent="Button_Manager" unique_id=855177693]
+layout_mode = 0
+offset_left = 394.0
+offset_top = 279.0
+offset_right = 774.0
+offset_bottom = 354.0
+texture_normal = ExtResource("5_dhcqh")
+texture_pressed = ExtResource("6_udspj")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("7_udspj")
+
+[node name="StartLabel" type="Label" parent="Button_Manager/Start" unique_id=1125124962]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 24.0
+offset_right = 283.0
+offset_bottom = 69.0
+theme_override_fonts/font = ExtResource("4_4rgdw")
+theme_override_font_sizes/font_size = 40
+text = "START"
+horizontal_alignment = 1
+
+[node name="Settings" type="TextureButton" parent="Button_Manager" unique_id=1892038555]
+layout_mode = 0
+offset_left = 393.0
+offset_top = 411.0
+offset_right = 773.0
+offset_bottom = 481.0
+texture_normal = ExtResource("5_dhcqh")
+texture_pressed = ExtResource("6_udspj")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("8_pdu2t")
+
+[node name="SettingsLabel" type="Label" parent="Button_Manager/Settings" unique_id=1880309553]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 21.0
+offset_right = 290.0
+offset_bottom = 66.0
+theme_override_fonts/font = ExtResource("4_4rgdw")
+theme_override_font_sizes/font_size = 40
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="Quit" type="TextureButton" parent="Button_Manager" unique_id=1245993682]
+layout_mode = 0
+offset_left = 391.0
+offset_top = 540.0
+offset_right = 773.0
+offset_bottom = 607.0
+texture_normal = ExtResource("5_dhcqh")
+texture_pressed = ExtResource("6_udspj")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("9_mfmar")
+
+[node name="QuitLabel" type="Label" parent="Button_Manager/Quit" unique_id=1016089340]
+layout_mode = 0
+offset_left = 113.0
+offset_top = 19.0
+offset_right = 280.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource("4_4rgdw")
+theme_override_font_sizes/font_size = 40
+text = "QUIT"
+horizontal_alignment = 1
+
+[node name="TitleScreenUI" type="Control" parent="." unique_id=761161529]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1282.0
+offset_bottom = 720.0
+
+[node name="Label" type="Label" parent="TitleScreenUI" unique_id=1471192289]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -70.5
+offset_top = 81.0
+offset_right = 70.5
+offset_bottom = 157.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 50
+text = "TITLE PLACEHOLDER"
+
+[node name="Animated_BG" type="Node2D" parent="TitleScreenUI" unique_id=809498749]
+script = ExtResource("10_1v42v")
+
+[connection signal="mouse_entered" from="Button_Manager/Start" to="Button_Manager/Start" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Button_Manager/Start" to="Button_Manager/Start" method="_on_mouse_exited"]
+[connection signal="pressed" from="Button_Manager/Start" to="." method="_on_start_pressed"]
+[connection signal="mouse_entered" from="Button_Manager/Start/StartLabel" to="Button_Manager/Start" method="_on_start_label_mouse_entered"]
+[connection signal="mouse_exited" from="Button_Manager/Start/StartLabel" to="Button_Manager/Start" method="_on_start_label_mouse_exited"]
+[connection signal="mouse_entered" from="Button_Manager/Settings" to="Button_Manager/Settings" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Button_Manager/Settings" to="Button_Manager/Settings" method="_on_mouse_exited"]
+[connection signal="pressed" from="Button_Manager/Settings" to="." method="_on_settings_pressed"]
+[connection signal="mouse_entered" from="Button_Manager/Settings/SettingsLabel" to="Button_Manager/Settings" method="_on_settings_label_mouse_entered"]
+[connection signal="mouse_exited" from="Button_Manager/Settings/SettingsLabel" to="Button_Manager/Settings" method="_on_settings_label_mouse_exited"]
+[connection signal="mouse_entered" from="Button_Manager/Quit" to="Button_Manager/Quit" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Button_Manager/Quit" to="Button_Manager/Quit" method="_on_mouse_exited"]
+[connection signal="pressed" from="Button_Manager/Quit" to="." method="_on_quit_pressed"]
+[connection signal="mouse_entered" from="Button_Manager/Quit/QuitLabel" to="Button_Manager/Quit" method="_on_quit_label_mouse_entered"]
+[connection signal="mouse_exited" from="Button_Manager/Quit/QuitLabel" to="Button_Manager/Quit" method="_on_quit_label_mouse_exited"]

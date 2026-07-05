@@ -2,15 +2,14 @@ extends BattleBase
 class_name BattleTutorial
 
 @onready var ui: CanvasLayer = $PLAYER_HP_BATTLE_UI
-@onready var enemy_hitpoint: Marker2D = $CommonBug/CommonBugMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
 
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
 const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
 const FIREWALL = preload("uid://x8y5dkw5aur6")
-const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
+const COMMON_BUG_SCENE_PATH = "res://scenes/units/CommonBug.tscn"
 
 
 
@@ -35,7 +34,7 @@ var first_combo_chip: Chip = null
 var second_combo_chip: Chip = null
 var pending_combo: Chip = null
 const DECK_COLUMNS := 5
-var encounter = SignalBus.current_encounter
+var encounter: EncounterData
 
 signal phase_changed(new_phase: BattlePhase)
 signal player_chip_selected(chip: Chip)
@@ -78,6 +77,9 @@ func _ready() -> void:
 	player.hp_changed.connect(_on_player_hp_changed)
 	# IMPORTANT: store enemies properly
 	enemies.clear()
+
+	# Fetch the encounter data fresh from SignalBus (not cached at class load time)
+	encounter = SignalBus.current_encounter
 
 	if encounter != null:
 		for i in range(encounter.enemy_count):
@@ -263,7 +265,17 @@ func spawn_enemy(pos: Vector2i) -> void:
 	while is_enemy_on_tile(pos):
 		pos.x += 1
 
-	var e: Unit = COMMON_BUG_SCENE.instantiate()
+	# Load the scene fresh to avoid cache issues
+	var enemy_scene = load(COMMON_BUG_SCENE_PATH)
+	if enemy_scene == null:
+		push_error("Failed to load CommonBug scene from ", COMMON_BUG_SCENE_PATH)
+		return
+
+	var e: Unit = enemy_scene.instantiate()
+	if e == null:
+		push_error("Failed to instantiate CommonBug scene from ", COMMON_BUG_SCENE_PATH)
+		return
+
 	add_child(e)
 
 	e.add_to_group("enemies")

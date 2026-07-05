@@ -1,7 +1,7 @@
 extends CanvasLayer
 
-@onready var color_rect: ColorRect = $ColorRect
-@onready var label: Label = $ColorRect/Label
+@onready var color_rect: ColorRect = $Transition_rect
+@onready var label: Label = $Transition_rect/Transition_label
 
 @export var fade_time := 1.0
 @export var hold_time := 2.0

@@ -1,22 +1,21 @@
 extends Unit
 
-@onready var anim_player: AnimatedSprite2D = $AnimatedSprite2D
 const EnemyBasicProjectile = preload("res://scenes/Attacks/enemy_basic_projectile.tscn")
-
-@onready var player_character: Unit = $"../PlayerCharacter"
-@onready var battle_scene: BattleBase = get_parent()
-@onready var ProjectileShootPoint: Marker2D = $HitPoint
-
 
 const GRID_WIDTH := 4
 const GRID_HEIGHT := 4
 const X_OFFSET := 4
 const TILE_SIZE := 64
 
+var anim_player: AnimatedSprite2D
+var player_character: Unit
+var battle_scene: BattleBase
+var ProjectileShootPoint: Marker2D
+var hp_label: Label
+
 var target_position := Vector2.ZERO
 var attack_locked := false
 @export var attack_recovery := 0.5
-@onready var hp_label: Label = $HPLabel
 
 var stun_tween: Tween
 var original_modulate := Color.WHITE
@@ -42,12 +41,26 @@ var displayed_hp := 0
 var hp_tween: Tween
 
 func _ready():
+	# Call parent's _ready first to initialize sprite and hp
+	super._ready()
+	
 	z_index = 10
 	team = Team.ENEMY
 	add_to_group("enemies")
 	
+	# Cache node references now that we're in the tree
+	anim_player = $AnimatedSprite2D
+	hp_label = $HPLabel
+	ProjectileShootPoint = $HitPoint
+	battle_scene = get_parent()
+	
+	# Get player character from the battle scene
+	if battle_scene:
+		player_character = battle_scene.find_child("PlayerCharacter", true, false) as Unit
+	
 	displayed_hp = hp
-	hp_label.text = str(displayed_hp)
+	if hp_label:
+		hp_label.text = str(displayed_hp)
 	
 	update_hp_label()
 

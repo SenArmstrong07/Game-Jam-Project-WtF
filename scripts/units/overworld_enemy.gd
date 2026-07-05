@@ -4,7 +4,7 @@ extends CharacterBody2D
 
 signal died
 
-@export var speed = 70.0
+@export var speed = 100.0
 var player_chase : bool = false
 var player = null
 var frontlayer: TileMapLayer

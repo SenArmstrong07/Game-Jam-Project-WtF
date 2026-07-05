@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dvmrbwoekfwsp" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_15.png" id="10_gm4ip"]
 [ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="11_k238p"]
 [ext_resource type="Script" uid="uid://dodkvxb75nag8" path="res://scripts/UI/Dialoguetransition.gd" id="14_ofbof"]
+[ext_resource type="Shader" uid="uid://dmmv5lssj0w5i" path="res://scripts/UI/opening_dialogue.gdshader" id="15_s4fvl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6cyn7"]
 atlas = ExtResource("5_dg0tl")
@@ -85,6 +86,11 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5p8dl"]
+shader = ExtResource("15_s4fvl")
+shader_parameter/progress = 0.0
+shader_parameter/spin = 12.0
+
 [node name="Opening_dialogue" type="Node2D" unique_id=1859898110]
 
 [node name="Dialogue_UI" type="Control" parent="." unique_id=579979889]
@@ -138,7 +144,7 @@ scale = Vector2(14.65625, 15.717185)
 sprite_frames = SubResource("SpriteFrames_1y54r")
 animation = &"MiniBot"
 autoplay = "MiniBot"
-frame_progress = 0.71759355
+frame_progress = 0.7789004
 
 [node name="NinePatchRect" type="NinePatchRect" parent="Dialogue_UI/DialogueBar/CharacterPict" unique_id=706717372]
 layout_mode = 0
@@ -228,6 +234,7 @@ vertical_alignment = 1
 script = ExtResource("14_ofbof")
 
 [node name="Transition_rect" type="ColorRect" parent="Transition" unique_id=1361569860]
+material = SubResource("ShaderMaterial_5p8dl")
 offset_right = 1286.0
 offset_bottom = 721.0
 color = Color(0, 0, 0, 1)

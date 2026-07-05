@@ -14,6 +14,29 @@ var menu_open := false
 var menu_start_pos: Vector2
 var labels : Array[Label]
 
+func _on_new_game_pressed():
+	new_button.disabled = true
+	continue_button.disabled = true
+	exit_button.disabled = true
+
+	var fade := ColorRect.new()
+	fade.color = Color.BLACK
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade.modulate.a = 0.0
+
+	var canvas := CanvasLayer.new()
+	canvas.layer = 100
+	canvas.add_child(fade)
+	add_child(canvas)
+
+	var tween = create_tween()
+	tween.tween_property(fade, "modulate:a", 1.0, 0.4)
+
+	await tween.finished
+
+	get_tree().change_scene_to_file("res://scenes/UI/opening_dialogue.tscn")
+
+	
 func _ready():
 	
 	blink_press_key()
@@ -30,6 +53,7 @@ func _ready():
 	menu_buttons.modulate.a = 0.0
 	menu_buttons.visible = false
 	exit_button.pressed.connect(_on_exit_pressed)
+	new_button.pressed.connect(_on_new_game_pressed)
 	
 	title_loop()
 	

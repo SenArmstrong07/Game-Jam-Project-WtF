@@ -2,7 +2,6 @@ extends Node2D
 
 @onready var player: Node2D = $OverworldPlayer
 @onready var frontlayer: TileMapLayer = $TileNode/front
-@onready var simulate_button: Button = $UI/SimulateRemoveEnemy
 
 var overworld_state: Dictionary = {}
 
@@ -10,10 +9,6 @@ func _ready() -> void:
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
-	if simulate_button:
-		simulate_button.pressed.connect(_on_simulate_remove_enemy_pressed)
-	else:
-		print("[CYBERMAP] Simulate button missing")
 
 	var loading_screen = get_node_or_null("LoadingScreen")
 	var should_show_loading_screen := not SignalBus.in_transition and SignalBus.overworld_state.is_empty()

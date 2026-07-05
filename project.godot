@@ -88,4 +88,4 @@ previous_chip={
 textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
-environment/defaults/default_clear_color=Color(0.14136606, 0.42202497, 0.86507773, 1)
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)

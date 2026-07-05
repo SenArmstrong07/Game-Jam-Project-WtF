@@ -2,9 +2,9 @@ extends CanvasLayer
 
 signal finished
 
-const GLITCH_OUT_TIME := 0.4
-const GLITCH_IN_TIME := 0.6
-const GLITCH_HOLD_TIME := 0.6
+const GLITCH_OUT_TIME := 0.3
+const GLITCH_IN_TIME := 0.3
+const GLITCH_HOLD_TIME := 0.1
 const RETURN_FADE_TIME := 0.4
 @onready var overworld_shot: TextureRect = $OverworldShot
 @onready var glitch_overlay: ColorRect = $GlitchOverlay

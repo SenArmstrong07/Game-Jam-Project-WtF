@@ -8,7 +8,6 @@
 [ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="3_1uck2"]
 [ext_resource type="PackedScene" uid="uid://cqk87mlrchf2c" path="res://scenes/units/Unit.tscn" id="3_g3tu8"]
 [ext_resource type="Texture2D" uid="uid://bysu6mfntht4l" path="res://assets/ui/Battle_BG.png" id="4_1uck2"]
-[ext_resource type="PackedScene" uid="uid://eexfwe7w37sf" path="res://scenes/battle/battle_bgm.tscn" id="9_3m02u"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1uck2"]
 shader = ExtResource("3_1uck2")
@@ -40,5 +39,3 @@ position = Vector2(1, -64)
 [node name="Grid" parent="." unique_id=651052919 instance=ExtResource("2_curwf")]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1004523237]
-
-[node name="BattleBGM" parent="." unique_id=438235275 instance=ExtResource("9_3m02u")]

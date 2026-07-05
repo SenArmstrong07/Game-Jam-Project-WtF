@@ -1,0 +1,243 @@
+[gd_scene format=4 uid="uid://btq3jhv87t461"]
+
+[ext_resource type="Script" uid="uid://xg1ecd6rbcfo" path="res://scripts/battle/battle_tutorial.gd" id="1_shuuc"]
+[ext_resource type="Script" uid="uid://c2p8vcsmrvdgr" path="res://scripts/UI/tutorials.gd" id="2_nt0uh"]
+[ext_resource type="PackedScene" uid="uid://sy7w0ntech8w" path="res://scenes/battle/battle_ui.tscn" id="2_rlyew"]
+[ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="3_nt0uh"]
+[ext_resource type="Texture2D" uid="uid://o7ek3g0lgsse" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_80.png" id="3_ssvqq"]
+[ext_resource type="Texture2D" uid="uid://bysu6mfntht4l" path="res://assets/ui/Battle_BG.png" id="4_f6qu4"]
+[ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="4_s8smd"]
+[ext_resource type="Texture2D" uid="uid://bxtavjpme4moy" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/MainCharacter/Character_Shot_RP1 (40x40).png" id="5_x2d3q"]
+[ext_resource type="PackedScene" uid="uid://cqk87mlrchf2c" path="res://scenes/units/Unit.tscn" id="5_x4a8o"]
+[ext_resource type="Texture2D" uid="uid://bfkgeogwobj82" path="res://assets/MiniBt/Slash-Interact-GuardStance_S.png" id="6_l53hm"]
+[ext_resource type="PackedScene" uid="uid://6hbsmgfnmld0" path="res://scenes/battle/GridMap.tscn" id="6_uyhnq"]
+[ext_resource type="Texture2D" uid="uid://kyv8ikn0084b" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_79.png" id="7_br7dd"]
+[ext_resource type="PackedScene" uid="uid://bd000x17iehe0" path="res://scenes/units/player_character.tscn" id="7_pfgp0"]
+[ext_resource type="Texture2D" uid="uid://bhnre5btuttrj" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_08.png" id="8_5x66o"]
+[ext_resource type="PackedScene" uid="uid://djdrn1tgj56hi" path="res://scenes/battle/Grid.tscn" id="8_08fsj"]
+[ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="9_xmo67"]
+[ext_resource type="Texture2D" uid="uid://dvmrbwoekfwsp" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_15.png" id="10_sqaer"]
+[ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="11_m3sbs"]
+[ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="12_gupeu"]
+[ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="13_tb2s4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6cyn7"]
+atlas = ExtResource("5_x2d3q")
+region = Rect2(0, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ebi12"]
+atlas = ExtResource("5_x2d3q")
+region = Rect2(40, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gm4ip"]
+atlas = ExtResource("6_l53hm")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k238p"]
+atlas = ExtResource("6_l53hm")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ofbof"]
+atlas = ExtResource("6_l53hm")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5p8dl"]
+atlas = ExtResource("6_l53hm")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4fvl"]
+atlas = ExtResource("6_l53hm")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ku0n6"]
+atlas = ExtResource("6_l53hm")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e6xy3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6cyn7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ebi12")
+}],
+"loop": 1,
+"name": &"MC",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gm4ip")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k238p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ofbof")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5p8dl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s4fvl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ku0n6")
+}],
+"loop": 1,
+"name": &"MiniBot",
+"speed": 5.0
+}]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1uck2"]
+shader = ExtResource("3_nt0uh")
+
+[node name="BattleTutorial" type="Node2D" unique_id=1208126284]
+script = ExtResource("1_shuuc")
+
+[node name="PLAYER_HP_BATTLE_UI" parent="." unique_id=912230315 instance=ExtResource("2_rlyew")]
+
+[node name="TUTORIALS" type="CanvasLayer" parent="." unique_id=25598762]
+script = ExtResource("2_nt0uh")
+
+[node name="DialogueBar" type="NinePatchRect" parent="TUTORIALS" unique_id=1160132832]
+anchors_preset = -1
+anchor_top = 0.65500003
+anchor_right = 1.001
+anchor_bottom = 1.0
+offset_top = 93.39996
+offset_right = -0.28100586
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("3_ssvqq")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
+
+[node name="CharacterPict" type="NinePatchRect" parent="TUTORIALS/DialogueBar" unique_id=2085330830]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 11.0
+offset_right = 256.0
+offset_bottom = 240.0
+texture = ExtResource("4_s8smd")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Portrait" type="AnimatedSprite2D" parent="TUTORIALS/DialogueBar/CharacterPict" unique_id=541123909]
+position = Vector2(126.375015, 124.13129)
+scale = Vector2(15.578126, 14.733594)
+sprite_frames = SubResource("SpriteFrames_e6xy3")
+animation = &"MiniBot"
+autoplay = "MiniBot"
+
+[node name="NinePatchRect" type="NinePatchRect" parent="TUTORIALS/DialogueBar/CharacterPict" unique_id=1661028825]
+layout_mode = 0
+offset_left = -11.0
+offset_top = -20.0
+offset_right = 261.0
+offset_bottom = 148.0
+texture = ExtResource("7_br7dd")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 15
+patch_margin_bottom = 15
+
+[node name="DialogueBar" type="NinePatchRect" parent="TUTORIALS/DialogueBar" unique_id=1023344261]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.215
+anchor_right = 0.994
+anchor_bottom = 0.96800005
+offset_left = -6.630005
+offset_top = 1.0
+offset_right = 12.692017
+offset_bottom = 6.967987
+texture = ExtResource("8_5x66o")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 15
+patch_margin_bottom = 15
+
+[node name="RichTextLabel" type="RichTextLabel" parent="TUTORIALS/DialogueBar/DialogueBar" unique_id=1946868811]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.99100006
+anchor_bottom = 0.952
+offset_left = 42.0
+offset_top = 22.0
+offset_right = -23.838074
+offset_bottom = -10.144012
+theme_override_constants/shadow_outline_size = 5
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 3
+theme_override_fonts/normal_font = ExtResource("9_xmo67")
+theme_override_font_sizes/normal_font_size = 36
+text = "Hey! I'm Cody. I recently graduated with a degree in IT, and today is my very first day working at an IT company."
+autowrap_mode = 2
+autowrap_trim_flags = 64
+
+[node name="NextArrow" type="TextureRect" parent="TUTORIALS/DialogueBar/DialogueBar" unique_id=762638518]
+layout_mode = 0
+offset_left = 941.0
+offset_top = 99.0
+offset_right = 981.0
+offset_bottom = 139.0
+texture = ExtResource("10_sqaer")
+script = ExtResource("11_m3sbs")
+
+[node name="CharacterTag" type="NinePatchRect" parent="TUTORIALS/DialogueBar" unique_id=5676659]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.402
+anchor_right = 0.21300001
+offset_left = -3.0
+offset_top = 0.09799957
+offset_right = -0.06600952
+offset_bottom = 4.0
+texture = ExtResource("12_gupeu")
+
+[node name="CharacterName" type="Label" parent="TUTORIALS/DialogueBar/CharacterTag" unique_id=643829850]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.058000002
+anchor_top = 0.15400001
+anchor_right = 0.94900006
+anchor_bottom = 0.558
+offset_left = -0.0080013275
+offset_top = -0.016000748
+offset_right = 0.07598877
+offset_bottom = -0.032001495
+theme_override_fonts/font = ExtResource("13_tb2s4")
+theme_override_font_sizes/font_size = 35
+text = "LEBRON JAMES"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1800903184]
+texture_filter = 1
+texture_repeat = 2
+material = SubResource("ShaderMaterial_1uck2")
+offset_left = -429.0
+offset_top = -228.0
+offset_right = 935.0
+offset_bottom = 540.0
+texture = ExtResource("4_f6qu4")
+
+[node name="Unit" parent="." unique_id=1715206411 instance=ExtResource("5_x4a8o")]
+
+[node name="GridMap" parent="." unique_id=1241810169 instance=ExtResource("6_uyhnq")]
+position = Vector2(1, 2)
+tile_map_data = PackedByteArray("AAAWAAEAAAAAAA8AAAAWAAQAAAAAAA8AAAAWAAcAAAAAAA8AAAAWAAoAAAAAAA8AAAAAAAAAAAAHAAMAAAABAAAAAAAHAAMAAAACAAAAAAAHAAMAAAADAAAAAAAHAAMAAAADAAEAAAAHAAMAAAACAAEAAAAHAAMAAAABAAEAAAAHAAMAAAAAAAEAAAAHAAMAAAAAAAIAAAAHAAMAAAABAAIAAAAHAAMAAAACAAIAAAAHAAMAAAADAAIAAAAHAAMAAAACAAMAAAAHAAMAAAABAAMAAAAHAAMAAAAAAAMAAAAHAAMAAAADAAMAAAAHAAMAAAAEAAAAAAAGAAMAAAAFAAAAAAAGAAMAAAAGAAAAAAAGAAMAAAAHAAAAAAAGAAMAAAAHAAEAAAAGAAMAAAAGAAEAAAAGAAMAAAAFAAEAAAAGAAMAAAAEAAEAAAAGAAMAAAAEAAIAAAAGAAMAAAAFAAIAAAAGAAMAAAAGAAIAAAAGAAMAAAAHAAIAAAAGAAMAAAAHAAMAAAAGAAMAAAAGAAMAAAAGAAMAAAAFAAMAAAAGAAMAAAAEAAMAAAAGAAMAAAA=")
+
+[node name="PlayerCharacter" parent="." unique_id=1154184100 instance=ExtResource("7_pfgp0")]
+position = Vector2(1, -64)
+
+[node name="Grid" parent="." unique_id=651052919 instance=ExtResource("8_08fsj")]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1004523237]

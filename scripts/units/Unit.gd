@@ -14,6 +14,7 @@ var is_hurt := false
 var team: Team
 var is_dead: bool = false
 var action_locked := false
+signal hp_changed(unit: Unit, hp: int)
 
 func get_projectile_target() -> Vector2:
 	return global_position
@@ -100,13 +101,13 @@ func take_damage(amount: int, damage_type: DamageType = DamageType.NEUTRAL, chip
 
 	var final_damage: int = int(amount * multiplier)
 	hp -= final_damage
-	
-	print(name, " took ", final_damage)
-	print(name, " HP after: ", hp)
 
+	if hp < 0:
+		hp = 0
+
+	hp_changed.emit(self, hp)
 
 	if hp <= 0:
-		hp = 0
 		die()
 		
 #func play_hurt():
@@ -137,6 +138,7 @@ func take_damage(amount: int, damage_type: DamageType = DamageType.NEUTRAL, chip
 # ============================================================
 func restore_hp(amount: int) -> void:
 	hp = min(hp + amount, max_hp)
+	hp_changed.emit(self, hp)
 
 # ============================================================
 # COMBAT HELPERS

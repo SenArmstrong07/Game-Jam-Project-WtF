@@ -6,7 +6,6 @@
 [ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="4_4rgdw"]
 [ext_resource type="FontFile" uid="uid://ctgejobb4njpx" path="res://assets/fonts/ARCADECLASSIC.TTF" id="5_rdh3f"]
 [ext_resource type="Texture2D" uid="uid://bu2bwlb8l3pq0" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_02.png" id="6_dhcqh"]
-[ext_resource type="AudioStream" uid="uid://7a0bd2o44r6q" path="res://assets/FX/TitleScreen.ogg" id="7_udspj"]
 
 [sub_resource type="GDScript" id="GDScript_mfmar"]
 script/source = "@tool
@@ -421,7 +420,3 @@ theme = SubResource("Theme_udspj")
 theme_override_constants/icon_max_width = 100
 theme_override_icons/icon = ExtResource("6_dhcqh")
 icon_alignment = 1
-
-[node name="TitleScreenBGM" type="AudioStreamPlayer2D" parent="." unique_id=1286021108]
-stream = ExtResource("7_udspj")
-autoplay = true

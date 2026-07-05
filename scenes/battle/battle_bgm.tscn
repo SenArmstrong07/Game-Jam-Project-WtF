@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://eexfwe7w37sf"]
 
 [ext_resource type="AudioStream" uid="uid://c8q2scy25nv0x" path="res://assets/FX/BattleBGMTest.mp3" id="1_twyft"]
+[ext_resource type="Script" uid="uid://de14pl2g6i4tb" path="res://scenes/battle/battle_bgm.gd" id="2_kwd0c"]
 
 [node name="BattleBGM" type="AudioStreamPlayer2D" unique_id=438235275]
 stream = ExtResource("1_twyft")
 autoplay = true
 parameters/looping = true
+script = ExtResource("2_kwd0c")

@@ -56,6 +56,8 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
+	BgTitleToDial.stop()
+	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
 	battle_preperations.visible = false
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()

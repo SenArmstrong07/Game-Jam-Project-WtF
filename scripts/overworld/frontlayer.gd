@@ -4,6 +4,7 @@ signal enemy_spawned(enemy: Node2D)
 signal world_generation_started
 signal world_generation_progress(progress: float)
 signal world_generation_complete
+signal overworld_ready
 
 var moisture = FastNoiseLite.new() #x offset
 var temperature = FastNoiseLite.new() #y offset
@@ -138,6 +139,15 @@ func pre_generate_world() -> void:
 		return
 	
 	generation_started = true
+
+	if SignalBus.overworld_state.has("terrain_tiles") and SignalBus.overworld_state["terrain_tiles"].size() > 0:
+		print("[WORLD_GEN] Restoring saved terrain tiles instead of regenerating from noise.")
+		restore_saved_terrain(SignalBus.overworld_state["terrain_tiles"])
+		is_world_ready = true
+		world_generation_complete.emit()
+		_finish_world_setup()
+		return
+
 	print("[WORLD_GEN] Starting world generation...")
 	world_generation_started.emit()
 	
@@ -159,6 +169,12 @@ func pre_generate_world() -> void:
 			if chunks_generated % 4 == 0:
 				await get_tree().process_frame
 	
+	SignalBus.overworld_state["terrain_tiles"] = get_saved_terrain_data()
+	_finish_world_setup()
+
+func _finish_world_setup() -> void:
+	var total_chunks: int = (world_bounds * 2 + 1) * (world_bounds * 2 + 1)
+
 	# Find valid spawn point and place player
 	var spawn_pos = find_valid_spawn_tile()
 	if spawn_pos != Vector2.ZERO:
@@ -166,6 +182,8 @@ func pre_generate_world() -> void:
 	
 	is_world_ready = true
 	world_generation_complete.emit()
+	overworld_ready.emit()
+	overworld_ready.emit()
 
 	#restore player position
 	if SignalBus.overworld_state.has("player_position"):
@@ -215,6 +233,25 @@ func pre_generate_world() -> void:
 	print("===================================================\n")
 
 
+
+func get_saved_terrain_data() -> Array:
+	var terrain_tiles: Array = []
+	for cell in get_used_cells():
+		var atlas_coords = get_cell_atlas_coords(cell)
+		if atlas_coords != Vector2i(-1, -1):
+			terrain_tiles.append({
+				"position": cell,
+				"atlas": atlas_coords,
+			})
+	return terrain_tiles
+
+func restore_saved_terrain(terrain_data: Array) -> void:
+	clear()
+	for entry in terrain_data:
+		if entry is Dictionary and entry.has("position") and entry.has("atlas"):
+			var tile_pos: Vector2i = entry["position"]
+			var atlas: Vector2i = entry["atlas"]
+			set_cell(tile_pos, 0, atlas)
 
 func build_world_map_snapshot() -> Dictionary:
 	var land_tiles: Array[Vector2i] = []

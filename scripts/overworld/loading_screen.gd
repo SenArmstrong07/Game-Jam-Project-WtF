@@ -5,8 +5,8 @@ extends CanvasLayer
 var frontlayer: TileMapLayer
 
 func _ready() -> void:
-	add_to_group("loadingscreen")
-	visible = false
+	add_to_group("LoadingScreen")
+	_hide_overlay()
 
 	if SignalBus.in_transition or not SignalBus.overworld_state.is_empty():
 		print("[LOADING_SCREEN] Skipping loading overlay for restored overworld transition")
@@ -29,12 +29,12 @@ func _ready() -> void:
 
 func _on_generation_started() -> void:
 	if SignalBus.in_transition or not SignalBus.overworld_state.is_empty():
-		visible = false
+		_hide_overlay()
 		return
 
 	progress_bar.value = 0
 	loading_label.text = "Generating world..."
-	visible = true
+	_show_overlay()
 
 
 func _on_generation_progress(progress: float) -> void:
@@ -47,9 +47,17 @@ func _on_generation_complete() -> void:
 	loading_label.text = "World ready! Starting game..."
 	
 	if SignalBus.in_transition or not SignalBus.overworld_state.is_empty():
-		visible = false
+		_hide_overlay()
 		return
 	
 	# Hide loading screen after a brief delay
 	await get_tree().create_timer(0.5).timeout
+	_hide_overlay()
+
+func _show_overlay(message: String = "Generating world...") -> void:
+	loading_label.text = message
+	progress_bar.value = 0
+	visible = true
+
+func _hide_overlay() -> void:
 	visible = false

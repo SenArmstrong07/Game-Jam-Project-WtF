@@ -12,6 +12,11 @@ func _ready() -> void:
 	# Get reference to frontlayer to check if world is ready
 	frontlayer = get_parent().get_node("TileNode/front")
 
+func set_controls_locked(locked: bool) -> void:
+	controls_locked = locked
+	if not locked:
+		velocity = Vector2.ZERO
+
 func _physics_process(delta: float) -> void:
 	# Don't allow movement until world generation is complete
 	if frontlayer and not frontlayer.is_world_ready:

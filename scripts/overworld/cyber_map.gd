@@ -13,16 +13,32 @@ func _ready() -> void:
 	else:
 		print("[CYBERMAP] Simulate button missing")
 
-	# If we're returning from a battle transition, restore the saved overworld state
+	var loading_screen = get_node_or_null("LoadingScreen")
+	var should_show_loading_screen := not SignalBus.in_transition and SignalBus.overworld_state.is_empty()
+	if should_show_loading_screen:
+		_set_player_controls_locked(true)
+		if loading_screen and loading_screen.has_method("_show_overlay"):
+			loading_screen._show_overlay("Generating world...")
+	else:
+		_set_player_controls_locked(false)
+		if loading_screen and loading_screen.has_method("_hide_overlay"):
+			loading_screen._hide_overlay()
+
+	if frontlayer and not frontlayer.is_connected("world_generation_complete", _on_world_generation_complete):
+		frontlayer.world_generation_complete.connect(_on_world_generation_complete)
+
+	# If we're returning from a battle transition, let the return transition play while the saved state is restored immediately.
 	if SignalBus.in_transition:
-		await EncounterTransition.transition_to_overworld()
-		# restore saved state if present
-		#if SignalBus.overworld_state and SignalBus.overworld_state.size() > 0:
-			#_restore_overworld_state(SignalBus.overworld_state)
 		SignalBus.in_transition = false
 	else:
 		# Normal startup: capture and store current overworld state
 		store_overworld_state()
+
+func _on_world_generation_complete() -> void:
+	_set_player_controls_locked(false)
+	var loading_screen = get_node_or_null("LoadingScreen")
+	if loading_screen and loading_screen.has_method("_hide_overlay"):
+		loading_screen._hide_overlay()
 
 func _on_simulate_remove_enemy_pressed() -> void:
 	var nearest_enemy = _find_nearest_overworld_enemy()
@@ -60,6 +76,12 @@ func _remove_overworld_enemy(enemy: Node2D) -> void:
 func store_overworld_state() -> void:
 	overworld_state = get_overworld_state()
 	SignalBus.overworld_state = overworld_state
+
+func _set_player_controls_locked(locked: bool) -> void:
+	if player and player.has_method("set_controls_locked"):
+		player.set_controls_locked(locked)
+	elif player:
+		player.controls_locked = locked
 
 
 func _restore_overworld_state(state: Dictionary) -> void:

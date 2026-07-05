@@ -3,9 +3,9 @@ extends CanvasLayer
 signal finished
 
 const GLITCH_OUT_TIME := 0.3
-const GLITCH_IN_TIME := 0.3
-const GLITCH_HOLD_TIME := 0.1
-const RETURN_FADE_TIME := 0.4
+const GLITCH_IN_TIME := 0.4
+const GLITCH_HOLD_TIME := 0.2
+const RETURN_FADE_TIME := 0.2
 @onready var overworld_shot: TextureRect = $OverworldShot
 @onready var glitch_overlay: ColorRect = $GlitchOverlay
 @onready var reconstruction_overlay: ColorRect = $ReconstructionOverlay
@@ -171,12 +171,23 @@ func transition_to_battle(battlescene: String) -> void:
 
 func transition_to_overworld() -> void:
 	visible = true
+	reset()
 
-	# Let the new overworld render first.
-	await RenderingServer.frame_post_draw
-	await RenderingServer.frame_post_draw
+	# Show glitch immediately
+	_set_visible(glitch_overlay, true)
+	_set_alpha(glitch_overlay, 0.35)
 
+	await get_tree().process_frame
+
+	# Wait until the overworld is actually ready for player input
+	var frontlayer = get_tree().get_first_node_in_group("frontlayer")
+
+	if frontlayer:
+		await frontlayer.overworld_ready
+
+	# NOW reveal it
 	await play_return_fade()
+
 	reset()
 
 	visible = false
@@ -190,29 +201,36 @@ func play_return_fade() -> void:
 	_set_visible(glitch_overlay, true)
 	_set_alpha(glitch_overlay, 0.35)
 
-	if is_instance_valid(glitch_overlay) and glitch_overlay.has_method("play_glitch_in"):
-		await glitch_overlay.play_glitch_in()
-	else:
-		var mat := glitch_overlay.material as ShaderMaterial
-		if mat == null:
-			print("[EncounterTransition] play_return_fade: no material on glitch_overlay")
-		else:
-			mat.set_shader_parameter("glitch_strength", 0.0)
+	var mat := glitch_overlay.material as ShaderMaterial
+	if mat == null:
+		_set_visible(glitch_overlay, false)
+		return
 
-		var tween := create_tween()
-		tween.set_trans(Tween.TRANS_EXPO)
-		tween.set_ease(Tween.EASE_OUT)
-		tween.parallel().tween_method(
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_EXPO)
+	tween.set_ease(Tween.EASE_OUT)
+
+	var loop_count := 0
+	while loop_count < 3:
+		loop_count += 1
+		tween.tween_method(
 			func(v):
-				if mat != null:
+				if mat:
 					mat.set_shader_parameter("glitch_strength", v),
 			1.0,
 			0.0,
-			GLITCH_IN_TIME
+			GLITCH_IN_TIME / 3.0
 		)
-		tween.parallel().tween_property(glitch_overlay, "modulate:a", 0.0, GLITCH_IN_TIME)
-		await tween.finished
+		tween.tween_method(
+			func(v):
+				if mat:
+					mat.set_shader_parameter("glitch_strength", v),
+			0.0,
+			1.0,
+			GLITCH_IN_TIME / 3.0
+		)
 
+	await tween.finished
 	_set_visible(glitch_overlay, false)
 
 

@@ -138,7 +138,7 @@ scale = Vector2(14.65625, 15.717185)
 sprite_frames = SubResource("SpriteFrames_1y54r")
 animation = &"MiniBot"
 autoplay = "MiniBot"
-frame_progress = 0.71759355
+frame_progress = 0.0068495143
 
 [node name="NinePatchRect" type="NinePatchRect" parent="Dialogue_UI/DialogueBar/CharacterPict" unique_id=706717372]
 layout_mode = 0

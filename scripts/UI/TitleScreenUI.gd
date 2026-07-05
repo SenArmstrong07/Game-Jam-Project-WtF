@@ -38,7 +38,8 @@ func _on_new_game_pressed():
 
 	
 func _ready():
-	
+	BattleBgm.stop()
+	BgTitleToDial.play_music(preload("res://assets/FX/TitleScreen.ogg"))
 	blink_press_key()
 	menu_buttons.visible = false
 	randomize()

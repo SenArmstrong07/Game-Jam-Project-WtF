@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://6hbsmgfnmld0" path="res://scenes/battle/GridMap.tscn" id="6_qkxww"]
 [ext_resource type="PackedScene" uid="uid://bd000x17iehe0" path="res://scenes/units/player_character.tscn" id="7_b2kb6"]
 [ext_resource type="PackedScene" uid="uid://djdrn1tgj56hi" path="res://scenes/battle/Grid.tscn" id="8_x1cae"]
-[ext_resource type="PackedScene" uid="uid://eexfwe7w37sf" path="res://scenes/battle/battle_bgm.tscn" id="9_h2k7u"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6l7n5"]
 shader = ExtResource("4_fbnia")
@@ -41,5 +40,3 @@ position = Vector2(1, -64)
 [node name="Grid" parent="." unique_id=651052919 instance=ExtResource("8_x1cae")]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1004523237]
-
-[node name="BattleBGM" parent="." unique_id=438235275 instance=ExtResource("9_h2k7u")]

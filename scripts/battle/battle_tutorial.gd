@@ -1,16 +1,17 @@
 extends BattleBase
-class_name Battlescene3
+class_name BattleTutorial
 
-@onready var ui: CanvasLayer = $BattlePhaseUI
-@onready var trojan_marker: Marker2D = $TrojanMarker
+@onready var ui: CanvasLayer = $PLAYER_HP_BATTLE_UI
+@onready var enemy_hitpoint: Marker2D = $CommonBug/CommonBugMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
 
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
 const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
 const FIREWALL = preload("uid://x8y5dkw5aur6")
-const TROJAN = preload("uid://txqcgt474x1y")
+const COMMON_BUG_SCENE = preload("uid://bx0l221gdwc3i")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
+
 
 
 @onready var grid = $Grid
@@ -23,6 +24,7 @@ var player_deck: ChipDeck
 var player_hand: Array[Chip] = []
 
 var selected_chips: Array[Chip] = []
+
 var current_chip_index := 0
 var player_chip_index: int = 0
 var turn_locked := false
@@ -33,9 +35,12 @@ var first_combo_chip: Chip = null
 var second_combo_chip: Chip = null
 var pending_combo: Chip = null
 const DECK_COLUMNS := 5
+var encounter = SignalBus.current_encounter
 
 signal phase_changed(new_phase: BattlePhase)
 signal player_chip_selected(chip: Chip)
+var emergency_heal_used := false
+
 signal battle_ended(winner: Unit)
 var player_attack_locked := false
 @export var player_attack_delay := 0.4
@@ -44,37 +49,123 @@ var selecting_buttons := false
 @onready var player_ui = $PLAYER_HP_BATTLE_UI/PLAYER_LIVES
 @onready var battle_preperations =  $PLAYER_HP_BATTLE_UI/BATTLE_PREPERATIONS
 @onready var move_shuffle = $PLAYER_HP_BATTLE_UI/MOVE_SHUFFLE
+@onready var tutorial: CanvasLayer = $TUTORIALS
+var intro_tutorial_done := false
+var prep_tutorial_done := false
+var battle_tutorial_done := false
+var confirm_tutorial_done := false
+
+var tutorial_mode := true
 
 #put new vector to add enemy
 var enemy_spawn_positions := [
 	Vector2i(1, 2)
 ]
 
-
 func _ready() -> void:
+	BgTitleToDial.stop()
+	BattleBgm.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
+	
+	player.lives_changed.connect(_on_player_lives_changed)
 	battle_preperations.visible = false
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
+	
 	update_player_ui()
+	
 	player.unit_died.connect(_on_unit_died)
-
+	player.hp_changed.connect(_on_player_hp_changed)
 	# IMPORTANT: store enemies properly
 	enemies.clear()
 
-	for pos in enemy_spawn_positions:
-		spawn_enemy(pos)
+	if encounter != null:
+		for i in range(encounter.enemy_count):
+			if i < enemy_spawn_positions.size():
+				spawn_enemy(enemy_spawn_positions[i])
+	else:
+		# Running the battle scene directly for testing
+		#For testing: Spawning 2 enemies by default
+		for pos in enemy_spawn_positions:
+			spawn_enemy(pos)
 	
 	battle_preperations.select_button.pressed.connect(_on_select_pressed)
 	battle_preperations.unselect_button.pressed.connect(_on_unselect_pressed)
+
 	await get_tree().process_frame
 	_start_preparation_phase()
 
+func _on_player_hp_changed(unit: Unit, hp: int) -> void:
+	if emergency_heal_used:
+		return
+
+	if hp != 1:
+		return
+
+	emergency_heal_used = true
+
+	_emergency_tutorial_heal()
+
+func _emergency_tutorial_heal() -> void:
+	battle_active = false
+	player.movement_locked = true
+
+	await tutorial_popup(
+		"MiniBot",
+		"MiniBot",
+		"Oh Wow... 4 years of college just to be like that?"
+	)
+
+	await tutorial_popup(
+		"MiniBot",
+		"MiniBot",
+		"I leave you alone for a second and you're about to get DELETED."
+	)
+
+	await tutorial_popup(
+		"Cody",
+		"MC",
+		"Hey!"
+	)
+
+	await tutorial_popup(
+		"MiniBot",
+		"MiniBot",
+		"Fine. Since this is still the tutorial, I'll patch you up."
+	)
+
+	update_player_ui()
+
+	await tutorial_popup(
+		"MiniBot",
+		"MiniBot",
+		"Don't get used to it. Next time you're on your own."
+	)
+
+	player.movement_locked = false
+	battle_active = true
+	
 func _on_select_pressed():
 
 	selecting_buttons = false
+	if !confirm_tutorial_done:
+		confirm_tutorial_done = true
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"Great! You've selected your Modules. lets delete that bugger shall we!"
+		)
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"You can click Confirm or use 'SPACE' if you are ready, or Wait if you want some changes on your Module"
+		)
+		await tutorial_popup(
+			"Cody",
+			"MC",
+			"What are you kidding me! I did not study programming to fight an actual bug!"
+		)
 	_start_battle_phase()
-
 
 func _on_unselect_pressed():
 
@@ -90,6 +181,25 @@ func _on_unselect_pressed():
 	battle_preperations.unselect_button.release_focus()
 
 	_update_ui()
+
+func tutorial_popup(name: String, portrait_anim: String, message: String):
+
+	if !tutorial_mode:
+		return
+
+	get_tree().paused = true
+
+	tutorial.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	tutorial.show_tutorial(
+		name,
+		portrait_anim,
+		message
+	)
+
+	await tutorial.tutorial_closed
+
+	get_tree().paused = false
 	
 func find_battle_scene() -> BattleBase:
 	var node = self
@@ -114,6 +224,8 @@ func _process(delta: float) -> void:
 func is_tile_free(tile: Vector2i) -> bool:
 	return not occupied_tiles.has(tile)
 	
+
+
 # ============================================================
 # PREPARATION PHASE
 # ============================================================
@@ -151,7 +263,7 @@ func spawn_enemy(pos: Vector2i) -> void:
 	while is_enemy_on_tile(pos):
 		pos.x += 1
 
-	var e: Unit = TROJAN.instantiate()
+	var e: Unit = COMMON_BUG_SCENE.instantiate()
 	add_child(e)
 
 	e.add_to_group("enemies")
@@ -160,9 +272,10 @@ func spawn_enemy(pos: Vector2i) -> void:
 	# =========================
 	# SET ENEMY STATS HERE
 	# =========================
-	e.max_hp = 350
+	e.max_hp = 200
 
 	e.hp = e.max_hp
+	
 	e.update_hp_label()
 	enemies.append(e)
 	occupied_tiles[pos] = true
@@ -176,13 +289,32 @@ func is_enemy_on_tile(pos: Vector2i) -> bool:
 			return true
 	return false
 	
-	
 func _start_preparation_phase() -> void:
+	
+	if !prep_tutorial_done:
+		prep_tutorial_done = true
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"Hey Cody! I know you're confused, but right now there's a bug in front of you."
+		)
+
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"You need to fight it with the Debugger Gauntlet you have!"
+		)
+		await tutorial_popup(
+			"Cody",
+			"MC",
+			"What! Where am I!"
+		)
 	current_phase = BattlePhase.PREPARATION
+	
 
 	player_ui.hide_hp_ui()
 	move_shuffle.hide_bar()
-
+	
 	await get_tree().create_timer(0.35).timeout
 
 	phase_changed.emit(current_phase)
@@ -192,10 +324,44 @@ func _start_preparation_phase() -> void:
 	selected_chips.clear()
 	current_chip_index = 0
 	player_chip_index = 0
-
+	
 	_update_ui()
-
-
+	
+	if !battle_tutorial_done:
+		battle_tutorial_done = true
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"As you can see below is your Module Deck you can use 'Arrow Keys' then 'Space' to select you Module!"
+		)
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"And on the your right side is the Module Hand you selected, you can use 'B' to remove a Module on the Hand"
+		)
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"And you can click 'C' on a move that you want to COMBINE but right now you can only COMBINE DELETE Module with each other!"
+		)
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"You can click 'ESC' to cancel COMBINE Module"
+		)
+		
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"Careful now. If you get DELETED here, you'll be DELETED in real life too. That's one way to erase your digital footprint... eh?"
+		)
+		await tutorial_popup(
+			"Cody",
+			"MC",
+			"Huh?! I don't wanna die"
+		)
+		
+	
 func move_cursor_right():
 	if player_hand.is_empty():
 		return
@@ -400,6 +566,7 @@ func next_chip():
 
 	_apply_current_chip()
 
+
 func previous_chip():
 
 	if selected_chips.is_empty():
@@ -408,6 +575,7 @@ func previous_chip():
 	current_chip_index = (current_chip_index - 1 + selected_chips.size()) % selected_chips.size()
 
 	_apply_current_chip()
+
 
 func _apply_current_chip():
 
@@ -435,6 +603,23 @@ func _start_battle_phase() -> void:
 
 	move_shuffle.show_bar()
 
+	await get_tree().process_frame
+	
+	if !battle_tutorial_done:
+		battle_tutorial_done = true
+		await get_tree().create_timer(1.5).timeout
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"As you can see on your right is your Module Hand. You can use 'Q' and 'E' to switch between Modules."
+		)
+
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"At the top are your lives. You can only take 5 hits before you're DELETED, so dodge those bullets... unless you want some bullet holes on ya!"
+		)
+
 	var first_chip := selected_chips[0]
 	player.attack_range = first_chip.range_tile
 	player.attack_power = first_chip.power
@@ -442,6 +627,7 @@ func _start_battle_phase() -> void:
 	_update_ui()
 	
 func _handle_battle_input() -> void:
+
 	if player_attack_locked:
 		return
 
@@ -517,6 +703,7 @@ func use_chip(chip: Chip):
 # ============================================================
 
 func _next_round() -> void:
+	move_shuffle.hide_bar()
 	player.movement_locked = false
 
 	selected_chips.clear()
@@ -659,11 +846,32 @@ func _on_unit_died(unit: Unit) -> void:
 	print("Enemy wins!")
 	battle_ended.emit(enemies[0] if enemies.size() > 0 else null)
 
+	await tutorial_popup(
+		"MiniBot",
+		"MiniBot",
+		"Looks like you got DELETED... I told you this wouldn't always be easy."
+	)
+
+	await tutorial_popup(
+		"MiniBot",
+		"MiniBot",
+		"Well... see you next time! Let me know if there's a robot heaven."
+	)
+	await tutorial_popup(
+		"MiniBot",
+		"MiniBot",
+		"...Or hell. Honestly, I'll take either one. See ya."
+	)
+
 	await get_tree().create_timer(1.0).timeout
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file("res://scenes/UI/TitleScreen.tscn")
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_O:
+		print("[BATTLE] O pressed - simulating return to overworld")
+
 
 func _check_win_condition():
-	# remove invalid references
 	enemies = enemies.filter(func(e):
 		return is_instance_valid(e) and not e.is_dead
 	)
@@ -675,15 +883,58 @@ func _check_win_condition():
 		print("Player wins!")
 		battle_ended.emit(player)
 
-		# HARD STOP ALL ENEMIES
 		for e in get_tree().get_nodes_in_group("enemies"):
 			if is_instance_valid(e):
 				e.queue_free()
 
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"Nice work! You successfully DELETED the bug!"
+		)
+
+		await tutorial_popup(
+			"Cody",
+			"MC",
+			"I... actually did it?"
+		)
+
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"See? Debugging isn't just about fixing code anymore. Get ready—there are plenty more bugs waiting for you."
+		)
+		await tutorial_popup(
+			"MiniBot",
+			"MiniBot",
+			"Im Sendfing you to the CyberMap now go and eliminate all bugs you'll see!"
+		)
+		await tutorial_popup(
+			"Cody",
+			"MC",
+			"No! No! No! No! No! Wait! Wait! Wait WAI-"
+		)
+
 		await get_tree().create_timer(0.5).timeout
-		get_tree().reload_current_scene()
+		get_tree().change_scene_to_file("res://scenes/overworld/CyberMap.tscn")
+		# Continue to the next scene or end the tutorial here.
 		
 func get_alive_enemies() -> Array:
 	return enemies.filter(func(e):
 		return is_instance_valid(e) and not e.is_dead
 	)
+
+func _on_player_lives_changed(_player: Unit, lives: int) -> void:
+	if emergency_heal_used:
+		return
+
+	if lives != 1:
+		return
+
+	emergency_heal_used = true
+
+	# Heal immediately so take_damage() won't call die()
+	player.heal(4)
+
+	# Show the dialogue separately
+	_emergency_tutorial_heal.call_deferred()

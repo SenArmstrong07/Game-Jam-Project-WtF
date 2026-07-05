@@ -155,6 +155,8 @@ var dialogue = [
 var dialogue_index = 0
 
 func _ready() -> void:
+	BattleBgm.stop()
+	BgTitleToDial.play_music(preload("res://assets/FX/TitleScreen.ogg"))
 	show_dialogue()   # Set the correct name, portrait, background, etc.
 	await play_intro_transition("IN THE FUTURE\nFAR FROM NOW...")
 	transition_finished = true
@@ -215,7 +217,7 @@ func next_dialogue():
 
 func end_dialogue():
 	await play_end_transition()
-	get_tree().change_scene_to_file("res://scenes/battle/Battlescene.tscn")
+	get_tree().change_scene_to_file("res://scenes/battle/BattleTutorial.tscn")
 
 func type_text() -> void:
 	typing = true

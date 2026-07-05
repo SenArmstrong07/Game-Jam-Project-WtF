@@ -3,7 +3,8 @@ extends Unit
 @onready var camera_2d: Camera2D = $"../Camera2D"
 @onready var anim_player: AnimatedSprite2D = $AnimatedSprite2D
 const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
-@onready var battle_scene = get_parent()
+var battle_scene
+signal lives_changed(player: Unit, lives: int)
 @export var hurt_duration := 0.2
 
 var stunned := false
@@ -49,11 +50,17 @@ func _ready():
 	grid_pos = Vector2i(1, 2)
 	optimize_particles = GPUParticles2D.new()
 	add_child(optimize_particles)
-	
+
 	position = grid_to_world(grid_pos)
 	grid_x = grid_pos.x
 	grid_y = grid_pos.y
 	anim_player.play("Idle")
+
+	battle_scene = find_battle_scene()
+
+	if battle_scene == null:
+		push_error("Battle scene not found!")
+		return
 	
 	# Safety check for camera
 	if camera_2d == null:
@@ -74,19 +81,27 @@ func _ready():
 
 
 # Override take_damage function from Unit superclass to implement "1 hit = 1 life" mechanic (PLAYER ONLY)
-func take_damage(amount: int, damage_type: Unit.DamageType = Unit.DamageType.NEUTRAL, chip: Chip = null) -> void:
-	# Check if hit connects (even if "1 hit = 1 life", we could add dodge chance)
+func take_damage(amount: int, damage_type := Unit.DamageType.NEUTRAL, chip: Chip = null) -> void:
+	if is_dead:
+		return
+
 	lives -= 1
+
+	lives_changed.emit(self, lives)
+
 	play_hurt()
-	
+
 	if battle_scene:
 		battle_scene.update_player_ui()
 
 	print("Hit! Lives remaining: ", lives)
-	
-	if lives <= 0:
-		die()
 
+	# If the tutorial healed us, don't die.
+	if lives > 0:
+		return
+
+	die()
+	
 #Converts grid coordinates to pixel position
 func grid_to_world(cell: Vector2i) -> Vector2:
 	return Vector2(
@@ -96,6 +111,9 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 
 #player controls
 func _unhandled_input(event):
+	if battle_scene == null:
+		return
+
 	if battle_scene.current_phase != battle_scene.BattlePhase.BATTLE:
 		return
 
@@ -225,12 +243,15 @@ func play_optimize_effect():
 func heal(amount: int):
 	lives = min(lives + amount, max_lives)
 
+	lives_changed.emit(self, lives)
+
 	play_heal()
+
 	if battle_scene:
 		battle_scene.update_player_ui()
 
 	print("Lives: ", lives, "/", max_lives)
-
+	
 func play_heal():
 	anim_player.modulate = Color.GREEN
 
@@ -379,3 +400,13 @@ func create_dash_afterimage():
 	await tween.finished
 
 	ghost.queue_free()
+
+func find_battle_scene():
+	var node = self
+
+	while node:
+		if node is BattleBase:
+			return node
+		node = node.get_parent()
+
+	return null

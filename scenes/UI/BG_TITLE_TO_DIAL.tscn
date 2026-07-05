@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://c5pd3mfo8p4pa"]
+
+[ext_resource type="AudioStream" uid="uid://7a0bd2o44r6q" path="res://assets/FX/TitleScreen.ogg" id="1_aoumb"]
+[ext_resource type="Script" uid="uid://wtlpp0m1qx6v" path="res://scripts/UI/bg_title_to_dial.gd" id="2_cqyq6"]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" unique_id=1310685754]
+stream = ExtResource("1_aoumb")
+volume_db = -18.246
+autoplay = true
+parameters/looping = true
+script = ExtResource("2_cqyq6")

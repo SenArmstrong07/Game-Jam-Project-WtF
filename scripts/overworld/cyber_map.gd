@@ -7,6 +7,8 @@ extends Node2D
 var overworld_state: Dictionary = {}
 
 func _ready() -> void:
+	BattleBgm.stop()
+	BgTitleToDial.stop()
 	add_to_group("Cybermap")
 	if simulate_button:
 		simulate_button.pressed.connect(_on_simulate_remove_enemy_pressed)

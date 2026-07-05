@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="GameJam_Battle-Network"
-run/main_scene="uid://dlpal1rn4sjjg"
+run/main_scene="uid://cifxh7of05osf"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 
 SignalBus="*uid://d154sxpgm1121"
 EncounterTransition="*uid://jnyme5is58f3"
+BgTitleToDial="*uid://c5pd3mfo8p4pa"
+BattleBgm="*uid://ccl22qo5ki6ex"
 
 [display]
 

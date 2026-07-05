@@ -277,6 +277,34 @@ func _group_land_tiles_into_islands(land_tiles: Array[Vector2i]) -> Array:
 	return islands
 
 
+func is_tile_walkable(tile: Vector2i) -> bool:
+	"""Return true when the requested tile is land and inside the generated world."""
+	if tile.x < -world_bounds * width or tile.x > (world_bounds + 1) * width - 1:
+		return false
+	if tile.y < -world_bounds * height or tile.y > (world_bounds + 1) * height - 1:
+		return false
+	return get_cell_source_id(tile) != -1
+
+
+func get_walkable_neighbor_tiles(tile: Vector2i) -> Array[Vector2i]:
+	"""Return all walkable surrounding tiles around a given tile, including diagonals."""
+	var neighbors: Array[Vector2i] = []
+	for direction in [
+		Vector2i.RIGHT,
+		Vector2i.LEFT,
+		Vector2i.UP,
+		Vector2i.DOWN,
+		Vector2i(1, 1),
+		Vector2i(1, -1),
+		Vector2i(-1, 1),
+		Vector2i(-1, -1)
+	]:
+		var candidate = tile + direction
+		if is_tile_walkable(candidate):
+			neighbors.append(candidate)
+	return neighbors
+
+
 func find_valid_spawn_tile() -> Vector2:
 	"""Find a valid terrain tile near the center to spawn the player"""
 	var center_chunk = Vector2i(0, 0)

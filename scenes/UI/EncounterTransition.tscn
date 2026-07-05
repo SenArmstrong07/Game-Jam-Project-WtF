@@ -46,13 +46,13 @@ script = ExtResource("4_hbgfg")
 material = SubResource("ShaderMaterial_yxi5m")
 offset_left = -65.0
 offset_top = -82.0
-offset_right = 1220.0
-offset_bottom = 724.0
+offset_right = 1615.0
+offset_bottom = 959.0
 script = ExtResource("5_yxi5m")
 
 [node name="OverworldShot" type="TextureRect" parent="." unique_id=437705358]
 modulate = Color(1, 1, 1, 0)
-offset_left = -127.0
-offset_top = -130.0
-offset_right = 1305.0
-offset_bottom = 797.0
+offset_left = -146.0
+offset_top = -160.0
+offset_right = 1463.0
+offset_bottom = 933.0

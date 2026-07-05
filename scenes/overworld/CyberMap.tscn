@@ -66,7 +66,6 @@ script = ExtResource("7_xw8qz")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=350550884]
 
 [node name="BackgroundTexture" type="TextureRect" parent="Camera2D" unique_id=627048204]
-texture_filter = 0
 texture_repeat = 2
 material = SubResource("ShaderMaterial_pmfpv")
 anchors_preset = 8

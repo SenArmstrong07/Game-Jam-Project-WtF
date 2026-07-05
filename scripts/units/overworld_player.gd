@@ -29,12 +29,19 @@ func _physics_process(delta: float) -> void:
 		"down"
 	)
 
-	# Track last direction for facing/animations
+	var desired_velocity := Vector2.ZERO
 	if input_dir != Vector2.ZERO:
 		last_direction = input_dir.normalized()
-		velocity = velocity.move_toward(input_dir * max_speed, acceleration * delta)
+		desired_velocity = input_dir.normalized() * max_speed
 	else:
-		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+		desired_velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+
+	var next_position := position + desired_velocity * delta
+	var next_tile := frontlayer.local_to_map(next_position)
+	if frontlayer and frontlayer.is_tile_walkable(next_tile):
+		velocity = desired_velocity
+	else:
+		velocity = Vector2.ZERO
 
 	move_and_slide()
 	
@@ -45,30 +52,29 @@ func _physics_process(delta: float) -> void:
 		var clamped_y = clamp(position.y, frontlayer.world_min_y, frontlayer.world_max_y)
 		position.x = clamped_x
 		position.y = clamped_y
-		
-		# Debug: Show if player was clamped
-		if original_pos.x != clamped_x:
-			print("[PLAYER] X CLAMPED: ", original_pos.x, " -> ", clamped_x, " (Bounds: ", frontlayer.world_min_x, " to ", frontlayer.world_max_x, ")")
-		if original_pos.y != clamped_y:
-			print("[PLAYER] Y CLAMPED: ", original_pos.y, " -> ", clamped_y, " (Bounds: ", frontlayer.world_min_y, " to ", frontlayer.world_max_y, ")")
-		
-		# Show proximity to boundaries
-		var dist_to_min_x = position.x - frontlayer.world_min_x
-		var dist_to_max_x = frontlayer.world_max_x - position.x
-		var dist_to_min_y = position.y - frontlayer.world_min_y
-		var dist_to_max_y = frontlayer.world_max_y - position.y
-		
-		# Alert if very close to boundary (within 500 pixels)
-		if dist_to_min_x < 500:
-			print("[WARNING] Close to X MIN boundary: ", dist_to_min_x, " pixels away")
-		if dist_to_max_x < 500:
-			print("[WARNING] Close to X MAX boundary: ", dist_to_max_x, " pixels away")
-		if dist_to_min_y < 500:
-			print("[WARNING] Close to Y MIN boundary: ", dist_to_min_y, " pixels away")
-		if dist_to_max_y < 500:
-			print("[WARNING] Close to Y MAX boundary: ", dist_to_max_y, " pixels away")
 	
 	_update_facing()
+
+
+func _get_next_walkable_tile(input_dir: Vector2) -> Vector2i:
+	if not frontlayer:
+		return Vector2i(-1, -1)
+
+	var current_tile := frontlayer.local_to_map(position)
+	var axis_dir := Vector2i.ZERO
+	if abs(input_dir.x) > abs(input_dir.y):
+		axis_dir = Vector2i(signi(input_dir.x), 0)
+	elif input_dir.y != 0:
+		axis_dir = Vector2i(0, signi(input_dir.y))
+
+	if axis_dir == Vector2i.ZERO:
+		return Vector2i(-1, -1)
+
+	var next_tile := current_tile + axis_dir
+	if frontlayer.is_tile_walkable(next_tile):
+		return next_tile
+
+	return Vector2i(-1, -1)
 
 
 func _update_facing() -> void:

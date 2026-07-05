@@ -176,6 +176,14 @@ func pre_generate_world() -> void:
 		player.position = map_to_local(
 			SignalBus.overworld_state["player_tile"]
 		)
+
+	# NEW: Make sure the restored position is on land
+	var tile = local_to_map(player.position)
+
+	if get_cell_source_id(tile) == -1:
+		print("[SPAWN] Saved position is on water. Finding new spawn...")
+		player.position = find_valid_spawn_tile()
+
 	# Enemy restoration
 	if SignalBus.overworld_state.has("enemies"):
 		var saved_enemies: Array = SignalBus.overworld_state["enemies"]
@@ -281,13 +289,14 @@ func find_valid_spawn_tile() -> Vector2:
 			var tile_x = base_x + x
 			var tile_y = base_y + y
 			var alt = altitude.get_noise_2d(tile_x, tile_y) * 10
+			var tile = Vector2i(tile_x, tile_y)
 			
 			# Valid spawn = land (not water)
-			if alt >= 0:
-				var world_pos = map_to_local(Vector2i(tile_x, tile_y))
-				return world_pos
+			if get_cell_source_id(tile) != -1:
+				return map_to_local(tile)
 	
 	# Fallback to origin
+	push_error("No valid land tile found!")
 	return map_to_local(Vector2i(0, 0))
 func generate_chunk(chunk_coord: Vector2i):
 	var base_x = chunk_coord.x * width

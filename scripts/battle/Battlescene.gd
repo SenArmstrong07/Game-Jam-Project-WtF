@@ -84,9 +84,9 @@ func _ready() -> void:
 	
 	#Test with overworld: 
 	#How we spawn enemies based on encounter:
-	for i in encounter.enemy_count:
-		spawn_enemy(enemy_spawn_positions[i])
-	print("BattleScene READY FINISHED")
+	#for i in encounter.enemy_count:
+		#spawn_enemy(enemy_spawn_positions[i])
+	#print("BattleScene READY FINISHED")
 	await get_tree().process_frame
 	_start_preparation_phase()
 

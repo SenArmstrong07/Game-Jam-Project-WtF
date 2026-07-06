@@ -64,33 +64,27 @@ sources/0 = SubResource("TileSetAtlasSource_udnr2")
 script = ExtResource("7_xw8qz")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=350550884]
+position = Vector2(637, 368)
 
 [node name="BackgroundTexture" type="TextureRect" parent="Camera2D" unique_id=627048204]
 texture_repeat = 2
 material = SubResource("ShaderMaterial_pmfpv")
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -780.0
-offset_top = -481.0
-offset_right = 1423.0
-offset_bottom = 838.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -1417.0
+offset_top = -849.0
+offset_right = 786.0
+offset_bottom = 470.0
 texture = ExtResource("2_ojrtv")
 
 [node name="TileNode" type="Node2D" parent="." unique_id=2118573039]
+position = Vector2(-241, -117)
 
 [node name="front" type="TileMapLayer" parent="TileNode" unique_id=508529142]
 tile_set = SubResource("TileSet_80qnd")
 script = ExtResource("2_udnr2")
 
 [node name="OverworldPlayer" parent="." unique_id=1664911443 instance=ExtResource("3_80qnd")]
+position = Vector2(145, -162)
 
 [node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
 
 [node name="LoadingScreen" parent="." unique_id=1500000010 instance=ExtResource("5_loading")]
-
-[node name="UI" type="CanvasLayer" parent="." unique_id=1500000011]

@@ -19,40 +19,65 @@ shader_parameter/block_size = 80.0
 script = ExtResource("1_sihfp")
 
 [node name="Flash" type="ColorRect" parent="." unique_id=1972372626]
-offset_left = -19.0
-offset_top = -41.0
-offset_right = 1188.0
-offset_bottom = 677.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -196.0
+offset_top = -138.0
+offset_right = 372.0
+offset_bottom = 258.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(1, 1, 1, 0)
 
 [node name="Fade" type="ColorRect" parent="." unique_id=792041666]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = -65.0
 offset_top = -82.0
-offset_right = 1220.0
-offset_bottom = 724.0
+offset_right = 169.0
+offset_bottom = 148.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=820209970]
 
 [node name="ReconstructionOverlay" type="ColorRect" parent="." unique_id=1899841330]
 material = SubResource("ShaderMaterial_hbgfg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = -210.0
 offset_top = -198.0
-offset_right = 1496.0
-offset_bottom = 893.0
+offset_right = 216.0
+offset_bottom = 173.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("4_hbgfg")
 
 [node name="GlitchOverlay" type="ColorRect" parent="." unique_id=1687937731]
 material = SubResource("ShaderMaterial_yxi5m")
-offset_left = -65.0
-offset_top = -82.0
-offset_right = 1615.0
-offset_bottom = 959.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -189.0
+offset_top = -129.0
+offset_right = 211.0
+offset_bottom = 192.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("5_yxi5m")
 
 [node name="OverworldShot" type="TextureRect" parent="." unique_id=437705358]
 modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = -146.0
 offset_top = -160.0
-offset_right = 1463.0
-offset_bottom = 933.0
+offset_right = 183.0
+offset_bottom = 213.0
+grow_horizontal = 2
+grow_vertical = 2

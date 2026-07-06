@@ -175,32 +175,18 @@ func pre_generate_world() -> void:
 func _finish_world_setup() -> void:
 	var total_chunks: int = (world_bounds * 2 + 1) * (world_bounds * 2 + 1)
 
-	# Find valid spawn point and place player
-	var spawn_pos = find_valid_spawn_tile()
+	# Resolve the player's spawn position from saved state when possible,
+	# but only use it if it is confirmed to be a walkable terrain tile.
+	var spawn_pos = resolve_spawn_position()
 	if spawn_pos != Vector2.ZERO:
 		player.position = spawn_pos
+	else:
+		push_error("[SPAWN] Failed to resolve a valid spawn tile.")
 	
 	is_world_ready = true
 	world_generation_complete.emit()
 	overworld_ready.emit()
 	overworld_ready.emit()
-
-	#restore player position
-	if SignalBus.overworld_state.has("player_position"):
-		var saved_player_pos = SignalBus.overworld_state["player_position"]
-		if saved_player_pos is Vector2i:
-			player.position = map_to_local(saved_player_pos)
-	elif SignalBus.overworld_state.has("player_tile"):
-		player.position = map_to_local(
-			SignalBus.overworld_state["player_tile"]
-		)
-
-	# NEW: Make sure the restored position is on land
-	var tile = local_to_map(player.position)
-
-	if get_cell_source_id(tile) == -1:
-		print("[SPAWN] Saved position is on water. Finding new spawn...")
-		player.position = find_valid_spawn_tile()
 
 	# Enemy restoration
 	if SignalBus.overworld_state.has("enemies"):
@@ -323,6 +309,26 @@ func is_tile_walkable(tile: Vector2i) -> bool:
 	return get_cell_source_id(tile) != -1
 
 
+func is_position_on_walkable_tile(position: Vector2) -> bool:
+	var tile = local_to_map(position)
+	return is_tile_walkable(tile)
+
+
+func resolve_spawn_position() -> Vector2:
+	if SignalBus.overworld_state.has("player_position"):
+		var saved_player_pos = SignalBus.overworld_state["player_position"]
+		if saved_player_pos is Vector2i:
+			var candidate_position = map_to_local(saved_player_pos)
+			if is_position_on_walkable_tile(candidate_position):
+				return candidate_position
+	elif SignalBus.overworld_state.has("player_tile"):
+		var saved_tile = SignalBus.overworld_state["player_tile"]
+		if saved_tile is Vector2i and is_tile_walkable(saved_tile):
+			return map_to_local(saved_tile)
+
+	return find_valid_spawn_tile()
+
+
 func get_walkable_neighbor_tiles(tile: Vector2i) -> Array[Vector2i]:
 	"""Return all walkable surrounding tiles around a given tile, including diagonals."""
 	var neighbors: Array[Vector2i] = []
@@ -343,24 +349,25 @@ func get_walkable_neighbor_tiles(tile: Vector2i) -> Array[Vector2i]:
 
 
 func find_valid_spawn_tile() -> Vector2:
-	"""Find a valid terrain tile near the center to spawn the player"""
-	var center_chunk = Vector2i(0, 0)
-	var base_x = center_chunk.x * width
-	var base_y = center_chunk.y * height
-	
-	# Search for first valid land tile in center chunk
-	for x in range(width):
-		for y in range(height):
-			var tile_x = base_x + x
-			var tile_y = base_y + y
-			var alt = altitude.get_noise_2d(tile_x, tile_y) * 10
-			var tile = Vector2i(tile_x, tile_y)
-			
-			# Valid spawn = land (not water)
-			if get_cell_source_id(tile) != -1:
-				return map_to_local(tile)
-	
-	# Fallback to origin
+	"""Find the closest walkable terrain tile to the world center for spawning the player."""
+	var best_tile: Vector2i = Vector2i.ZERO
+	var best_distance: float = INF
+
+	for x in range(-world_bounds * width, (world_bounds + 1) * width):
+		for y in range(-world_bounds * height, (world_bounds + 1) * height):
+			var tile = Vector2i(x, y)
+			if not is_tile_walkable(tile):
+				continue
+
+			var distance = abs(tile.x) + abs(tile.y)
+			if distance < best_distance:
+				best_distance = distance
+				best_tile = tile
+
+	if best_tile != Vector2i.ZERO or is_tile_walkable(best_tile):
+		print("[SPAWN] Selected valid terrain tile at: ", best_tile)
+		return map_to_local(best_tile)
+
 	push_error("No valid land tile found!")
 	return map_to_local(Vector2i(0, 0))
 func generate_chunk(chunk_coord: Vector2i):

@@ -15,15 +15,13 @@ script = ExtResource("1_vu6ey")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1094118409]
 material = SubResource("ShaderMaterial_minimap")
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -192.0
-offset_top = -192.0
-grow_horizontal = 0
-grow_vertical = 0
+offset_left = 1088.0
+offset_top = 528.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1259698418]
 handle_input_locally = false

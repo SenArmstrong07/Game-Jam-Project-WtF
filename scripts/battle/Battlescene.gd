@@ -3,6 +3,7 @@ class_name Battlescene
 
 @onready var ui: CanvasLayer = $PLAYER_HP_BATTLE_UI
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
+@onready var victory_overlay: Control = $VictoryOverlay
 
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
@@ -55,6 +56,8 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
+	victory_overlay.visible = false
+	SignalBus.victory_continue.connect(_on_victory_continue)
 	BgTitleToDial.stop()
 	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
 	battle_preperations.visible = false
@@ -718,8 +721,11 @@ func _check_win_condition():
 	if enemies.size() == 0:
 		current_phase = BattlePhase.END
 		battle_active = false
+		battle_preperations.visible = false
+		move_shuffle.hide_bar()
 
 		print("Player wins!")
+		victory_overlay.show_victory()
 		battle_ended.emit(player)
 
 		# HARD STOP ALL ENEMIES
@@ -728,8 +734,10 @@ func _check_win_condition():
 				e.queue_free()
 
 		await get_tree().create_timer(0.5).timeout
-		# Proceed to reconstruction + return to overworld
-		end_battle()
+		
+func _on_victory_continue():
+	print("BattleScene received signal!")
+	end_battle()
 		
 func get_alive_enemies() -> Array:
 	return enemies.filter(func(e):

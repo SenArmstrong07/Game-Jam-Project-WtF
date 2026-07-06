@@ -7,8 +7,6 @@
 [node name="Unit" type="CharacterBody2D" unique_id=1746116883]
 script = ExtResource("1_e3b5r")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1302790633]
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1045346558]
 
 [node name="Marker2D" type="Marker2D" parent="." unique_id=1638764818]

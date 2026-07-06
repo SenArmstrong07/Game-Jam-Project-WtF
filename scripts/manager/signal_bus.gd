@@ -4,6 +4,9 @@ extends Node
 var current_encounter : EncounterData
 var in_transition := false
 var overworld_state : Dictionary = {}
+#victory signals
+signal battle_won
+signal victory_continue
 func start_battle(overworld_enemy):
 
 	var encounter := EncounterData.new()

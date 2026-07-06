@@ -49,11 +49,12 @@ var selecting_buttons := false
 @onready var battle_preperations =  $PLAYER_HP_BATTLE_UI/BATTLE_PREPERATIONS
 @onready var move_shuffle = $PLAYER_HP_BATTLE_UI/MOVE_SHUFFLE
 @onready var tutorial: CanvasLayer = $TUTORIALS
-var intro_tutorial_done := false
+
 var prep_tutorial_done := false
 var battle_tutorial_done := false
 var confirm_tutorial_done := false
-
+var battle_controls_tutorial_done := false
+	
 var tutorial_mode := true
 
 #put new vector to add enemy
@@ -616,9 +617,9 @@ func _start_battle_phase() -> void:
 	move_shuffle.show_bar()
 
 	await get_tree().process_frame
-	
-	if !battle_tutorial_done:
-		battle_tutorial_done = true
+
+	if !battle_controls_tutorial_done:
+		battle_controls_tutorial_done = true
 		await get_tree().create_timer(1.5).timeout
 		await tutorial_popup(
 			"MiniBot",

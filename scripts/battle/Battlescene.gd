@@ -52,7 +52,7 @@ var selecting_buttons := false
 var enemy_spawn_positions := [
 	Vector2i(1, 2),
 	Vector2i(2, 1)
-]
+]	
 
 func _ready() -> void:
 	BgTitleToDial.stop()

@@ -8,7 +8,6 @@ enum Team {
 	PLAYER,
 	ENEMY
 }
-var sprite: AnimatedSprite2D
 
 var is_hurt := false
 var team: Team
@@ -44,10 +43,10 @@ var attack_damage_type: DamageType = DamageType.NEUTRAL
 var dmg_eff: Array[DamageType] = []
 
 func _ready():
-	sprite = find_child("AnimatedSprite2D", true, false)
-
-	if sprite == null:
-		push_error(name + " is missing an AnimatedSprite2D")
+	#sprite = find_child("AnimatedSprite2D", true, false)
+#
+	#if sprite == null:
+		#push_error(name + " is missing an AnimatedSprite2D")
 
 	hp = max_hp
 # ============================================================

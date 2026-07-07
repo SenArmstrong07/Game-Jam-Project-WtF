@@ -3,6 +3,91 @@
 [ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="1_h64li"]
 [ext_resource type="Script" uid="uid://dhey7p4kb0txw" path="res://scripts/UI/victory_overlay.gd" id="1_toycp"]
 
+[sub_resource type="Animation" id="Animation_h64li"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1282, 108)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MarginContainer/VictoryMessage:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MarginContainer:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_7cl5r"]
+resource_name = "victory_reveal"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.22),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1282, 0), Vector2(1282, 108), Vector2(1286, 108)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MarginContainer/VictoryMessage:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.0009999999, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MarginContainer:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.01),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2l3lj"]
+_data = {
+&"RESET": SubResource("Animation_h64li"),
+&"victory_reveal": SubResource("Animation_7cl5r")
+}
+
 [node name="VictoryOverlay" type="Control" unique_id=1088365696]
 layout_mode = 3
 anchors_preset = 15
@@ -12,29 +97,29 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_toycp")
 
-[node name="UI" type="CanvasLayer" parent="." unique_id=1076568098]
-
-[node name="MsgContainer" type="PanelContainer" parent="UI" unique_id=2144262748]
+[node name="MsgContainer" type="PanelContainer" parent="." unique_id=2144262748]
+layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.003
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 251.0
-offset_right = 0.15991211
-offset_bottom = -316.0
+offset_left = -4.0
+offset_top = 307.0
+offset_right = -5.840088
+offset_bottom = -305.0
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/MsgContainer" unique_id=222861712]
+[node name="MarginContainer" type="MarginContainer" parent="MsgContainer" unique_id=222861712]
 modulate = Color(0.50436056, 0.7030328, 0.2348895, 1)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/MsgContainer/MarginContainer" unique_id=1462654457]
+[node name="VBoxContainer" type="VBoxContainer" parent="MsgContainer/MarginContainer" unique_id=1462654457]
 layout_mode = 2
 
-[node name="VictoryMessage" type="Label" parent="UI/MsgContainer/MarginContainer" unique_id=136757871]
+[node name="VictoryMessage" type="Label" parent="MsgContainer/MarginContainer" unique_id=136757871]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_h64li")
-theme_override_font_sizes/font_size = 100
+theme_override_font_sizes/font_size = 60
 text = "ENEMY DEBUGGED"
 horizontal_alignment = 1
 
-[node name="MsgPlayer" type="AnimationPlayer" parent="UI/MsgContainer" unique_id=315363503]
+[node name="MsgPlayer" type="AnimationPlayer" parent="MsgContainer" unique_id=315363503]
+libraries/ = SubResource("AnimationLibrary_2l3lj")

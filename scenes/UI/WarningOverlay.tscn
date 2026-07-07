@@ -1,0 +1,130 @@
+[gd_scene format=3 uid="uid://cbcsukraroxem"]
+
+[ext_resource type="Script" uid="uid://kvxaawdnrb7p" path="res://scripts/UI/warning_overlay.gd" id="1_c1fr1"]
+[ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="2_sxuup"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jkqwt"]
+bg_color = Color(0.18208069, 0.00788588, 3.008172e-08, 1)
+
+[sub_resource type="Animation" id="Animation_sxuup"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(195, 147)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MarginContainer/WarningMsg:theme_override_colors/font_color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MarginContainer/WarningMsg:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_xnypy"]
+resource_name = "show_warning"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335, 0.38),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(37.80005, 158.5), Vector2(1279, 154)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MarginContainer/WarningMsg:theme_override_colors/font_color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.43333334, 0.73333335, 1.0333333, 1.3, 1.6, 1.9, 2.2, 2.4666667, 2.7666667, 3.0666666, 3.3333333, 3.6, 3.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.8274293, 3.946722e-06, 8.663535e-07, 1), Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1), Color(0.8274293, 3.946722e-06, 8.663535e-07, 1), Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1), Color(0.8274293, 3.946722e-06, 8.663535e-07, 1), Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1), Color(0.8274293, 3.946722e-06, 8.663535e-07, 1), Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1), Color(0.8274293, 3.946722e-06, 8.663535e-07, 1), Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1), Color(0.8274293, 3.946722e-06, 8.663535e-07, 1), Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1), Color(0.8274293, 3.946722e-06, 8.663535e-07, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MarginContainer/WarningMsg:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.36666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jkqwt"]
+_data = {
+&"RESET": SubResource("Animation_sxuup"),
+&"show_warning": SubResource("Animation_xnypy")
+}
+
+[node name="WarningOverlay" type="Control" unique_id=2090506840]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c1fr1")
+
+[node name="MsgContainer" type="PanelContainer" parent="." unique_id=2056995269]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 306.5
+offset_right = -591.0
+offset_bottom = -259.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jkqwt")
+
+[node name="MarginContainer" type="MarginContainer" parent="MsgContainer" unique_id=972531381]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MsgContainer/MarginContainer" unique_id=1141916145]
+layout_mode = 2
+
+[node name="WarningMsg" type="Label" parent="MsgContainer/MarginContainer" unique_id=855267384]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.43348202, 7.099286e-07, 1.4439226e-07, 1)
+theme_override_fonts/font = ExtResource("2_sxuup")
+theme_override_font_sizes/font_size = 175
+text = "WARNING"
+horizontal_alignment = 1
+
+[node name="WrnPlayer" type="AnimationPlayer" parent="MsgContainer" unique_id=296131234]
+libraries/ = SubResource("AnimationLibrary_jkqwt")

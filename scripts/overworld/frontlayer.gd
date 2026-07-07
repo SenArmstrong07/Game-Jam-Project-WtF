@@ -310,7 +310,7 @@ func is_tile_walkable(tile: Vector2i) -> bool:
 
 
 func is_position_on_walkable_tile(position: Vector2) -> bool:
-	var tile = local_to_map(position)
+	var tile = global_to_map(position)
 	return is_tile_walkable(tile)
 
 
@@ -318,13 +318,13 @@ func resolve_spawn_position() -> Vector2:
 	if SignalBus.overworld_state.has("player_position"):
 		var saved_player_pos = SignalBus.overworld_state["player_position"]
 		if saved_player_pos is Vector2i:
-			var candidate_position = map_to_local(saved_player_pos)
+			var candidate_position = map_to_global(saved_player_pos)
 			if is_position_on_walkable_tile(candidate_position):
 				return candidate_position
 	elif SignalBus.overworld_state.has("player_tile"):
 		var saved_tile = SignalBus.overworld_state["player_tile"]
 		if saved_tile is Vector2i and is_tile_walkable(saved_tile):
-			return map_to_local(saved_tile)
+			return map_to_global(saved_tile)
 
 	return find_valid_spawn_tile()
 
@@ -366,10 +366,10 @@ func find_valid_spawn_tile() -> Vector2:
 
 	if best_tile != Vector2i.ZERO or is_tile_walkable(best_tile):
 		print("[SPAWN] Selected valid terrain tile at: ", best_tile)
-		return map_to_local(best_tile)
+		return map_to_global(best_tile)
 
 	push_error("No valid land tile found!")
-	return map_to_local(Vector2i(0, 0))
+	return map_to_global(Vector2i(0, 0))
 func generate_chunk(chunk_coord: Vector2i):
 	var base_x = chunk_coord.x * width
 	var base_y = chunk_coord.y * height
@@ -446,6 +446,8 @@ func spawn_fixed_enemy_count() -> void:
 			continue
 		
 		var spawn_world_pos = map_to_local(Vector2i(random_tile_x, random_tile_y))
+		# Convert to global (CyberMap root) coordinates to match player/enemy positions
+		spawn_world_pos = map_to_global(Vector2i(random_tile_x, random_tile_y))
 		
 		# Check distance to player
 		if spawn_world_pos.distance_to(player.position) < min_distance_between_enemies:
@@ -496,3 +498,21 @@ func get_world_bounds() -> Rect2:
 func get_world_size() -> Vector2:
 	"""Returns total world dimensions"""
 	return Vector2(world_max_x - world_min_x, world_max_y - world_min_y)
+
+
+## Coordinate helpers to account for TileNode parent offsets
+func map_to_global(tile: Vector2i) -> Vector2:
+	# Convert tile->local (TileMap) then translate by TileNode position to get CyberMap local coords
+	var local_pos = map_to_local(tile)
+	var node = get_parent()
+	if node:
+		return local_pos + node.position
+	return local_pos
+
+func global_to_map(global_pos: Vector2) -> Vector2i:
+	# Convert global (CyberMap local) pos to TileMap local, then to tile coords
+	var node = get_parent()
+	var local_pos = global_pos
+	if node:
+		local_pos = global_pos - node.position
+	return local_to_map(local_pos)

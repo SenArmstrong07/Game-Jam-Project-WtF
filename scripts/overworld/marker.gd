@@ -10,7 +10,8 @@ var max_marker_scale = 1.0  # Scale when at minimap edge
 var min_marker_scale = 0.4  # Scale when at center
 var world_render_distance = 2000  # Distance at which marker reaches max size
 
-func update_position(pos):
+func update_position(pos: Vector2) -> void:
+	# Expect world-space coordinates in the same root space as player and minimap visuals
 	global_position = pos / zoom_factor
 
 func set_enemy(enemy_ref: Node2D) -> void:
@@ -29,8 +30,8 @@ func _process(delta: float) -> void:
 	# Continuously update marker position based on enemy position
 	if enemy and minimap_script:
 		var minimap_cam = minimap_script.minimap_cam
-		var camera_pos = minimap_script.player.position / zoom_factor
-		var enemy_pos = enemy.position / zoom_factor
+		var camera_pos = minimap_script.player.global_position / zoom_factor
+		var enemy_pos = enemy.global_position / zoom_factor
 		
 		# Position relative to camera in minimap world space
 		var relative_to_camera = enemy_pos - camera_pos
@@ -64,7 +65,7 @@ func _process(delta: float) -> void:
 			rotation = 0
 			
 			# Scale based on proximity - closer = smaller, farther = larger
-			var world_distance = enemy.position.distance_to(minimap_script.player.position)
+			var world_distance = enemy.global_position.distance_to(minimap_script.player.global_position)
 			var proximity_scale = clamp(1.0 - (world_distance / world_render_distance), min_marker_scale, max_marker_scale)
 			scale = Vector2.ONE * proximity_scale
 

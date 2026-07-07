@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var player: Node2D = $OverworldPlayer
 @onready var frontlayer: TileMapLayer = $TileNode/front
+@onready var boss_summon_overlay: Control = $UI/Boss_Summon_Overlay
 
 var overworld_state: Dictionary = {}
 
@@ -42,9 +43,9 @@ func _on_simulate_remove_enemy_pressed() -> void:
 	if nearest_enemy:
 		_remove_overworld_enemy(nearest_enemy)
 		store_overworld_state()
-		print("[CYBERMAP] Removed nearest overworld enemy: ", nearest_enemy.name)
+		print("[STATE] Removed nearest overworld enemy: ", nearest_enemy.name)
 	else:
-		print("[CYBERMAP] No overworld enemy found to remove")
+		print("[STATE] No overworld enemy found to remove")
 
 func _find_nearest_overworld_enemy() -> Node2D:
 	var nearest_enemy: Node2D = null
@@ -64,11 +65,17 @@ func _find_nearest_overworld_enemy() -> Node2D:
 func _remove_overworld_enemy(enemy: Node2D) -> void:
 	if not enemy or not enemy.is_inside_tree():
 		return
-	# Remove any marker linked by minimap system if present
-	if enemy.has_signal("died"):
-		enemy.emit_signal("died")
-	# Remove the enemy node itself
-	enemy.queue_free()
+	if enemy.has_method("disappear"):
+		enemy.disappear()
+	else:
+		# Remove the enemy node itself through here
+		enemy.queue_free()
+	#wait one queue frame
+	await get_tree().process_frame
+	#Store current state first
+	store_overworld_state()
+	#check for validity before summoning boss
+	_check_for_boss_summon_validity()
 
 func store_overworld_state() -> void:
 	overworld_state = get_overworld_state()
@@ -92,7 +99,7 @@ func _restore_overworld_state(state: Dictionary) -> void:
 	# Spawn enemies based on saved data
 	#var enemy_scene = load("res://scenes/units/overworld_enemy.tscn")
 	#if enemy_scene == null:
-		#print("[CYBERMAP] _restore_overworld_state: cannot load overworld enemy scene")
+		#print("[STATE] _restore_overworld_state: cannot load overworld enemy scene")
 		#return
 #
 	#if "enemies" in state:
@@ -104,6 +111,13 @@ func _restore_overworld_state(state: Dictionary) -> void:
 
 	# Update stored state after restoration
 	store_overworld_state()
+	
+func _check_for_boss_summon_validity() -> void:
+	var enemies = get_tree().get_nodes_in_group("overworldmob")
+	
+	if enemies.is_empty():
+		print("[STATE] All enemies are defeated. Summoning Boss...")
+		boss_summon_overlay.summon_message()
 
 func get_overworld_state() -> Dictionary:
 	var enemies = []
@@ -151,5 +165,5 @@ func _collect_island_data() -> Array:
 				"tiles": island,
 			})
 	else:
-		print("[CYBERMAP] world_map_ui has no islands data yet")
+		print("[STATE] world_map_ui has no islands data yet")
 	return island_info

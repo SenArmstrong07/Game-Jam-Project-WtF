@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bp7rq1s1rj2x8" path="res://scenes/overworld/loading_screen.tscn" id="5_loading"]
 [ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="6_ojrtv"]
 [ext_resource type="Script" uid="uid://bckhqp8t0oqkg" path="res://scripts/overworld/cyber_map.gd" id="7_xw8qz"]
+[ext_resource type="PackedScene" uid="uid://bsaifpdqxphrt" path="res://scenes/UI/Boss_Summon_Overlay.tscn" id="8_pmfpv"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pmfpv"]
 shader = ExtResource("6_ojrtv")
@@ -87,4 +88,18 @@ position = Vector2(145, -162)
 
 [node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
 
+[node name="UI" type="CanvasLayer" parent="." unique_id=34691778]
+
+[node name="SimulateEnemyDel" type="Button" parent="UI" unique_id=1728111055]
+offset_left = 2.0
+offset_top = -4.0
+offset_right = 312.0
+offset_bottom = 49.0
+theme_override_font_sizes/font_size = 27
+text = "Simulate Enemy Delete"
+
+[node name="Boss_Summon_Overlay" parent="UI" unique_id=422444063 instance=ExtResource("8_pmfpv")]
+
 [node name="LoadingScreen" parent="." unique_id=1500000010 instance=ExtResource("5_loading")]
+
+[connection signal="pressed" from="UI/SimulateEnemyDel" to="." method="_on_simulate_remove_enemy_pressed"]

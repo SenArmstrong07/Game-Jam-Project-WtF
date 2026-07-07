@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://bsaifpdqxphrt"]
+
+[ext_resource type="Script" uid="uid://thdl4k7yk6qf" path="res://scripts/UI/boss_summon_overlay.gd" id="1_wlj66"]
+[ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="2_mnwcq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wlj66"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="Animation" id="Animation_sreia"]
+length = 3.0000000000000004
+
+[sub_resource type="Animation" id="Animation_mnwcq"]
+resource_name = "play_summon"
+length = 2.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MarginContainer/SummonMsg:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.16666687, 0.23333359, 0.3000002, 0.3666669, 0.43333352, 0.50000024, 0.56666684, 0.63333356, 0.70000017, 0.7666669, 0.8333335, 0.9000002, 0.9666668, 1.0333335, 1.1000001, 1.1666669, 1.2333335, 1.3000002, 1.3666668, 1.4333335, 1.5000001, 1.5666667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": ["M", "M", "MA", "MAS", "MAST", "MASTE", "MASTER", "MASTER ", "MASTER V", "MASTER VI", "MASTER VIR", "MASTER VIRU", "MASTER VIRUS", "MASTER VIRUS ", "MASTER VIRUS I", "MASTER VIRUS IN", "MASTER VIRUS INC", "MASTER VIRUS INCO", "MASTER VIRUS INCOM", "MASTER VIRUS INCOMI", "MASTER VIRUS INCOMIN", "MASTER VIRUS INCOMING"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MarginContainer/SummonMsg:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.16666669),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../BlinkRect:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.36666667, 0.6, 0.8333333, 1.0666667, 1.2666667, 1.4666667, 1.7, 1.9333333, 2.1666667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.47843137, 0, 0, 0), Color(0.47843137, 0, 0, 1), Color(0.47843137, 0, 0, 0), Color(0.47843137, 0, 0, 1), Color(0.47843137, 0, 0, 0), Color(0.47843137, 0, 0, 1), Color(0.47843137, 0, 0, 0), Color(0.47843137, 0, 0, 1), Color(1, 1, 1, 0), Color(0.5882353, 0, 0, 1), Color(0.5882353, 0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sreia"]
+_data = {
+&"RESET": SubResource("Animation_sreia"),
+&"play_summon": SubResource("Animation_mnwcq")
+}
+
+[node name="Boss_Summon_Overlay" type="Control" unique_id=422444063]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wlj66")
+
+[node name="BlinkRect" type="ColorRect" parent="." unique_id=1001914030]
+modulate = Color(0.51613545, 0.040816307, 0.040816307, 0.9591837)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.5882353, 0, 0, 0)
+
+[node name="MsgContainer" type="PanelContainer" parent="." unique_id=425221031]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 290.0
+offset_right = 3.0
+offset_bottom = -277.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wlj66")
+
+[node name="MarginContainer" type="MarginContainer" parent="MsgContainer" unique_id=1816041292]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MsgContainer/MarginContainer" unique_id=1483906339]
+layout_mode = 2
+
+[node name="SummonMsg" type="Label" parent="MsgContainer/MarginContainer" unique_id=1762048659]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_mnwcq")
+theme_override_font_sizes/font_size = 100
+text = "MASTER VIRUS INCOMING"
+horizontal_alignment = 1
+
+[node name="SmnPlayer" type="AnimationPlayer" parent="MsgContainer" unique_id=1033580215]
+libraries/ = SubResource("AnimationLibrary_sreia")
+
+[connection signal="animation_finished" from="MsgContainer/SmnPlayer" to="." method="_on_smn_player_animation_finished"]

@@ -8,10 +8,6 @@ func _ready() -> void:
 	visible = false
 	print("victory overlay ready")
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
 	
 func show_victory():
 	print("SHOW VICTORY CALLED")

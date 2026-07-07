@@ -3,8 +3,10 @@ extends CanvasLayer
 @onready var minimap_cam: Camera2D = %minimapCam
 @onready var map_markers: Node2D = %mapMarkers
 @onready var terrain_visuals: Node2D = %TerrainVisuals
+@onready var map_root: Node2D = $SubViewportContainer/SubViewport/Map
 @onready var marker_scene = preload("res://scenes/overworld/Marker.tscn")
 @onready var world_map_scene = preload("res://scenes/overworld/world_map_ui.tscn")
+@onready var Bounds2DScript = preload("res://scripts/overworld/bounds2d.gd")
 
 var zoom_factor = 8
 var markers = []
@@ -33,6 +35,18 @@ var tile_colors = {
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	add_to_group("minimap")
+	if map_root == null or not is_instance_valid(map_root):
+		var viewport_root = find_child("SubViewport", false)
+		if viewport_root and viewport_root.has_node("Map"):
+			map_root = viewport_root.get_node("Map")
+		elif has_node("SubViewport/Map"):
+			map_root = get_node("SubViewport/Map")
+		elif has_node("Map"):
+			map_root = get_node("Map")
+		else:
+			map_root = null
+		print("[MINIMAP] Resolved map root: ", map_root)
+	
 	# Get reference to player
 	player = get_tree().get_first_node_in_group("player")
 	
@@ -71,21 +85,16 @@ func _ready() -> void:
 	else:
 		print("[MINIMAP] WARNING: SubViewportContainer not found!")
 	
-	# Create bounds drawer control for drawing world bounds border
-	bounds_drawer = BoundsDrawer.new()
-	bounds_drawer.minimap_script = self
-	bounds_drawer.name = "BoundsDrawer"
-	bounds_drawer.anchors_preset = Control.PRESET_BOTTOM_RIGHT
-	bounds_drawer.anchor_left = 1.0
-	bounds_drawer.anchor_top = 1.0
-	bounds_drawer.anchor_right = 1.0
-	bounds_drawer.anchor_bottom = 1.0
-	bounds_drawer.offset_left = -192.0
-	bounds_drawer.offset_top = -192.0
-	bounds_drawer.size = Vector2(192, 192)
-	bounds_drawer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bounds_drawer)
-	move_child(bounds_drawer, get_child_count() - 1)  # Move to top layer
+	# Create a world-space bounds drawer inside the SubViewport Map using external script
+	var bounds_node = Bounds2DScript.new()
+	bounds_node.minimap_script = self
+	bounds_node.name = "Bounds2D"
+	if map_root and is_instance_valid(map_root):
+		map_root.add_child(bounds_node)
+	else:
+		# Fallback: add to this CanvasLayer if Map isn't found
+		add_child(bounds_node)
+		move_child(bounds_node, get_child_count() - 1)
 
 func _physics_process(delta: float) -> void:
 	if player:
@@ -125,7 +134,7 @@ func create_marker_for_enemy(enemy: Node2D) -> Sprite2D:
 	marker.set_enemy(enemy)
 	
 	# Set initial position immediately to avoid visual glitch
-	marker.update_position(enemy.position)
+	marker.update_position(enemy.global_position)
 	
 	# Add to marker layer (above minimap) instead of inside viewport
 	marker_layer.add_child(marker)
@@ -142,7 +151,7 @@ func render_nearby_terrain_chunks() -> void:
 	if not frontlayer or not terrain_visuals:
 		return
 	
-	var camera_tile_pos = frontlayer.local_to_map(player.position)
+	var camera_tile_pos = frontlayer.global_to_map(player.position)
 	var render_range = 25  # Adjusted for smaller 192×192 viewport
 	
 	# Render terrain tiles in range
@@ -180,7 +189,7 @@ func render_terrain_tile(tile_pos: Vector2i, tile_type: int) -> void:
 		return
 		
 	var rect = ColorRect.new()
-	var world_pos = frontlayer.map_to_local(tile_pos) / zoom_factor
+	var world_pos = frontlayer.map_to_global(tile_pos) / zoom_factor
 	
 	rect.position = world_pos - Vector2(tile_size / 2 / zoom_factor, tile_size / 2 / zoom_factor)
 	rect.size = Vector2(tile_size / zoom_factor, tile_size / zoom_factor)
@@ -191,25 +200,7 @@ func render_terrain_tile(tile_pos: Vector2i, tile_type: int) -> void:
 	# IMPORTANT: Store reference to the node so we can delete it later
 	terrain_tiles[tile_pos] = rect
 
-
-# Custom Control class for drawing world bounds
-class BoundsDrawer extends Control:
-	var minimap_script: Node
-	
-	func _draw() -> void:
-		if not minimap_script or not minimap_script.player or not minimap_script.frontlayer:
-			return
-		
-		var world_bounds = minimap_script.frontlayer.get_world_bounds()
-		
-		# Scale world bounds to minimap coordinates
-		var minimap_bounds = Rect2(
-			world_bounds.position / minimap_script.zoom_factor,
-			world_bounds.size / minimap_script.zoom_factor
-		)
-		
-		# Draw a border rectangle showing the world bounds
-		draw_rect(minimap_bounds, Color.WHITE, false, 2.0)
+ 
 
 
 func _on_minimap_gui_input(event: InputEvent) -> void:

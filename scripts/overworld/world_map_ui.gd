@@ -140,7 +140,7 @@ func _restore_from_map_snapshot(snapshot: Dictionary) -> void:
 					islands.append(typed_island)
 
 	for tile_pos in land_tiles:
-		var world_pos = frontlayer.map_to_local(tile_pos)
+		var world_pos = frontlayer.map_to_global(tile_pos)
 		var screen_pos = _world_to_screen(world_pos)
 		tile_to_screen[tile_pos] = screen_pos
 
@@ -169,7 +169,7 @@ func _scan_all_land_tiles() -> void:
 				land_tiles.append(tile_pos)
 				
 				# Convert to screen coordinates for clicking
-				var world_pos = frontlayer.map_to_local(tile_pos)
+				var world_pos = frontlayer.map_to_global(tile_pos)
 				var screen_pos = _world_to_screen(world_pos)
 				tile_to_screen[tile_pos] = screen_pos
 
@@ -290,7 +290,7 @@ func _draw() -> void:
 			for tile_pos in hovered_island:
 				# Make sure we have screen coordinates for this tile
 				if tile_pos not in tile_to_screen:
-					var world_pos = frontlayer.map_to_local(tile_pos)
+					var world_pos = frontlayer.map_to_global(tile_pos)
 					var screen_pos = _world_to_screen(world_pos)
 					tile_to_screen[tile_pos] = screen_pos
 				
@@ -304,7 +304,7 @@ func _draw() -> void:
 				draw_rect(rect, Color(1, 1, 0, 0.3), true)
 	
 		# Draw player current position marker
-		var player_world_pos = frontlayer.map_to_local(frontlayer.local_to_map(player.position))
+		var player_world_pos = player.position
 		var player_screen_pos = _world_to_screen(player_world_pos)
 		draw_circle(player_screen_pos, 8, Color.YELLOW)
 		draw_circle(player_screen_pos, 8, Color.WHITE, false, 2)
@@ -399,8 +399,8 @@ func _handle_mouse_motion(screen_pos: Vector2) -> void:
 	# Convert screen position to world position
 	var world_pos = _screen_to_world(screen_pos)
 	
-	# Find the tile under the cursor
-	var tile_under_cursor = frontlayer.local_to_map(world_pos)
+	# Find the tile under the cursor (global-aware)
+	var tile_under_cursor = frontlayer.global_to_map(world_pos)
 	
 	# Check if this tile is land
 	if tile_under_cursor not in land_tiles:
@@ -465,8 +465,8 @@ func _handle_left_click(screen_pos: Vector2) -> void:
 	
 	print("[WORLD_MAP] ABOUT TO TELEPORT")
 
-	# Teleport player to that tile
-	var tile_world_pos = frontlayer.map_to_local(nearest_tile)
+	# Teleport player to that tile (convert to global coords)
+	var tile_world_pos = frontlayer.map_to_global(nearest_tile)
 	player.position = tile_world_pos
 	
 	print("[WORLD_MAP] Teleported player to tile: ", nearest_tile, " at world pos: ", tile_world_pos)
@@ -479,8 +479,8 @@ func _find_nearest_land_tile(world_pos: Vector2) -> Vector2i:
 	var nearest_tile = Vector2i.ZERO
 	var min_distance = INF
 	
-	# Convert world position to approximate tile
-	var approx_tile = frontlayer.local_to_map(world_pos)
+	# Convert world position to approximate tile (global-aware)
+	var approx_tile = frontlayer.global_to_map(world_pos)
 	
 	# Search in a small radius around the approximation
 	var search_range = 3
@@ -490,7 +490,7 @@ func _find_nearest_land_tile(world_pos: Vector2) -> Vector2i:
 			
 			# Check if this tile is in our land tiles list
 			if check_tile in land_tiles:
-				var tile_world_pos = frontlayer.map_to_local(check_tile)
+				var tile_world_pos = frontlayer.map_to_global(check_tile)
 				var distance = world_pos.distance_to(tile_world_pos)
 				
 				if distance < min_distance:

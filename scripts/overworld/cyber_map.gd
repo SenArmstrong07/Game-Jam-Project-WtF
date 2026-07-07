@@ -119,7 +119,7 @@ func get_overworld_state() -> Dictionary:
 			})
 
 	var island_data = _collect_island_data()
-	var player_tile = frontlayer.local_to_map(player.position)
+	var player_tile = frontlayer.global_to_map(player.position)
 	var world_map_data: Dictionary = {}
 	if frontlayer and frontlayer.has_method("build_world_map_snapshot"):
 		world_map_data = frontlayer.build_world_map_snapshot()

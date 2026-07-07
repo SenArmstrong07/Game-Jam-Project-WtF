@@ -79,6 +79,7 @@ func trigger_battle() -> void:
 	SignalBus.start_battle(self)
 
 func disappear() -> void:
+	# Remove any marker linked by minimap system if present
 	if has_signal("died"):
 		emit_signal("died")
 	queue_free()

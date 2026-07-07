@@ -10,7 +10,7 @@ const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
 const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
 const FIREWALL = preload("uid://x8y5dkw5aur6")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
-const COMMON_BUG_SCENE_PATH = "res://scenes/units/CommonBug.tscn"
+const COMMON_BUG = preload("uid://bx0l221gdwc3i")
 
 
 
@@ -55,11 +55,13 @@ var enemy_spawn_positions := [
 	Vector2i(2, 1)
 ]	
 
+
 func _ready() -> void:
 	victory_overlay.visible = false
 	SignalBus.victory_continue.connect(_on_victory_continue)
 	BgTitleToDial.stop()
 	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
+	
 	battle_preperations.visible = false
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
@@ -69,34 +71,15 @@ func _ready() -> void:
 	# IMPORTANT: store enemies properly
 	enemies.clear()
 
-	# Fetch the encounter data fresh from SignalBus (not cached at class load time)
-	encounter = SignalBus.current_encounter
-
-	if encounter != null:
-		for i in range(encounter.enemy_count):
-			if i < enemy_spawn_positions.size():
-				spawn_enemy(enemy_spawn_positions[i])
-	else:
-		# Running the battle scene directly for testing
-		#For testing: Spawning 2 enemies by default
-		for pos in enemy_spawn_positions:
-			spawn_enemy(pos)
+	for pos in enemy_spawn_positions:
+		spawn_enemy(pos)
 	
 	battle_preperations.select_button.pressed.connect(_on_select_pressed)
 	battle_preperations.unselect_button.pressed.connect(_on_unselect_pressed)
-	#NOTE KAY BIG BEN:
-	#I'm currently in the process of tidying up yung transition from
-	#overworld to battle scene on an encounter.
-	#kung gusto mo magtest ng battle scene w/o overworld...
-	#iunhighlight mo nalang yung first for loop dito
-	
-	#Test with overworld: 
-	#How we spawn enemies based on encounter:
-	#for i in encounter.enemy_count:
-		#spawn_enemy(enemy_spawn_positions[i])
-	#print("BattleScene READY FINISHED")
+
 	await get_tree().process_frame
 	_start_preparation_phase()
+	
 
 func _on_select_pressed():
 
@@ -181,17 +164,7 @@ func spawn_enemy(pos: Vector2i) -> void:
 	while is_enemy_on_tile(pos):
 		pos.x += 1
 
-	# Load the scene fresh to avoid cache issues
-	var enemy_scene = load(COMMON_BUG_SCENE_PATH)
-	if enemy_scene == null:
-		push_error("Failed to load CommonBug scene from ", COMMON_BUG_SCENE_PATH)
-		return
-
-	var e: Unit = enemy_scene.instantiate()
-	if e == null:
-		push_error("Failed to instantiate CommonBug scene from ", COMMON_BUG_SCENE_PATH)
-		return
-
+	var e: Unit = COMMON_BUG.instantiate()
 	add_child(e)
 
 	e.add_to_group("enemies")
@@ -200,7 +173,7 @@ func spawn_enemy(pos: Vector2i) -> void:
 	# =========================
 	# SET ENEMY STATS HERE
 	# =========================
-	e.max_hp = 100
+	e.max_hp = 150
 
 	e.hp = e.max_hp
 	
@@ -210,6 +183,7 @@ func spawn_enemy(pos: Vector2i) -> void:
 
 	if not e.unit_died.is_connected(_on_unit_died):
 		e.unit_died.connect(_on_unit_died)
+	
 	
 func is_enemy_on_tile(pos: Vector2i) -> bool:
 	for n in enemies:

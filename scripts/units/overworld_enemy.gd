@@ -14,8 +14,27 @@ var patrol_target: Vector2
 var patrol_timer: float = 0.0
 var patrol_change_interval: float = 3.0  # Change target every 3 seconds
 
+# FOR BATTLESCENE ASSIGNMENT OF SPAWNED ENEMY
+enum EnemyTier {
+	COMMON,
+	ELITE
+}
+
+var enemy_tier: EnemyTier = EnemyTier.COMMON
+var battle_scene: PackedScene
+
 func _ready() -> void:
 	add_to_group("overworldmob")
+	battle_scene = SignalBus.BATTLE_POOL.pick_random()
+
+	if battle_scene == SignalBus.TROJAN_ELITE:
+		enemy_tier = EnemyTier.ELITE
+	else:
+		enemy_tier = EnemyTier.COMMON
+		
+	if enemy_tier == EnemyTier.ELITE:
+		make_elite()
+		
 	frontlayer = get_tree().get_first_node_in_group("frontlayer")
 	if frontlayer == null:
 		frontlayer = get_parent().get_node_or_null("TileNode/front")
@@ -103,3 +122,18 @@ func update_sprite_direction(target_pos: Vector2) -> void:
 		$sprite.flip_h = true
 	elif horizontal_delta < -2.0:
 		$sprite.flip_h = false
+
+
+func make_elite() -> void:
+	# Make the enemy slightly larger
+	scale = Vector2(1.3, 1.3)
+
+	# Create an infinite breathing tween
+	var tween := create_tween()
+	tween.set_loops()
+
+	tween.tween_property(self, "scale", Vector2(1.42, 1.42), 0.15)
+	tween.parallel().tween_property($sprite, "modulate", Color(1, 0.35, 0.35), 0.15)
+
+	tween.tween_property(self, "scale", Vector2(1.3, 1.3), 0.45)
+	tween.parallel().tween_property($sprite, "modulate", Color.WHITE, 0.45)

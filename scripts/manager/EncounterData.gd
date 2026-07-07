@@ -4,6 +4,7 @@ class_name EncounterData
 var enemy_count: int
 var overworld_enemy : Node
 var overworld_enemy_position: Vector2
+var battle_scene: PackedScene
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

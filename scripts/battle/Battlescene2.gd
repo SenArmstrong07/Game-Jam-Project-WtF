@@ -667,6 +667,14 @@ func _on_unit_died(unit: Unit) -> void:
 	await get_tree().create_timer(1.0).timeout
 	get_tree().reload_current_scene()
 
+func end_battle() -> void:
+	SignalBus.return_to_overworld()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_O:
+		print("[BATTLE] O pressed - simulating return to overworld")
+		end_battle()
+
 func _check_win_condition():
 	# remove invalid references
 	enemies = enemies.filter(func(e):
@@ -686,7 +694,8 @@ func _check_win_condition():
 				e.queue_free()
 
 		await get_tree().create_timer(0.5).timeout
-		get_tree().reload_current_scene()
+		# Proceed to reconstruction + return to overworld
+		end_battle()
 		
 func get_alive_enemies() -> Array:
 	return enemies.filter(func(e):

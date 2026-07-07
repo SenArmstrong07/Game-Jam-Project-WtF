@@ -1,43 +1,61 @@
 extends Node
 
-#This signal sends specific mob data to the battle scene
-var current_encounter : EncounterData
+# THIS ARE BATTLESCENES (NOT ENEMY SCENES)
+const COMMON_BUG = preload("res://scenes/battle/Battlescene.tscn")
+const THROW_BUG = preload("res://scenes/battle/Battlescene2.tscn")
+const TROJAN_ELITE = preload("res://scenes/battle/Battlescene3.tscn")
+
+const BATTLE_POOL = [
+	COMMON_BUG,
+	THROW_BUG,
+	TROJAN_ELITE
+]
+
+
+var current_encounter: EncounterData
 var in_transition := false
-var overworld_state : Dictionary = {}
+var overworld_state: Dictionary = {}
+
+# Victory signals
+signal battle_won
+signal victory_continue
+
+
 func start_battle(overworld_enemy):
 
 	var encounter := EncounterData.new()
 
-	encounter.enemy_count = randi_range(1,2)
 	encounter.overworld_enemy = overworld_enemy
 	encounter.overworld_enemy_position = overworld_enemy.global_position
 
+	# Use the battle already assigned to this enemy
+	encounter.battle_scene = overworld_enemy.battle_scene
+
 	current_encounter = encounter
 
-	#await BattleTransition.play()
-
 	call_deferred("_change_to_battle")
-	
-func _change_to_battle() -> void:
-	SignalBus.in_transition = true
 
-	# Wait until the current frame has actually been drawn.
+
+func _change_to_battle() -> void:
+
+	in_transition = true
+
 	await RenderingServer.frame_post_draw
 
 	await EncounterTransition.transition_to_battle(
-		"res://scenes/battle/Battlescene.tscn"
+		current_encounter.battle_scene.resource_path
 	)
 
 func return_to_overworld():
 
 	var enemy = current_encounter.overworld_enemy
 
-	# Remove defeated enemy from the current overworld
+	# Remove defeated overworld enemy
 	if is_instance_valid(enemy):
 		enemy.queue_free()
 		await get_tree().process_frame
 
-	# Remove the defeated enemy from the SAVED overworld state
+	# Remove it from saved overworld state
 	var defeated_pos = current_encounter.overworld_enemy_position
 
 	if overworld_state.has("enemies"):

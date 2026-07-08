@@ -34,6 +34,8 @@ var world_max_y: float
 
 var loaded_chunks = {}  # Dictionary: {Vector2i chunk_coord: true}
 
+var camera_follow_enabled : bool = true
+
 # Enemy spawning settings
 var enemy_scene = preload("res://scenes/units/overworld_enemy.tscn")
 var min_distance_between_enemies = 1000
@@ -108,7 +110,7 @@ func _process(delta):
 		print("[ERROR] player is NULL in frontlayer._process()")
 	
 	# Follow player with camera
-	if camera:
+	if camera and camera_follow_enabled:
 		camera.global_position = player.global_position
 		
 		# Clamp camera to world bounds
@@ -132,6 +134,10 @@ func _process(delta):
 	
 	# All chunks are pre-generated and permanently loaded - no dynamic unloading needed
 
+
+func set_camera_follow_enabled(enabled: bool) -> void:
+	camera_follow_enabled = enabled
+	print("[FRONTLAYER] Camera follow enabled=", camera_follow_enabled)
 
 func pre_generate_world() -> void:
 	"""Pre-generate all chunks within world bounds once at startup.
@@ -196,7 +202,10 @@ func _finish_world_setup() -> void:
 		var saved_enemies: Array = SignalBus.overworld_state["enemies"]
 
 		if saved_enemies.is_empty():
-			spawn_fixed_enemy_count()
+			if SignalBus.summon_boss_on_return:
+				print("[TRANSITION] Skipping normal enemy respawn because boss summon is pending")
+			else:
+				spawn_fixed_enemy_count()
 		else:
 			_spawn_saved_enemy_positions(saved_enemies)
 	else:

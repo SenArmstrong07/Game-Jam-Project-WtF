@@ -85,6 +85,16 @@ func _ready() -> void:
 	else:
 		print("[MINIMAP] WARNING: SubViewportContainer not found!")
 	
+	# Create background fill for empty minimap areas with the sea level/empty space color
+	if terrain_visuals:
+		var background = ColorRect.new()
+		background.position = Vector2(-50000, -50000)
+		background.size = Vector2(100000, 100000)
+		background.color = tile_colors[0]  # empty space (dark/neon green)
+		terrain_visuals.add_child(background)
+		terrain_visuals.move_child(background, 0)  # Move to back so terrain tiles render on top
+		print("[MINIMAP] Background fill added to terrain_visuals")
+	
 	# NOTE: We intentionally do NOT add the world-bounds overlay to the minimap
 	# to avoid drawing the world boundary rectangle inside the minimap UI.
 	# Bounds2DScript is kept available if needed for debug builds, but is not

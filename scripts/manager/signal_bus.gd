@@ -14,6 +14,7 @@ const BATTLE_POOL = [
 
 var current_encounter: EncounterData
 var in_transition := false
+var summon_boss_on_return := false
 var overworld_state: Dictionary = {}
 
 # Victory signals
@@ -63,6 +64,9 @@ func return_to_overworld():
 			func(e):
 				return e["position"] != defeated_pos
 		)
+		if overworld_state["enemies"].is_empty():
+			summon_boss_on_return = true
+			print("[SIGNAL_BUS] Last overworld enemy defeated; boss summon queued on return")
 
 	in_transition = true
 

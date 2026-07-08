@@ -4,6 +4,7 @@ class_name Battlescene2
 @onready var ui: CanvasLayer = $BattlePhaseUI
 @onready var enemy_hitpoint: Marker2D = $CommonBug/CommonBugMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
+@onready var victory_overlay: Control = $VictoryOverlay
 
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
@@ -51,6 +52,7 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
+	victory_overlay.visible = false
 	BgTitleToDial.stop()
 	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
 	
@@ -686,6 +688,7 @@ func _check_win_condition():
 		battle_active = false
 
 		print("Player wins!")
+		victory_overlay.show_victory()
 		battle_ended.emit(player)
 
 		# HARD STOP ALL ENEMIES

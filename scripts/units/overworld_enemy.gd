@@ -39,36 +39,36 @@ func _ready() -> void:
 	if frontlayer == null:
 		frontlayer = get_parent().get_node_or_null("TileNode/front")
 
-	patrol_center = position
+	patrol_center = global_position
 	pick_new_patrol_target()
 
 func _physics_process(delta: float) -> void:
 	var target_world_pos: Vector2 = patrol_target
 
 	if player_chase and is_instance_valid(player):
-		target_world_pos = player.position
+		target_world_pos = player.global_position
 		$sprite.play("s_walk")
 		update_sprite_direction(target_world_pos)
 	else:
 		patrol_timer += delta
-		if patrol_timer >= patrol_change_interval or position.distance_to(patrol_target) < 8.0:
+		if patrol_timer >= patrol_change_interval or global_position.distance_to(patrol_target) < 8.0:
 			pick_new_patrol_target()
 			patrol_timer = 0.0
 
-		if position.distance_to(patrol_target) > 4.0:
+		if global_position.distance_to(patrol_target) > 4.0:
 			$sprite.play("s_walk")
 			update_sprite_direction(patrol_target)
 		else:
 			$sprite.stop()
 
-	var direction := target_world_pos - position
+	var direction := target_world_pos - global_position
 	if direction.length_squared() > 0.01:
 		direction = direction.normalized()
 		velocity = direction * speed
 	else:
 		velocity = Vector2.ZERO
 
-	var next_position: Vector2 = position + velocity * delta
+	var next_position: Vector2 = global_position + velocity * delta
 	if frontlayer:
 		var next_tile: Vector2i = frontlayer.global_to_map(next_position)
 		if not frontlayer.is_tile_walkable(next_tile):
@@ -78,8 +78,30 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# Enforce world bounds so enemies cannot wander or be pushed outside the playable area
+	if frontlayer:
+		var bounds: Rect2 = frontlayer.get_world_bounds()
+		var minx = bounds.position.x
+		var maxx = bounds.position.x + bounds.size.x
+		var miny = bounds.position.y
+		var maxy = bounds.position.y + bounds.size.y
+		var gp = global_position
+		var clamped = Vector2(clamp(gp.x, minx, maxx), clamp(gp.y, miny, maxy))
+		if gp != clamped:
+			global_position = clamped
+			velocity = Vector2.ZERO
+			if not player_chase:
+				# Reset patrol center/target to current clamped position
+				patrol_center = global_position
+				patrol_target = global_position
+
 func _on_detection_area_body_entered(body: Node2D) -> void:
-	player = body
+	# Use canonical player node if available to ensure we get global_position
+	var canonical = get_tree().get_first_node_in_group("player")
+	if canonical:
+		player = canonical
+	else:
+		player = body
 	player_chase = true
 
 func _on_detection_area_body_exited(body: Node2D) -> void:
@@ -113,11 +135,10 @@ func pick_new_patrol_target() -> void:
 			patrol_target = candidate
 			return
 		attempts += 1
-
-	patrol_target = position
+	patrol_target = global_position
 
 func update_sprite_direction(target_pos: Vector2) -> void:
-	var horizontal_delta := target_pos.x - position.x
+	var horizontal_delta := target_pos.x - global_position.x
 	if horizontal_delta > 2.0:
 		$sprite.flip_h = true
 	elif horizontal_delta < -2.0:

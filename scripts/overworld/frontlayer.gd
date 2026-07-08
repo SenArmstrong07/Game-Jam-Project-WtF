@@ -18,6 +18,9 @@ var tile_size = 64  # Pixel size of each tile
 # World bounds - FIXED PLAYABLE AREA
 var max_world_coord = 2  # ±2 chunks = 5x5 chunks total (20,480x20,480 pixels)
 var world_bounds = max_world_coord
+
+# Extra padding to expand the playable bounds slightly (in tiles)
+@export var world_bounds_padding_tiles: int = 1
 var is_world_ready = false
 
 # Calculate world limits in world coordinates
@@ -492,7 +495,15 @@ func _spawn_saved_enemy_positions(enemy_data: Array) -> void:
 
 func get_world_bounds() -> Rect2:
 	"""Returns the playable world bounds as a Rect2"""
-	return Rect2(Vector2(world_min_x, world_min_y), Vector2(world_max_x - world_min_x, world_max_y - world_min_y))
+	var rect = Rect2(Vector2(world_min_x, world_min_y), Vector2(world_max_x - world_min_x, world_max_y - world_min_y))
+
+	# Expand bounds by padding (in tiles) if configured
+	if world_bounds_padding_tiles != 0:
+		var pad_pixels = Vector2(tile_size * world_bounds_padding_tiles, tile_size * world_bounds_padding_tiles)
+		rect.position -= pad_pixels
+		rect.size += pad_pixels * 2
+
+	return rect
 
 
 func get_world_size() -> Vector2:

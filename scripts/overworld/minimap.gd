@@ -85,21 +85,42 @@ func _ready() -> void:
 	else:
 		print("[MINIMAP] WARNING: SubViewportContainer not found!")
 	
-	# Create a world-space bounds drawer inside the SubViewport Map using external script
-	var bounds_node = Bounds2DScript.new()
-	bounds_node.minimap_script = self
-	bounds_node.name = "Bounds2D"
-	if map_root and is_instance_valid(map_root):
-		map_root.add_child(bounds_node)
-	else:
-		# Fallback: add to this CanvasLayer if Map isn't found
-		add_child(bounds_node)
-		move_child(bounds_node, get_child_count() - 1)
+	# NOTE: We intentionally do NOT add the world-bounds overlay to the minimap
+	# to avoid drawing the world boundary rectangle inside the minimap UI.
+	# Bounds2DScript is kept available if needed for debug builds, but is not
+	# instantiated here to prevent the white rectangle from appearing.
+	pass
 
 func _physics_process(delta: float) -> void:
 	if player:
-		minimap_cam.position = player.position / zoom_factor
-		minimap_center = player.position / zoom_factor  # Update center to camera position
+		# Compute desired minimap camera center (map world -> minimap space)
+		var desired_cam_pos = player.position / zoom_factor
+
+		# If frontlayer/world bounds available, clamp camera so viewport doesn't show beyond world edges
+		if frontlayer and frontlayer.has_method("get_world_bounds"):
+			var wb: Rect2 = frontlayer.get_world_bounds()
+			# Map world bounds into minimap space
+			var min_cam = wb.position / zoom_factor
+			var max_cam = (wb.position + wb.size) / zoom_factor
+
+			# Use minimap radius (half of 192) to ensure the circular minimap doesn't extend past edges
+			var pad = Vector2(minimap_radius, minimap_radius)
+			min_cam += pad
+			max_cam -= pad
+
+			# If world smaller than viewport, center the camera inside world
+			if min_cam.x > max_cam.x:
+				desired_cam_pos.x = (min_cam.x + max_cam.x) * 0.5
+			else:
+				desired_cam_pos.x = clamp(desired_cam_pos.x, min_cam.x, max_cam.x)
+
+			if min_cam.y > max_cam.y:
+				desired_cam_pos.y = (min_cam.y + max_cam.y) * 0.5
+			else:
+				desired_cam_pos.y = clamp(desired_cam_pos.y, min_cam.y, max_cam.y)
+
+		minimap_cam.position = desired_cam_pos
+		minimap_center = desired_cam_pos  # Update center to camera position
 		
 		# Ensure camera is enabled
 		if minimap_cam:
@@ -154,19 +175,29 @@ func render_nearby_terrain_chunks() -> void:
 	var camera_tile_pos = frontlayer.global_to_map(player.position)
 	var render_range = 25  # Adjusted for smaller 192×192 viewport
 	
-	# Render terrain tiles in range
+	# Render terrain tiles in range (but only those inside the generated world bounds)
+	var wb = frontlayer.world_bounds
+	var min_tile_x = -wb * frontlayer.width
+	var max_tile_x = (wb + 1) * frontlayer.width - 1
+	var min_tile_y = -wb * frontlayer.height
+	var max_tile_y = (wb + 1) * frontlayer.height - 1
+
 	for x in range(camera_tile_pos.x - render_range, camera_tile_pos.x + render_range):
 		for y in range(camera_tile_pos.y - render_range, camera_tile_pos.y + render_range):
 			var tile_pos = Vector2i(x, y)
-			
+
+			# Skip tiles outside the world's generated bounds
+			if tile_pos.x < min_tile_x or tile_pos.x > max_tile_x or tile_pos.y < min_tile_y or tile_pos.y > max_tile_y:
+				continue
+
 			# Skip if already rendered
 			if tile_pos in terrain_tiles:
 				continue
-			
+
 			# Get altitude and determine tile type
 			var altitude = frontlayer.get_altitude(x, y)
 			var tile_type = 0 if altitude < 0 else int((altitude + 10) / 20.0 * 4) % 4
-			
+
 			# Render tile to minimap
 			render_terrain_tile(tile_pos, tile_type)
 	

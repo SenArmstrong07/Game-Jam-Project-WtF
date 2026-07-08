@@ -1,6 +1,6 @@
 extends Unit
 
-@onready var player_character: Unit = $"../PlayerCharacter"
+@onready var player_character: Node = get_tree().get_first_node_in_group("player")
 @onready var anim_player: AnimatedSprite2D = $BossSC_Sprite
 @onready var battle_scene: BattleBase = get_parent()
 const ENEMY_BASIC_PROJECTILE = preload("uid://cnt0okx0i7ily")
@@ -71,6 +71,8 @@ func get_occupied_tiles(center: Vector2i) -> Array[Vector2i]:
 	]
 
 func _reserve_tiles(state: bool) -> void:
+	if battle_scene == null or battle_scene.get("occupied_tiles") == null:
+		return
 	for t in get_occupied_tiles(grid_pos):
 		if state:
 			battle_scene.occupied_tiles[t] = true
@@ -100,6 +102,8 @@ func clamp_to_arena(tile: Vector2i) -> Vector2i:
 # PROCESS (ONLY ATTACKS, NO MOVEMENT)
 # ============================================================
 func _process(delta):
+	if battle_scene == null or battle_scene.get("current_phase") == null:
+		return
 	if battle_scene.current_phase != BattleBase.BattlePhase.BATTLE:
 		return
 

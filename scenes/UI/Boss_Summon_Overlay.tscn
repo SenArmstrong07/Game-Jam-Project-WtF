@@ -19,10 +19,10 @@ tracks/0/path = NodePath("MarginContainer/SummonMsg:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.16666687, 0.23333359, 0.3000002, 0.3666669, 0.43333352, 0.50000024, 0.56666684, 0.63333356, 0.70000017, 0.7666669, 0.8333335, 0.9000002, 0.9666668, 1.0333335, 1.1000001, 1.1666669, 1.2333335, 1.3000002, 1.3666668, 1.4333335, 1.5000001, 1.5666667),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.16666687, 0.23333359, 0.3000002, 0.3666669, 0.43333352, 0.50000024, 0.56666684, 0.63333356, 0.70000017, 0.7666669, 0.8333335, 0.9000002, 0.9666668, 1.0333335, 1.1000001, 1.1666669, 1.2333335, 1.3000002, 1.3666668, 1.4333335, 1.5000001, 1.5666667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": ["M", "M", "MA", "MAS", "MAST", "MASTE", "MASTER", "MASTER ", "MASTER V", "MASTER VI", "MASTER VIR", "MASTER VIRU", "MASTER VIRUS", "MASTER VIRUS ", "MASTER VIRUS I", "MASTER VIRUS IN", "MASTER VIRUS INC", "MASTER VIRUS INCO", "MASTER VIRUS INCOM", "MASTER VIRUS INCOMI", "MASTER VIRUS INCOMIN", "MASTER VIRUS INCOMING"]
+"values": ["", "M", "M", "MA", "MAS", "MAST", "MASTE", "MASTER", "MASTER ", "MASTER V", "MASTER VI", "MASTER VIR", "MASTER VIRU", "MASTER VIRUS", "MASTER VIRUS ", "MASTER VIRUS I", "MASTER VIRUS IN", "MASTER VIRUS INC", "MASTER VIRUS INCO", "MASTER VIRUS INCOM", "MASTER VIRUS INCOMI", "MASTER VIRUS INCOMIN", "MASTER VIRUS INCOMING"]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -72,7 +72,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.5882353, 0, 0, 0)
+color = Color(0.47843137, 0, 0, 0)
 
 [node name="MsgContainer" type="PanelContainer" parent="." unique_id=425221031]
 layout_mode = 1
@@ -93,6 +93,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="SummonMsg" type="Label" parent="MsgContainer/MarginContainer" unique_id=1762048659]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_mnwcq")

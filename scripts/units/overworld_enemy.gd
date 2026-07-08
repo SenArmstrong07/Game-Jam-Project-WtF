@@ -25,14 +25,18 @@ var battle_scene: PackedScene
 
 func _ready() -> void:
 	add_to_group("overworldmob")
-	battle_scene = SignalBus.BATTLE_POOL.pick_random()
+	if battle_scene == null:
+		var roll := randi_range(1, 100)
+
+		if roll <= 38:
+			battle_scene = SignalBus.COMMON_BUG
+		elif roll <= 75:
+			battle_scene = SignalBus.THROW_BUG
+		else:
+			battle_scene = SignalBus.TROJAN_ELITE
 
 	if battle_scene == SignalBus.TROJAN_ELITE:
 		enemy_tier = EnemyTier.ELITE
-	else:
-		enemy_tier = EnemyTier.COMMON
-		
-	if enemy_tier == EnemyTier.ELITE:
 		make_elite()
 		
 	frontlayer = get_tree().get_first_node_in_group("frontlayer")

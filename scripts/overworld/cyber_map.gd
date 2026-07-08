@@ -42,6 +42,8 @@ func _ready() -> void:
 
 func _on_world_generation_complete() -> void:
 	_set_player_controls_locked(false)
+	ensure_one_elite()
+	
 	var loading_screen = get_node_or_null("LoadingScreen")
 	if loading_screen and loading_screen.has_method("_hide_overlay"):
 		loading_screen._hide_overlay()
@@ -50,6 +52,26 @@ func _on_world_generation_complete() -> void:
 		print("[BOSS] Delaying boss summon on overworld return by ", BOSS_SUMMON_DELAY_ON_RETURN, " seconds")
 		call_deferred("_delayed_return_boss_summon")
 
+func ensure_one_elite() -> void:
+	var enemies = get_tree().get_nodes_in_group("overworldmob")
+
+	if enemies.is_empty():
+		return
+
+	# Already have an elite?
+	for enemy in enemies:
+		if enemy.battle_scene == SignalBus.TROJAN_ELITE:
+			return
+
+	# Promote one random enemy
+	var elite = enemies.pick_random()
+
+	elite.battle_scene = SignalBus.TROJAN_ELITE
+	elite.enemy_tier = elite.EnemyTier.ELITE
+
+	if elite.has_method("make_elite"):
+		elite.make_elite()
+		
 func _on_simulate_remove_enemy_pressed() -> void:
 	var nearest_enemy = _find_nearest_overworld_enemy()
 	if nearest_enemy:

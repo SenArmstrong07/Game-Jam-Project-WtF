@@ -10,8 +10,7 @@
 [ext_resource type="Script" uid="uid://bckhqp8t0oqkg" path="res://scripts/overworld/cyber_map.gd" id="7_xw8qz"]
 [ext_resource type="Script" uid="uid://jym22jxfrcsn" path="res://scripts/manager/dialogues_overworld.gd" id="8_k3dwl"]
 [ext_resource type="PackedScene" uid="uid://bsaifpdqxphrt" path="res://scenes/UI/Boss_Summon_Overlay.tscn" id="8_pmfpv"]
-<<<<<<< Updated upstream
-[ext_resource type="Texture2D" uid="uid://o7ek3g0lgsse" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_80.png" id="9_3vs5p"]
+[ext_resource type="Textaure2D" uid="uid://o7ek3g0lgsse" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_80.png" id="9_3vs5p"]
 [ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="10_fkalm"]
 [ext_resource type="Texture2D" uid="uid://bxtavjpme4moy" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/MainCharacter/Character_Shot_RP1 (40x40).png" id="11_upd6r"]
 [ext_resource type="Texture2D" uid="uid://bfkgeogwobj82" path="res://assets/MiniBt/Slash-Interact-GuardStance_S.png" id="12_ibjp1"]
@@ -21,9 +20,6 @@
 [ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="17_r3qol"]
 [ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="18_hnpm0"]
 [ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="19_sxqrx"]
-=======
-[ext_resource type="PackedScene" uid="uid://bv4o4e802i33r" path="res://scenes/UI/quest_ui.tscn" id="9_quest"]
->>>>>>> Stashed changes
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pmfpv"]
 shader = ExtResource("6_ojrtv")

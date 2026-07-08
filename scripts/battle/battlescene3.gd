@@ -44,6 +44,7 @@ var selecting_buttons := false
 @onready var player_ui = $PLAYER_HP_BATTLE_UI/PLAYER_LIVES
 @onready var battle_preperations =  $PLAYER_HP_BATTLE_UI/BATTLE_PREPERATIONS
 @onready var move_shuffle = $PLAYER_HP_BATTLE_UI/MOVE_SHUFFLE
+@onready var victory_overlay: Control = $VictoryOverlay
 
 #put new vector to add enemy
 var enemy_spawn_positions := [
@@ -52,6 +53,7 @@ var enemy_spawn_positions := [
 
 
 func _ready() -> void:
+	victory_overlay.visible = false
 	BgTitleToDial.stop()
 	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
 	
@@ -683,6 +685,7 @@ func _check_win_condition():
 		battle_active = false
 
 		print("Player wins!")
+		victory_overlay.show_victory()
 		battle_ended.emit(player)
 
 		# HARD STOP ALL ENEMIES

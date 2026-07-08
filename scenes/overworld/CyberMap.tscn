@@ -8,7 +8,18 @@
 [ext_resource type="PackedScene" uid="uid://bp7rq1s1rj2x8" path="res://scenes/overworld/loading_screen.tscn" id="5_loading"]
 [ext_resource type="Shader" uid="uid://chro3k6bg607f" path="res://scripts/battle/Battlescene.gdshader" id="6_ojrtv"]
 [ext_resource type="Script" uid="uid://bckhqp8t0oqkg" path="res://scripts/overworld/cyber_map.gd" id="7_xw8qz"]
+[ext_resource type="Script" uid="uid://jym22jxfrcsn" path="res://scripts/manager/dialogues_overworld.gd" id="8_k3dwl"]
 [ext_resource type="PackedScene" uid="uid://bsaifpdqxphrt" path="res://scenes/UI/Boss_Summon_Overlay.tscn" id="8_pmfpv"]
+[ext_resource type="Texture2D" uid="uid://o7ek3g0lgsse" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_80.png" id="9_3vs5p"]
+[ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="10_fkalm"]
+[ext_resource type="Texture2D" uid="uid://bxtavjpme4moy" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/MainCharacter/Character_Shot_RP1 (40x40).png" id="11_upd6r"]
+[ext_resource type="Texture2D" uid="uid://bfkgeogwobj82" path="res://assets/MiniBt/Slash-Interact-GuardStance_S.png" id="12_ibjp1"]
+[ext_resource type="Texture2D" uid="uid://bhnre5btuttrj" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_08.png" id="14_x6swk"]
+[ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="15_80bmh"]
+[ext_resource type="Texture2D" uid="uid://dvmrbwoekfwsp" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_15.png" id="16_8crk6"]
+[ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="17_r3qol"]
+[ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="18_hnpm0"]
+[ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="19_sxqrx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pmfpv"]
 shader = ExtResource("6_ojrtv")
@@ -61,6 +72,75 @@ texture_region_size = Vector2i(64, 64)
 tile_size = Vector2i(64, 64)
 sources/0 = SubResource("TileSetAtlasSource_udnr2")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_6cyn7"]
+atlas = ExtResource("11_upd6r")
+region = Rect2(0, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ebi12"]
+atlas = ExtResource("11_upd6r")
+region = Rect2(40, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gm4ip"]
+atlas = ExtResource("12_ibjp1")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k238p"]
+atlas = ExtResource("12_ibjp1")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ofbof"]
+atlas = ExtResource("12_ibjp1")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5p8dl"]
+atlas = ExtResource("12_ibjp1")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4fvl"]
+atlas = ExtResource("12_ibjp1")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ku0n6"]
+atlas = ExtResource("12_ibjp1")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_udnmi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6cyn7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ebi12")
+}],
+"loop": 1,
+"name": &"MC",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gm4ip")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k238p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ofbof")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5p8dl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s4fvl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ku0n6")
+}],
+"loop": 1,
+"name": &"MiniBot",
+"speed": 5.0
+}]
+
 [node name="CyberMap" type="Node2D" unique_id=833708849]
 script = ExtResource("7_xw8qz")
 
@@ -70,10 +150,10 @@ position = Vector2(637, 368)
 [node name="BackgroundTexture" type="TextureRect" parent="Camera2D" unique_id=627048204]
 texture_repeat = 2
 material = SubResource("ShaderMaterial_pmfpv")
-offset_left = -1417.0
-offset_top = -849.0
-offset_right = 786.0
-offset_bottom = 470.0
+offset_left = -1418.0
+offset_top = -859.0
+offset_right = 785.0
+offset_bottom = 460.0
 texture = ExtResource("2_ojrtv")
 
 [node name="TileNode" type="Node2D" parent="." unique_id=2118573039]
@@ -86,9 +166,119 @@ script = ExtResource("2_udnr2")
 [node name="OverworldPlayer" parent="." unique_id=1664911443 instance=ExtResource("3_80qnd")]
 position = Vector2(145, -162)
 
+[node name="Dialogues" type="CanvasLayer" parent="." unique_id=1599703020]
+script = ExtResource("8_k3dwl")
+
+[node name="DialogueBar" type="NinePatchRect" parent="Dialogues" unique_id=1682409018]
+anchors_preset = -1
+anchor_top = 0.65500003
+anchor_right = 1.001
+anchor_bottom = 1.0
+offset_top = 62.399963
+offset_right = -120.28003
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("9_3vs5p")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
+
+[node name="CharacterPict" type="NinePatchRect" parent="Dialogues/DialogueBar" unique_id=858188553]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 267.0
+offset_bottom = 178.0
+texture = ExtResource("10_fkalm")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Portrait" type="AnimatedSprite2D" parent="Dialogues/DialogueBar/CharacterPict" unique_id=1930027949]
+position = Vector2(115.000015, 131)
+scale = Vector2(13.1640625, 14.733594)
+sprite_frames = SubResource("SpriteFrames_udnmi")
+animation = &"MiniBot"
+autoplay = "MiniBot"
+
+[node name="DialogueBar" type="NinePatchRect" parent="Dialogues/DialogueBar" unique_id=1040545828]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.215
+anchor_right = 0.994
+anchor_bottom = 0.96800005
+offset_left = -6.630005
+offset_top = 4.0
+offset_right = 127.96594
+offset_bottom = 6.967987
+texture = ExtResource("14_x6swk")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 15
+patch_margin_bottom = 15
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Dialogues/DialogueBar/DialogueBar" unique_id=20162602]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.99100006
+anchor_bottom = 0.952
+offset_left = 42.0
+offset_top = 22.0
+offset_right = -171.74792
+offset_bottom = -10.144012
+theme_override_constants/shadow_outline_size = 5
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 3
+theme_override_fonts/normal_font = ExtResource("15_80bmh")
+theme_override_font_sizes/normal_font_size = 36
+text = "Hey! I'm Cody. I recently graduated with a degree in IT, and today is my very first day working at an IT company."
+autowrap_mode = 2
+autowrap_trim_flags = 64
+
+[node name="NextArrow" type="TextureRect" parent="Dialogues/DialogueBar/DialogueBar" unique_id=1882056297]
+layout_mode = 0
+offset_left = 941.0
+offset_top = 99.0
+offset_right = 981.0
+offset_bottom = 139.0
+texture = ExtResource("16_8crk6")
+script = ExtResource("17_r3qol")
+
+[node name="CharacterTag" type="NinePatchRect" parent="Dialogues/DialogueBar" unique_id=1007303910]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.402
+anchor_right = 0.21300001
+offset_left = -4.0
+offset_top = -2.2279968
+offset_right = -1.0660095
+offset_bottom = 1.6740112
+texture = ExtResource("18_hnpm0")
+
+[node name="CharacterName" type="Label" parent="Dialogues/DialogueBar/CharacterTag" unique_id=1132360359]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.058000002
+anchor_top = 0.15400001
+anchor_right = 0.94900006
+anchor_bottom = 0.558
+offset_left = -0.0080013275
+offset_top = -0.016000748
+offset_right = 0.07598877
+offset_bottom = -0.032001495
+theme_override_fonts/font = ExtResource("19_sxqrx")
+theme_override_font_sizes/font_size = 35
+text = "LEBRON JAMES"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=34691778]
+visible = false
 
 [node name="SimulateEnemyDel" type="Button" parent="UI" unique_id=1728111055]
 offset_left = 2.0
@@ -101,5 +291,6 @@ text = "Simulate Enemy Delete"
 [node name="Boss_Summon_Overlay" parent="UI" unique_id=422444063 instance=ExtResource("8_pmfpv")]
 
 [node name="LoadingScreen" parent="." unique_id=1500000010 instance=ExtResource("5_loading")]
+visible = false
 
 [connection signal="pressed" from="UI/SimulateEnemyDel" to="." method="_on_simulate_remove_enemy_pressed"]

@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://cg15jhcpsexkv"]
+
+[ext_resource type="Script" uid="uid://bvmnxsl3gmmxm" path="res://scripts/units/after_image.gd" id="1_i671v"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_i671v"]
+
+[node name="AfterImage" type="Node2D" unique_id=2042148413]
+script = ExtResource("1_i671v")
+
+[node name="ghost_sprite" type="AnimatedSprite2D" parent="." unique_id=679567614]
+position = Vector2(-5.9604645e-08, -39)
+scale = Vector2(3.8958333, 3.7890627)
+sprite_frames = SubResource("SpriteFrames_i671v")

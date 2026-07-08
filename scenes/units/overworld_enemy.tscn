@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cdmodnjlny7bn"]
 
 [ext_resource type="Script" uid="uid://cjyf0gyb72c8m" path="res://scripts/units/overworld_enemy.gd" id="1_ek7hk"]
+[ext_resource type="PackedScene" uid="uid://cg15jhcpsexkv" path="res://scenes/units/AfterImage.tscn" id="2_8q0nd"]
 [ext_resource type="Texture2D" uid="uid://d3n6mj4qljped" path="res://assets/characters/bee/D_Death.png" id="2_uhbm6"]
 [ext_resource type="Texture2D" uid="uid://5jiawyqdgs87" path="res://assets/characters/bee/D_Walk.png" id="3_8q0nd"]
 [ext_resource type="Texture2D" uid="uid://cfsnnnjp4mptt" path="res://assets/characters/bee/S_Walk.png" id="4_hj4ch"]
@@ -246,22 +247,23 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_s71bm"]
-radius = 116.21101
+radius = 369.77966
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s71bm"]
-size = Vector2(55.75, 60.5)
+size = Vector2(47, 51)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gb7rx"]
 radius = 18.0
 
 [node name="OverworldEnemy" type="CharacterBody2D" unique_id=1862006112]
 script = ExtResource("1_ek7hk")
+after_image_scene = ExtResource("2_8q0nd")
 
 [node name="sprite" type="AnimatedSprite2D" parent="." unique_id=1345536325]
 position = Vector2(-5.9604645e-08, -39)
 scale = Vector2(3.8958333, 3.7890627)
 sprite_frames = SubResource("SpriteFrames_gb7rx")
-animation = &"u_death"
+animation = &"s_walk"
 
 [node name="detection_area" type="Area2D" parent="." unique_id=1165345193]
 collision_layer = 2
@@ -276,7 +278,7 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="BattleCollision" type="CollisionShape2D" parent="battle_trigger" unique_id=1234567891]
-position = Vector2(0, -27)
+position = Vector2(0.5, -25.5)
 shape = SubResource("RectangleShape2D_s71bm")
 
 [node name="enemy_col" type="CollisionShape2D" parent="." unique_id=1134506968]

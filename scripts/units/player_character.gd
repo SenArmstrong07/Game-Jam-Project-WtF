@@ -384,7 +384,7 @@ func create_dash_afterimage():
 
 	get_parent().add_child(ghost)
 
-	ghost.global_position = anim_player.global_position
+	ghost.global_position = global_position + anim_player.position
 	ghost.modulate = Color(0.5, 0.9, 1.0, 0.5)
 	ghost.z_index = z_index - 1
 

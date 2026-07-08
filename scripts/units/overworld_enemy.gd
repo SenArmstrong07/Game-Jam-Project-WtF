@@ -19,6 +19,18 @@ enum EnemyTier {
 	COMMON,
 	ELITE
 }
+#Dash settings
+@export var after_image_scene: PackedScene
+var dash_timer : float = 0.0
+var is_dashing : bool = false
+const AFTERIMG_INTERVAL : float = 0.04
+@export var dash_speed := 400.0
+@export var dash_duration := 0.25
+@export var dash_cooldown := 0.8
+
+var dash_direction := Vector2.ZERO
+var dash_duration_timer : float = 0.0
+var dash_cooldown_timer : float = 0.0
 
 var enemy_tier: EnemyTier = EnemyTier.COMMON
 var battle_scene: PackedScene
@@ -48,7 +60,25 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var target_world_pos: Vector2 = patrol_target
+	
+	#Dashers
+	if dash_cooldown_timer > 0.0:
+		dash_cooldown_timer -= delta
 
+	if is_dashing:
+		dash_duration_timer -= delta
+
+		if dash_duration_timer <= 0.0:
+			stop_dash()
+
+		dash_timer += delta
+
+		if dash_timer >= AFTERIMG_INTERVAL:
+			dash_timer = 0.0
+			spawn_afterimage()
+	else:
+		dash_timer = 0.0
+	#Chasers
 	if player_chase and is_instance_valid(player):
 		target_world_pos = player.global_position
 		$sprite.play("s_walk")
@@ -64,13 +94,20 @@ func _physics_process(delta: float) -> void:
 			update_sprite_direction(patrol_target)
 		else:
 			$sprite.stop()
+	#enabling dash
+	if player_chase and !is_dashing and dash_cooldown_timer <= 0.0:
+		start_dash()
 
-	var direction := target_world_pos - global_position
-	if direction.length_squared() > 0.01:
-		direction = direction.normalized()
-		velocity = direction * speed
+	if is_dashing:
+		velocity = dash_direction * dash_speed
 	else:
-		velocity = Vector2.ZERO
+		var direction := target_world_pos - global_position
+
+		if direction.length_squared() > 0.01:
+			direction = direction.normalized()
+			velocity = direction * speed
+		else:
+			velocity = Vector2.ZERO
 
 	var next_position: Vector2 = global_position + velocity * delta
 	if frontlayer:
@@ -141,6 +178,24 @@ func pick_new_patrol_target() -> void:
 		attempts += 1
 	patrol_target = global_position
 
+func start_dash():
+	if !player_chase:
+		return
+
+	if !is_instance_valid(player):
+		return
+
+	is_dashing = true
+	dash_duration_timer = dash_duration
+	dash_timer = 0.0
+
+	dash_direction = (player.global_position - global_position).normalized()
+
+
+func stop_dash():
+	is_dashing = false
+	dash_cooldown_timer = dash_cooldown
+
 func update_sprite_direction(target_pos: Vector2) -> void:
 	var horizontal_delta := target_pos.x - global_position.x
 	if horizontal_delta > 2.0:
@@ -148,6 +203,16 @@ func update_sprite_direction(target_pos: Vector2) -> void:
 	elif horizontal_delta < -2.0:
 		$sprite.flip_h = false
 
+func spawn_afterimage():
+	var ghost = after_image_scene.instantiate()
+
+	get_parent().add_child(ghost)
+
+	ghost.global_position = global_position
+	ghost.global_rotation = global_rotation
+	ghost.scale = scale
+
+	ghost.setup($sprite)
 
 func make_elite() -> void:
 	# Make the enemy slightly larger

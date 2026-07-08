@@ -121,19 +121,24 @@ theme = SubResource("Theme_cq3a5")
 [node name="LIST_1" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=818797906]
 layout_mode = 2
 text = "QUEST 1"
+autowrap_mode = 3
 
 [node name="LIST_2" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=622460000]
 layout_mode = 2
 text = "QUEST 2"
+autowrap_mode = 3
 
 [node name="LIST_3" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=2120832458]
 layout_mode = 2
 text = "QUEST 3"
+autowrap_mode = 3
 
 [node name="LIST_4" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1984266454]
 layout_mode = 2
 text = "QUEST 4"
+autowrap_mode = 3
 
 [node name="LIST_5" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1974161498]
 layout_mode = 2
-text = "QUEST 5"
+text = "QUEST 5 "
+autowrap_mode = 3

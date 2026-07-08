@@ -129,7 +129,7 @@ func jump_slam():
 	attack_locked = true
 
 	var start_pos = global_position
-	var target_tile := player_character.grid_pos
+	var target_tile: Vector2i = player_character.grid_pos
 
 	var sprite_offset := anim_player.position
 

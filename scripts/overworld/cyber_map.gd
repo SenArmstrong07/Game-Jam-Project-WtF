@@ -11,13 +11,17 @@ var boss_spawn_point: Marker2D
 var boss_scene: PackedScene = preload("res://scenes/units/overworld_enemy.tscn")
 const BOSS_SUMMON_DELAY_ON_RETURN := 1.5
 
+@onready var dialogues: CanvasLayer = $Dialogues
+var dialogue_done := false
+var dialogue_mode := true
+
 func _ready() -> void:
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
 
 	var loading_screen = get_node_or_null("LoadingScreen")
-	var should_show_loading_screen := not SignalBus.in_transition and SignalBus.overworld_state.is_empty()
+	var should_show_loading_screen: bool = !SignalBus.in_transition && SignalBus.overworld_state.is_empty()
 	if should_show_loading_screen:
 		_set_player_controls_locked(true)
 		if loading_screen and loading_screen.has_method("_show_overlay"):
@@ -40,10 +44,83 @@ func _ready() -> void:
 		# Normal startup: capture and store current overworld state
 		store_overworld_state()
 
+func dialogue_pop_up(name: String, portrait_anim: String, message: String):
+
+	if !dialogue_mode:
+		return
+
+	dialogues.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	dialogues.show_tutorial(
+		name,
+		portrait_anim,
+		message
+	)
+
+	await dialogues.tutorial_closed
+
+	get_tree().paused = false
+
 func _on_world_generation_complete() -> void:
 	_set_player_controls_locked(false)
 	ensure_one_elite()
 	
+	if !dialogue_done:
+		dialogue_done = true
+		
+		await dialogue_pop_up(
+			"MiniBot",
+			"MiniBot",
+			"Welcome to the Cyber World, here you will DELETE some bugs and viruses. Once that's done, you can go home."
+		)
+		
+		await dialogue_pop_up(
+			"Cody",
+			"MC",
+			"How many do I need to DELETE before I can go?"
+		)
+		
+		await dialogue_pop_up(
+			"MiniBot",
+			"MiniBot",
+			"Oh great you are now cooperating, this makes things easier! you see the map? you can follow the markers to find the bugs you need to DELETE"
+		)
+		
+		await dialogue_pop_up(
+			"MiniBot",
+			"MiniBot",
+			"Then after a 'Big' surprise will come to your way, you also need to DELETE that though"
+		)
+		
+		await dialogue_pop_up(
+			"Cody",
+			"MC",
+			"Surprise? why would I want to delete a surprise?"
+		)
+		
+		await dialogue_pop_up(
+			"MiniBot",
+			"MiniBot",
+			"Just think of it this way, alright? It's like getting rid of an cringey memory. You'll feel much better afterward!"
+		)
+		
+		await dialogue_pop_up(
+			"Cody",
+			"MC",
+			"What are you talking about?! we are talking about the bugs and now memories I don't get what you're saying"
+		)
+		
+		await dialogue_pop_up(
+			"MiniBot",
+			"MiniBot",
+			"Any who just do the DELETING and I'll let you go!"
+		)
+		
+		await dialogue_pop_up(
+			"Cody",
+			"MC",
+			"Oh man! How did I even get here in the first place?"
+		)
 	var loading_screen = get_node_or_null("LoadingScreen")
 	if loading_screen and loading_screen.has_method("_hide_overlay"):
 		loading_screen._hide_overlay()

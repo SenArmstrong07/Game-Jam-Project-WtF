@@ -25,6 +25,7 @@ func _ready() -> void:
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
+	call_deferred("_refresh_quest_ui")
 
 	# Try to load corruption tile script at runtime to avoid preload errors
 	corruption_tile_script = load(corruption_tile_script_path)
@@ -75,6 +76,7 @@ func dialogue_pop_up(name: String, portrait_anim: String, message: String):
 func _on_world_generation_complete() -> void:
 	_set_player_controls_locked(false)
 	ensure_one_elite()
+	_refresh_quest_ui()
 	
 	if !dialogue_done:
 		dialogue_done = true
@@ -203,6 +205,12 @@ func _remove_overworld_enemy(enemy: Node2D) -> void:
 func store_overworld_state() -> void:
 	overworld_state = get_overworld_state()
 	SignalBus.overworld_state = overworld_state
+	_refresh_quest_ui()
+
+func _refresh_quest_ui() -> void:
+	var quest_ui = get_node_or_null("UI/Quest_UI")
+	if quest_ui and quest_ui.has_method("_update_quest_ui"):
+		quest_ui._update_quest_ui()
 
 func _set_player_controls_locked(locked: bool) -> void:
 	if player and player.has_method("set_controls_locked"):

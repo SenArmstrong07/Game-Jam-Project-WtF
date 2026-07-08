@@ -9,12 +9,23 @@ var overworld_state: Dictionary = {}
 var boss_summon_in_progress := false
 var boss_spawn_point: Marker2D
 var boss_scene: PackedScene = preload("res://scenes/units/overworld_enemy.tscn")
+var summon_anim_scene: PackedScene = preload("res://scenes/units/SummonAnimation.tscn")
+var corruption_tile_script_path := "res://scripts/overworld/corruption_tile.gd"
+var corruption_tile_script: Script = null
+var CORRUPTION_SCALE := 1.0
+
 const BOSS_SUMMON_DELAY_ON_RETURN := 1.5
+const BOSS_POST_SUMMON_PAUSE := 2.4
 
 func _ready() -> void:
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
+
+	# Try to load corruption tile script at runtime to avoid preload errors
+	corruption_tile_script = load(corruption_tile_script_path)
+	if corruption_tile_script == null:
+		print("[BOSS] Warning: failed to load corruption tile script: ", corruption_tile_script_path)
 
 	var loading_screen = get_node_or_null("LoadingScreen")
 	var should_show_loading_screen := not SignalBus.in_transition and SignalBus.overworld_state.is_empty()
@@ -200,12 +211,58 @@ func _execute_boss_spawn_sequence(spawn_position: Vector2) -> void:
 	var spawn_point = _create_boss_spawn_point(spawn_position)
 	print("[BOSS] Moving camera to boss spawn")
 	await _move_camera_to_position(spawn_position, 0.9)
-	print("[BOSS] Spawning boss")
-	_spawn_boss_enemy(spawn_point.global_position)
-	print("[BOSS] Boss spawned, pausing before camera return")
-	await get_tree().create_timer(1.7).timeout
-	print("[BOSS] Resuming camera return to player")
-	await _move_camera_to_position(player.global_position, 0.8)
+
+	# Play summon animation at spawn point and wait for it to finish
+	if summon_anim_scene:
+		print("[BOSS] Instantiating summon animation")
+		var summon = summon_anim_scene.instantiate()
+		summon.global_position = spawn_point.global_position
+			# Use modest z_index values so we can layer corruption and characters predictably
+		summon.z_index = 6
+		add_child(summon)
+
+		var sprite = summon.get_node_or_null("summon_sprite")
+		if sprite:
+			print("[BOSS] Starting summon sprite playback")
+			# Ensure animation starts from the beginning and plays
+			if sprite.has_method("play"):
+				if sprite.sprite_frames and sprite.sprite_frames.has_animation("glitch_summon"):
+					# reset to first frame then play the named animation
+					sprite.frame = 0
+					sprite.frame_progress = 0.0
+					sprite.play("glitch_summon")
+				else:
+					# fallback: just start playback (uses current animation if any)
+					sprite.frame = 0
+					sprite.frame_progress = 0.0
+					sprite.play()
+			# Start corruption ripple concurrently with the summon animation
+			print("[BOSS] Starting corrupted tile ripple (concurrent)")
+			# Start without awaiting so it runs in parallel
+			_corrupt_tiles_around(spawn_point.global_position)
+			# Small, low-intensity screen shake while summon plays
+			_screen_shake(0.7, 3.5)
+
+			# Wait until the sprite emits the finished signal
+			await sprite.animation_finished
+		else:
+			# Fallback wait if no sprite/signal available
+			await get_tree().create_timer(0.9).timeout
+
+		# Spawn boss right after summon animation finishes and place it behind the summon
+		print("[BOSS] Spawning boss behind summon animation")
+		# Spawn boss at z_index above corruption and same as player
+		var boss = _spawn_boss_enemy(spawn_point.global_position, 7)
+
+		# Immediately clean up summon visual now that boss exists
+		if is_instance_valid(summon):
+			summon.queue_free()
+
+		# Allow a longer pause while the camera lingers on the summoned boss
+		await get_tree().create_timer(BOSS_POST_SUMMON_PAUSE).timeout
+
+		print("[BOSS] Resuming camera return to player")
+		await _move_camera_to_position(player.global_position, 0.8)
 	if frontlayer and frontlayer.has_method("set_camera_follow_enabled"):
 		frontlayer.set_camera_follow_enabled(true)
 	_set_player_controls_locked(false)
@@ -260,6 +317,55 @@ func _find_valid_boss_spawn_position() -> Vector2:
 	print("[BOSS] Selected boss spawn tile: ", chosen_tile, " valid_tiles=", valid_tiles.size(), " far_tiles=", far_tiles.size())
 	return frontlayer.map_to_global(chosen_tile)
 
+
+func _corrupt_tiles_around(spawn_position: Vector2) -> void:
+	# Create small ripple of corruption overlay tiles (black / purple)
+	if frontlayer == null:
+		return
+
+	var center_tile: Vector2i = frontlayer.global_to_map(spawn_position)
+	var max_radius := 2
+
+	for r in range(0, max_radius + 1):
+		var ring_tiles := []
+		for dx in range(-r, r + 1):
+			for dy in range(-r, r + 1):
+				if max(abs(dx), abs(dy)) != r:
+					continue
+				var t := center_tile + Vector2i(dx, dy)
+				if not frontlayer.is_tile_walkable(t):
+					continue
+				ring_tiles.append(t)
+
+		# Scatter tiles in ring randomly for more organic look
+		ring_tiles.shuffle()
+
+		for t in ring_tiles:
+			var pos = frontlayer.map_to_global(t)
+			var node := Node2D.new()
+			node.set_script(corruption_tile_script)
+			if node is Node2D:
+					# Parent corruption overlays to the frontlayer so their positions align
+					# with the tilemap's local coordinates and transforms.
+					frontlayer.add_child(node)
+					# compute scaled tile size and center the overlay on the tile
+					var tile_sz := int(frontlayer.tile_size * CORRUPTION_SCALE)
+					node.set("tile_size", tile_sz)
+					# frontlayer.to_local(pos) gives the tile position in frontlayer local coords
+					var local_center := frontlayer.to_local(pos)
+					# position node so its top-left aligns to center - half tile_sz
+					node.position = local_center - Vector2(tile_sz / 2.0, tile_sz / 2.0)
+					# place corruption overlay above tiles but below characters
+					if node is CanvasItem:
+						node.z_index = 5
+					# Randomize color between black and purple
+					var c = Color(0, 0, 0) if randi() % 2 == 0 else Color(0.45, 0.0, 0.45)
+					node.set("color", c)
+					# allow scaling handled earlier; no further action
+
+			# small delay between tiles to create ripple
+			await get_tree().create_timer(0.06).timeout
+
 func _delayed_return_boss_summon() -> void:
 	if not SignalBus.summon_boss_on_return or boss_summon_in_progress:
 		return
@@ -272,6 +378,23 @@ func _delayed_return_boss_summon() -> void:
 	print("[BOSS] Starting boss summon after return delay")
 	_begin_boss_summon_sequence()
 
+
+func _screen_shake(duration: float = 0.7, intensity: float = 4.0) -> void:
+	# Minimal camera shake centered on current camera global position
+	if camera == null:
+		return
+	var original := camera.global_position
+	var elapsed := 0.0
+	var step := 0.02
+	while elapsed < duration:
+		var ox := (randf() * 2.0 - 1.0) * intensity
+		var oy := (randf() * 2.0 - 1.0) * intensity
+		camera.global_position = original + Vector2(ox, oy)
+		await get_tree().create_timer(step).timeout
+		elapsed += step
+	# restore exact position
+	camera.global_position = original
+
 func _move_camera_to_position(target_position: Vector2, duration: float) -> void:
 	if camera == null:
 		return
@@ -281,11 +404,13 @@ func _move_camera_to_position(target_position: Vector2, duration: float) -> void
 		.set_ease(Tween.EASE_OUT)
 	await tween.finished
 
-func _spawn_boss_enemy(spawn_position: Vector2) -> void:
+func _spawn_boss_enemy(spawn_position: Vector2, z_idx: int = -1) -> Node2D:
 	var boss_instance = boss_scene.instantiate()
 	if boss_instance is Node2D:
 		boss_instance.global_position = spawn_position
 		boss_instance.name = "BossSummon"
+		if z_idx >= 0 and boss_instance is CanvasItem:
+			boss_instance.z_index = z_idx
 		add_child(boss_instance)
 		if not boss_instance.is_in_group("overworldmob"):
 			boss_instance.add_to_group("overworldmob")
@@ -295,6 +420,10 @@ func _spawn_boss_enemy(spawn_position: Vector2) -> void:
 			frontlayer.emit_signal("enemy_spawned", boss_instance)
 		else:
 			print("[STATE] frontlayer signal enemy_spawned unavailable")
+
+		return boss_instance
+
+	return null
 
 func get_overworld_state() -> Dictionary:
 	var enemies = []

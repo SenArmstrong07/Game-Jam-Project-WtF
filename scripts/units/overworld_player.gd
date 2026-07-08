@@ -26,6 +26,10 @@ func _ready() -> void:
 	# Get reference to frontlayer to check if world is ready
 	frontlayer = get_parent().get_node("TileNode/front")
 
+	# Ensure player renders above corruption overlays
+	if self is CanvasItem:
+		self.z_index = 7
+
 func set_controls_locked(locked: bool) -> void:
 	controls_locked = locked
 	if not locked:

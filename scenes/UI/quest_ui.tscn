@@ -1,0 +1,144 @@
+[gd_scene format=3 uid="uid://bv4o4e802i33r"]
+
+[ext_resource type="Texture2D" uid="uid://kyv8ikn0084b" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_79.png" id="1_a14vo"]
+[ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="1_fkawf"]
+[ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="2_fkawf"]
+[ext_resource type="Texture2D" uid="uid://du6r6kjrlesh" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo2.png" id="2_q16h1"]
+
+[sub_resource type="Theme" id="Theme_7nrbm"]
+Label/fonts/font = ExtResource("1_fkawf")
+
+[sub_resource type="Theme" id="Theme_cq3a5"]
+Label/font_sizes/font_size = 11
+
+[node name="QUEST_UI" type="CanvasLayer" unique_id=1050016775]
+
+[node name="Container" type="Control" parent="." unique_id=106940320]
+layout_mode = 3
+anchor_top = 0.356
+anchor_right = 0.134
+anchor_bottom = 0.64400005
+offset_top = 0.17999268
+offset_right = -0.5200043
+offset_bottom = -0.18005371
+grow_vertical = 2
+theme = SubResource("Theme_7nrbm")
+
+[node name="ABOVE_TITLE" type="NinePatchRect" parent="Container" unique_id=678782506]
+layout_mode = 0
+offset_left = 5.0
+offset_top = -53.5
+offset_right = 166.0
+offset_bottom = 2.5
+texture = ExtResource("2_q16h1")
+
+[node name="QUEST TITLE" type="Label" parent="Container/ABOVE_TITLE" unique_id=843023769]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.179
+anchor_right = 0.957
+anchor_bottom = 0.57100004
+offset_left = -0.05000019
+offset_top = -0.024000168
+offset_right = -0.07699585
+offset_bottom = 1.0239983
+theme_override_font_sizes/font_size = 26
+text = "QUEST"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BG_QUEST" type="NinePatchRect" parent="Container" unique_id=1905954763]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = 2.0
+offset_right = -3.0
+offset_bottom = 6.0
+texture = ExtResource("1_a14vo")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 15
+patch_margin_bottom = 15
+
+[node name="TEXT_CONTAINER" type="NinePatchRect" parent="Container" unique_id=143599541]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.058000002
+anchor_top = 0.068
+anchor_right = 0.91800004
+anchor_bottom = 0.961
+offset_left = 0.08199978
+offset_top = -0.07600117
+offset_right = 0.021987915
+offset_bottom = 0.07299805
+texture = ExtResource("2_fkawf")
+patch_margin_left = 1
+patch_margin_top = 4
+patch_margin_right = 1
+patch_margin_bottom = 1
+
+[node name="QUEST_LIST_LABEL" type="Label" parent="Container/TEXT_CONTAINER" unique_id=1463615471]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.034
+anchor_top = 0.108
+anchor_right = 0.95900005
+anchor_bottom = 0.18900001
+offset_left = 0.001999855
+offset_top = -13.980001
+offset_right = 0.026992798
+offset_bottom = -13.965
+text = "TO DOS:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Container/TEXT_CONTAINER" unique_id=1789386058]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.10300001
+anchor_right = 0.98600006
+anchor_bottom = 0.124000005
+offset_left = 2.0
+offset_top = -0.055002213
+offset_right = 0.0579834
+offset_bottom = 0.059999466
+
+[node name="QUEST_CONTAINER" type="VBoxContainer" parent="Container/TEXT_CONTAINER" unique_id=378052619]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.19500001
+anchor_right = 0.95900005
+anchor_bottom = 0.9620001
+offset_left = 6.0
+offset_top = -10.075001
+offset_right = 0.026992798
+offset_bottom = 0.02998352
+theme = SubResource("Theme_cq3a5")
+
+[node name="LIST_1" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=818797906]
+layout_mode = 2
+text = "QUEST 1"
+autowrap_mode = 3
+
+[node name="LIST_2" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=622460000]
+layout_mode = 2
+text = "QUEST 2"
+autowrap_mode = 3
+
+[node name="LIST_3" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=2120832458]
+layout_mode = 2
+text = "QUEST 3"
+autowrap_mode = 3
+
+[node name="LIST_4" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1984266454]
+layout_mode = 2
+text = "QUEST 4"
+autowrap_mode = 3
+
+[node name="LIST_5" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1974161498]
+layout_mode = 2
+text = "QUEST 5 "
+autowrap_mode = 3

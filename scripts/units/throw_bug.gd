@@ -15,7 +15,7 @@ const TILE_SIZE := 64
 
 var target_position := Vector2.ZERO
 var attack_locked := false
-@export var attack_recovery := 0.25
+@export var attack_recovery := 0.75
 @onready var hp_label: Label = $HPLabel
 
 var stun_tween: Tween

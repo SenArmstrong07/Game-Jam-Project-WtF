@@ -32,7 +32,8 @@ func _ready() -> void:
 
 func set_controls_locked(locked: bool) -> void:
 	controls_locked = locked
-	if not locked:
+	print("Controls locked:", locked)
+	if locked:
 		velocity = Vector2.ZERO
 
 func _physics_process(delta: float) -> void:

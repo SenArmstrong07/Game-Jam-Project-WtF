@@ -11,6 +11,9 @@ const BATTLE_POOL = [
 	TROJAN_ELITE
 ]
 
+#story signals
+var overworld_intro_played := false
+var boss_dialogue_played := false
 
 var current_encounter: EncounterData
 var in_transition := false

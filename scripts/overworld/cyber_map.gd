@@ -18,7 +18,7 @@ const BOSS_SUMMON_DELAY_ON_RETURN := 1.5
 const BOSS_POST_SUMMON_PAUSE := 2.4
 
 @onready var dialogues: CanvasLayer = $Dialogues
-var dialogue_done := false
+var intro_dialogue_running := false
 var dialogue_mode := true
 
 func _ready() -> void:
@@ -32,6 +32,7 @@ func _ready() -> void:
 	if corruption_tile_script == null:
 		print("[BOSS] Warning: failed to load corruption tile script: ", corruption_tile_script_path)
 
+	#prep the loading screen to cover the tilenodes
 	var loading_screen = get_node_or_null("LoadingScreen")
 	var should_show_loading_screen: bool = !SignalBus.in_transition && SignalBus.overworld_state.is_empty()
 	if should_show_loading_screen:
@@ -45,7 +46,16 @@ func _ready() -> void:
 
 	if frontlayer and not frontlayer.is_connected("world_generation_complete", _on_world_generation_complete):
 		frontlayer.world_generation_complete.connect(_on_world_generation_complete)
-
+	
+	#We start the overworld dialogue ONLY ONCE:
+	if !SignalBus.overworld_intro_played:
+		SignalBus.overworld_intro_played = true
+		intro_dialogue_running = true
+		_set_player_controls_locked(true)
+		await start_overworld_dialogue()
+		intro_dialogue_running = false
+		_set_player_controls_locked(false)
+	
 	if boss_summon_overlay and not boss_summon_overlay.is_connected("summon_finished", _on_boss_summon_finished):
 		boss_summon_overlay.summon_finished.connect(_on_boss_summon_finished)
 
@@ -55,7 +65,7 @@ func _ready() -> void:
 	else:
 		# Normal startup: capture and store current overworld state
 		store_overworld_state()
-
+#DIALOGUE STUFF
 func dialogue_pop_up(name: String, portrait_anim: String, message: String):
 
 	if !dialogue_mode:
@@ -73,71 +83,71 @@ func dialogue_pop_up(name: String, portrait_anim: String, message: String):
 
 	get_tree().paused = false
 
+func start_overworld_dialogue() -> void:
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Welcome to the Cyber World, here you will DELETE some bugs and viruses. Once that's done, you can go home."
+	)
+	
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"How many do I need to DELETE before I can go?"
+	)
+	
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Oh great you are now cooperating, this makes things easier! you see the map? you can follow the markers to find the bugs you need to DELETE"
+	)
+	
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Then after a 'Big' surprise will come to your way, you also need to DELETE that though"
+	)
+	
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Surprise? why would I want to delete a surprise?"
+	)
+	
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Just think of it this way, alright? It's like getting rid of an cringey memory. You'll feel much better afterward!"
+	)
+	
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"What are you talking about?! we are talking about the bugs and now memories I don't get what you're saying"
+	)
+	
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Any who just do the DELETING and I'll let you go!"
+	)
+	
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Oh man! How did I even get here in the first place?"
+	)
+
 func _on_world_generation_complete() -> void:
-	_set_player_controls_locked(false)
+	if !intro_dialogue_running:
+		_set_player_controls_locked(false)
 	ensure_one_elite()
 	_refresh_quest_ui()
-	
-	if !dialogue_done:
-		dialogue_done = true
-		
-		await dialogue_pop_up(
-			"MiniBot",
-			"MiniBot",
-			"Welcome to the Cyber World, here you will DELETE some bugs and viruses. Once that's done, you can go home."
-		)
-		
-		await dialogue_pop_up(
-			"Cody",
-			"MC",
-			"How many do I need to DELETE before I can go?"
-		)
-		
-		await dialogue_pop_up(
-			"MiniBot",
-			"MiniBot",
-			"Oh great you are now cooperating, this makes things easier! you see the map? you can follow the markers to find the bugs you need to DELETE"
-		)
-		
-		await dialogue_pop_up(
-			"MiniBot",
-			"MiniBot",
-			"Then after a 'Big' surprise will come to your way, you also need to DELETE that though"
-		)
-		
-		await dialogue_pop_up(
-			"Cody",
-			"MC",
-			"Surprise? why would I want to delete a surprise?"
-		)
-		
-		await dialogue_pop_up(
-			"MiniBot",
-			"MiniBot",
-			"Just think of it this way, alright? It's like getting rid of an cringey memory. You'll feel much better afterward!"
-		)
-		
-		await dialogue_pop_up(
-			"Cody",
-			"MC",
-			"What are you talking about?! we are talking about the bugs and now memories I don't get what you're saying"
-		)
-		
-		await dialogue_pop_up(
-			"MiniBot",
-			"MiniBot",
-			"Any who just do the DELETING and I'll let you go!"
-		)
-		
-		await dialogue_pop_up(
-			"Cody",
-			"MC",
-			"Oh man! How did I even get here in the first place?"
-		)
+
 	var loading_screen = get_node_or_null("LoadingScreen")
 	if loading_screen and loading_screen.has_method("_hide_overlay"):
 		loading_screen._hide_overlay()
-
+	
 	if SignalBus.summon_boss_on_return and not boss_summon_in_progress:
 		print("[BOSS] Delaying boss summon on overworld return by ", BOSS_SUMMON_DELAY_ON_RETURN, " seconds")
 		call_deferred("_delayed_return_boss_summon")
@@ -298,7 +308,7 @@ func _execute_boss_spawn_sequence(spawn_position: Vector2) -> void:
 	await _move_camera_to_position(spawn_position, 0.9)
 	
 	#give some pause after camera movement
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1).timeout
 	# Play summon animation at spawn point and wait for it to finish
 	if summon_anim_scene:
 		print("[BOSS] Instantiating summon animation")

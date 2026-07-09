@@ -19,6 +19,7 @@ const BOSS_POST_SUMMON_PAUSE := 2.4
 
 @onready var dialogues: CanvasLayer = $Dialogues
 var intro_dialogue_running := false
+var boss_dialogue_running := false
 var dialogue_mode := true
 
 func _ready() -> void:
@@ -105,7 +106,7 @@ func start_overworld_dialogue() -> void:
 	await dialogue_pop_up(
 		"MiniBot",
 		"MiniBot",
-		"Then after a 'Big' surprise will come to your way, you also need to DELETE that though"
+		"Afterwards, a 'Big' surprise will come to your way, you also need to DELETE that though"
 	)
 	
 	await dialogue_pop_up(
@@ -129,13 +130,69 @@ func start_overworld_dialogue() -> void:
 	await dialogue_pop_up(
 		"MiniBot",
 		"MiniBot",
-		"Any who just do the DELETING and I'll let you go!"
+		"Anywho, just do the DELETING and I'll let you go!"
 	)
 	
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
 		"Oh man! How did I even get here in the first place?"
+	)
+	
+func play_boss_dialogue() -> void:
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Uhh... What was that just now?"
+	)
+	
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"That's that 'cringey memory' I was talking to you about!"
+	)
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"That thing just came out of nowhere! Who does it think it is?"
+	)
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"That thing is called a 'Master Virus'"
+	)
+
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"It's responsible mostly for the spread of viruses you saw before, plaguing the Cyber World."
+	)
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"It's not like any other enemies you've faced before, especially in battle."
+	)
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"If that's the case, can I at least know how to get rid of this... thing?"
+	)
+	await get_tree().create_timer(1).timeout
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"...Break a leg!"
+	)
+	await get_tree().create_timer(1).timeout
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Wow, you're so thoughtful (-_-)"
+	)
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"I'll give you a 'surprise' once I come back..."
 	)
 
 func _on_world_generation_complete() -> void:
@@ -252,7 +309,8 @@ func _restore_overworld_state(state: Dictionary) -> void:
 
 	# Update stored state after restoration
 	store_overworld_state()
-	
+
+#BOSS SUMMONING SEQUENCES
 func _check_for_boss_summon_validity() -> void:
 	var enemies = get_tree().get_nodes_in_group("overworldmob")
 	print("[BOSS] Checking boss summon validity: enemy_count=", enemies.size(), " boss_in_progress=", boss_summon_in_progress)
@@ -362,7 +420,16 @@ func _execute_boss_spawn_sequence(spawn_position: Vector2) -> void:
 		await _move_camera_to_position(player.global_position, 0.8)
 	if frontlayer and frontlayer.has_method("set_camera_follow_enabled"):
 		frontlayer.set_camera_follow_enabled(true)
+	#Play the boss dialogue
+	if !SignalBus.boss_dialogue_played:
+		SignalBus.boss_dialogue_played = true
+		boss_dialogue_running = true
+		await get_tree().create_timer(1).timeout #let the boss animation finish first
+		await play_boss_dialogue()
+		boss_dialogue_running = false
+
 	_set_player_controls_locked(false)
+
 	boss_summon_in_progress = false
 	boss_spawn_pending_position = Vector2.ZERO
 

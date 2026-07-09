@@ -167,6 +167,8 @@ script = ExtResource("2_udnr2")
 [node name="OverworldPlayer" parent="." unique_id=1664911443 instance=ExtResource("3_80qnd")]
 position = Vector2(145, -162)
 
+[node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
+
 [node name="Dialogues" type="CanvasLayer" parent="." unique_id=1599703020]
 script = ExtResource("8_k3dwl")
 
@@ -275,8 +277,6 @@ theme_override_font_sizes/font_size = 35
 text = "LEBRON JAMES"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=34691778]
 

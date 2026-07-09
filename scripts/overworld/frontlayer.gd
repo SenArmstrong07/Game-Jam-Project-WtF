@@ -439,7 +439,7 @@ func spawn_fixed_enemy_count() -> void:
 	"""Spawn a fixed number of enemies (random between 3-10) after world generation."""
 	var enemy_count = randi_range(3, 10)
 	var spawned = 0
-	var max_attempts = enemy_count * 5  # Try up to 5x attempts to place all enemies
+	var max_attempts = enemy_count * 10  # Try up to 10x attempts to place all enemies
 	var attempt = 0
 	var spawned_positions = []  # Track positions of spawned enemies
 	
@@ -449,17 +449,17 @@ func spawn_fixed_enemy_count() -> void:
 		attempt += 1
 		
 		# Pick a random tile in the world
-		var random_tile_x = randi_range(-world_bounds * width, (world_bounds + 1) * width - 1)
-		var random_tile_y = randi_range(-world_bounds * height, (world_bounds + 1) * height - 1)
+		var random_tile = Vector2i(
+			randi_range(-world_bounds * width, (world_bounds + 1) * width - 1),
+			randi_range(-world_bounds * height, (world_bounds + 1) * height - 1)
+		)
 		
-		# Check if it's valid land (not water)
-		var alt = altitude.get_noise_2d(random_tile_x, random_tile_y) * 10
-		if alt < 0:  # Water, skip
+		# Ensure this tile is actually walkable land
+		if not is_tile_walkable(random_tile):
 			continue
 		
-		var spawn_world_pos = map_to_local(Vector2i(random_tile_x, random_tile_y))
-		# Convert to global (CyberMap root) coordinates to match player/enemy positions
-		spawn_world_pos = map_to_global(Vector2i(random_tile_x, random_tile_y))
+		var spawn_world_pos = map_to_global(random_tile)
+		var spawn_local_pos = get_parent().to_local(spawn_world_pos)
 		
 		# Check distance to player
 		if spawn_world_pos.distance_to(player.position) < min_distance_between_enemies:
@@ -477,7 +477,7 @@ func spawn_fixed_enemy_count() -> void:
 		
 		# Valid spawn location - spawn enemy
 		var new_enemy = enemy_scene.instantiate()
-		new_enemy.position = spawn_world_pos
+		new_enemy.position = spawn_local_pos
 		get_parent().add_child.call_deferred(new_enemy)
 		spawned_positions.append(spawn_world_pos)
 		enemy_spawned.emit(new_enemy)
@@ -492,15 +492,56 @@ func _spawn_saved_enemy_positions(enemy_data: Array) -> void:
 	var spawned = 0
 	for enemy_info in enemy_data:
 		if enemy_info is Dictionary and enemy_info.has("position"):
-			var new_enemy = enemy_scene.instantiate()
-			new_enemy.position = enemy_info["position"]
-			get_parent().add_child.call_deferred(new_enemy)
-			enemy_spawned.emit(new_enemy)
-			spawned += 1
-			print("[SPAWNING] Restored enemy at", enemy_info["position"])
+			var enemy_pos = enemy_info["position"]
+			if enemy_pos is Vector2i:
+				enemy_pos = Vector2(enemy_pos)
+			if enemy_pos is Vector2:
+				var tile = global_to_map(enemy_pos)
+				if not is_tile_walkable(tile):
+					print("[SPAWNING] Saved enemy position invalid, relocating: ", enemy_pos, " tile=", tile)
+					enemy_pos = _find_nearest_valid_land_position(enemy_pos)
+					print("[SPAWNING] Relocated saved enemy to valid land: ", enemy_pos)
+				
+				var new_enemy = enemy_scene.instantiate()
+				var enemy_local_pos = get_parent().to_local(enemy_pos)
+				new_enemy.position = enemy_local_pos
+				get_parent().add_child.call_deferred(new_enemy)
+				enemy_spawned.emit(new_enemy)
+				spawned += 1
+				print("[SPAWNING] Restored enemy at", enemy_pos)
 
 	enemies_spawned_count = spawned
 	print("[SPAWNING] Restored ", spawned, " saved enemies")
+
+func _find_nearest_valid_land_position(global_position: Vector2, max_distance_tiles: int = 30) -> Vector2:
+	var start_tile = global_to_map(global_position)
+	if is_tile_walkable(start_tile):
+		return map_to_global(start_tile)
+
+	var queue: Array = [start_tile]
+	var visited: Dictionary = {start_tile: true}
+	var directions = [
+		Vector2i.RIGHT,
+		Vector2i.LEFT,
+		Vector2i.UP,
+		Vector2i.DOWN,
+	]
+
+	while queue.size() > 0:
+		var tile: Vector2i = queue.pop_front()
+		for dir in directions:
+			var next_tile = tile + dir
+			if next_tile in visited:
+				continue
+			visited[next_tile] = true
+			if abs(next_tile.x - start_tile.x) > max_distance_tiles or abs(next_tile.y - start_tile.y) > max_distance_tiles:
+				continue
+			if is_tile_walkable(next_tile):
+				return map_to_global(next_tile)
+			queue.append(next_tile)
+
+	print("[SPAWNING] No nearby valid land tile found for saved enemy at", global_position, "; using fallback spawn")
+	return find_valid_spawn_tile()
 
 func get_world_bounds() -> Rect2:
 	"""Returns the playable world bounds as a Rect2"""

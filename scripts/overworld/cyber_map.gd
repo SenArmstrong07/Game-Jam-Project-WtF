@@ -296,7 +296,9 @@ func _execute_boss_spawn_sequence(spawn_position: Vector2) -> void:
 	var spawn_point = _create_boss_spawn_point(spawn_position)
 	print("[BOSS] Moving camera to boss spawn")
 	await _move_camera_to_position(spawn_position, 0.9)
-
+	
+	#give some pause after camera movement
+	await get_tree().create_timer(1.5).timeout
 	# Play summon animation at spawn point and wait for it to finish
 	if summon_anim_scene:
 		print("[BOSS] Instantiating summon animation")

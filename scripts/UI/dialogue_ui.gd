@@ -14,6 +14,7 @@ const PIXEL_ART_DESAMPLE = preload("uid://br1lxtg6bfeqa")
 @onready var transition_rect: ColorRect = $"../Transition/Transition_rect"
 @onready var transition_label: Label = $"../Transition/Transition_rect/Transition_label"
 @onready var vortex: ColorRect = $"../Transition/Transition_rect"
+@onready var dialogue_bar: NinePatchRect = $DialogueBar/DialogueBar
 
 @export var fade_time := 1.0
 @export var hold_time := 2.0
@@ -21,6 +22,8 @@ var typing := false
 var full_text := ""
 var text_speed := 0.03 
 var transition_finished := false
+var dialogue_bar_start_position: Vector2
+var dialogue_bar_start_scale: Vector2
 
 # Dialogue data
 var dialogue = [
@@ -155,6 +158,11 @@ var dialogue = [
 var dialogue_index = 0
 
 func _ready() -> void:
+	dialogue_bar_start_position = dialogue_bar.position
+	dialogue_bar_start_scale = dialogue_bar.scale
+	
+	#Make scaling happen around the center
+	dialogue_bar.pivot_offset = dialogue_bar.size / 2.0
 	BattleBgm.stop()
 	BgTitleToDial.play_music(preload("res://assets/FX/TitleScreen.ogg"))
 	show_dialogue()   # Set the correct name, portrait, background, etc.
@@ -209,9 +217,11 @@ func show_dialogue():
 	rich_text_label.text = ""
 	next_arrow.hide()
 
+	await _play_open_animation()
 	type_text()
 	
 func next_dialogue():
+	await _play_close_animation()
 	dialogue_index += 1
 	show_dialogue()
 
@@ -232,7 +242,46 @@ func type_text() -> void:
 
 	typing = false
 	next_arrow.show()
+	
+#OPENING ANIMATION
+func _play_open_animation() -> void:
 
+	dialogue_bar.scale = Vector2(
+	dialogue_bar_start_scale.x,
+	0.0
+)
+	dialogue_bar.modulate.a = 1.0
+
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(
+		dialogue_bar,
+		"scale",
+		dialogue_bar_start_scale,
+		0.22
+	)
+
+	await tween.finished
+
+#CLOSING ANIMATION
+func _play_close_animation() -> void:
+
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(
+		dialogue_bar,
+		"scale",
+		Vector2(dialogue_bar_start_scale.x, 0.0),
+		0.18
+	)
+
+	await tween.finished
+
+	dialogue_bar.scale = dialogue_bar_start_scale
 
 func play_end_transition():
 

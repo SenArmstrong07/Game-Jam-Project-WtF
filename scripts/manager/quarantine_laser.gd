@@ -1,4 +1,5 @@
 extends Area2D
+const ISOLATION = preload("uid://ctcutosgfkvp5")
 
 var direction: Vector2 = Vector2.RIGHT
 var speed: float = 900.0
@@ -10,6 +11,31 @@ var hit := false
 
 func _ready():
 	body_entered.connect(_on_body_entered)
+	play_sfx(ISOLATION, -15)
+	
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	get_tree().current_scene.add_child(player)
+
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
+
 
 func _process(delta):
 	position += direction * speed * delta

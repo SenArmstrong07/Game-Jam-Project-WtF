@@ -10,6 +10,9 @@ extends Unit
 const TROJAN_PROJECTILE = preload("uid://c7kgeep4y4jl1")
 const TROJAN_THROWABLE = preload("uid://b6oe25yx1mgl3")
 
+const ENEMY_HIT = preload("uid://b3k82ni30qus0")
+const TRAP_PROJECTILE = preload("uid://dvj4kvagu5wy2")
+
 const GRID_WIDTH := 4
 const GRID_HEIGHT := 4
 const X_OFFSET := 4
@@ -46,6 +49,29 @@ func _ready():
 	z_index = 10
 	team = Team.ENEMY
 	add_to_group("enemies")
+
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	get_tree().current_scene.add_child(player)
+
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 
 func init(pos: Vector2i) -> void:
 	grid_pos = pos
@@ -259,7 +285,6 @@ func can_shoot_player() -> bool:
 	return true
 
 func shoot_projectile():
-
 	var projectile = TROJAN_PROJECTILE.instantiate()
 
 	get_tree().current_scene.add_child(projectile)
@@ -426,6 +451,7 @@ func update_hp_label():
 	)
 
 func take_damage(amount: int, damage_type = DamageType.NEUTRAL, chip = null):
+	play_sfx(ENEMY_HIT, -15)
 	super.take_damage(amount, damage_type, chip)
 	
 	update_hp_label()

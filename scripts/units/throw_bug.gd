@@ -7,6 +7,7 @@ const EnemyThrowProjectile = preload("res://scenes/Attacks/Throw_Projectile.tscn
 @onready var battle_scene: BattleBase = get_parent()
 @onready var ProjectileThrowPoint: Marker2D = $HitPoint
 
+const ENEMY_HIT = preload("uid://b3k82ni30qus0")
 
 const GRID_WIDTH := 4
 const GRID_HEIGHT := 4
@@ -48,6 +49,27 @@ func _ready():
 	
 	update_hp_label()
 
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	add_child(player)
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 
 func init(pos: Vector2i) -> void:
 	grid_pos = pos
@@ -362,6 +384,7 @@ func update_hp_label():
 	)
 	
 func take_damage(amount: int, damage_type = DamageType.NEUTRAL, chip = null):
+	play_sfx(ENEMY_HIT, -15)
 	super.take_damage(amount, damage_type, chip)
 	
 	update_hp_label()

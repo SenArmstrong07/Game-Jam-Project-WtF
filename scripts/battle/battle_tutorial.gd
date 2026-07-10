@@ -16,7 +16,13 @@ const FIREWALL = preload("uid://x8y5dkw5aur6")
 const REFORMAT_PROJECTILE = preload("uid://b6jh3cqvs8aej")
 const COMMON_BUG_SCENE_PATH = "res://scenes/units/CommonBug.tscn"
 
-
+#SFX
+const CONFIRM = preload("uid://cskdybmo5smod")
+const DISCARD = preload("uid://1x7ot7r3rq5i")
+const OPTIMIZE = preload("uid://djho2gyihm0c7")
+const BACKUP = preload("uid://b86nl46vfgoe")
+const SELECT_BLIP = preload("uid://bxec6xy2p3p2o")
+const WAIT = preload("uid://bke0y5otm314q")
 
 @onready var grid = $Grid
 @onready var player: Unit = $PlayerCharacter
@@ -111,7 +117,31 @@ func _ready() -> void:
 	await play_battle_intro()
 	
 	_start_preparation_phase()
+
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	get_tree().current_scene.add_child(player)
+
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 	
+
 func play_battle_intro() -> void:
 
 	player.visible = false
@@ -394,6 +424,7 @@ func _emergency_tutorial_heal() -> void:
 	battle_active = true
 	
 func _on_select_pressed():
+	play_sfx(CONFIRM, -15)
 	if selected_chips.size() < max_selected_chips:
 		return
 
@@ -419,7 +450,7 @@ func _on_select_pressed():
 	_start_battle_phase()
 
 func _on_unselect_pressed():
-
+	play_sfx(WAIT, -15)
 	selecting_buttons = false
 
 	if !selected_chips.is_empty():
@@ -694,13 +725,14 @@ func _handle_preparation_input() -> void:
 	# Cancel Combo Mode
 	# ----------------------------------
 	if Input.is_action_just_pressed("ui_cancel") and combo_mode:
+		play_sfx(DISCARD, -15)
 		combo_mode = false
 		first_combo_chip = null
 		_update_ui()
 		return
 	
 	if Input.is_action_just_pressed("remove_chip"):
-
+		play_sfx(DISCARD, -15)
 		if !selected_chips.is_empty():
 
 			var chip = selected_chips.pop_back()
@@ -717,7 +749,7 @@ func _handle_preparation_input() -> void:
 	# SPACE = Select Chip
 	# ----------------------------------
 	if Input.is_action_just_pressed("ui_accept"):
-
+		play_sfx(SELECT_BLIP, -15)
 		var chip = player_hand[player_chip_index]
 
 		# ==========================
@@ -796,7 +828,7 @@ func _handle_preparation_input() -> void:
 	# ENTER = Begin Combo Selection
 	# ----------------------------------
 	if Input.is_action_just_pressed("combo_select"):
-
+		play_sfx(SELECT_BLIP, -15)
 		var chip = player_hand[player_chip_index]
 
 		if chip.combo_with.is_empty():
@@ -968,11 +1000,12 @@ func _next_round() -> void:
 # CHIPS / MOVES
 # ============================================================
 func use_optimize(chip: Chip):
+	play_sfx(OPTIMIZE, -15)
 	player.activate_optimize(chip.power, 8.0)
 
 func use_backup(chip: Chip):
+	play_sfx(BACKUP, -15)
 	player.heal(chip.power)
-
 	print("BACKUP restored ", chip.power, " life")
 	
 func use_delete(chip: Chip):

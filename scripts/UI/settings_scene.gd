@@ -8,6 +8,7 @@ const SETTINGS_CONFIG_PATH := "user://game_settings.cfg"
 
 var settings_control_scheme := "wasd"
 var settings_quest_toggle_key := "M"
+var settings_dash_btn := "Ctrl"
 var settings_music_volume := 0.8
 var settings_sfx_volume := 0.8
 var button_group: ButtonGroup
@@ -16,6 +17,8 @@ var final_position: Vector2 = Vector2.ZERO
 # Button and UI element references (will be set in _finish_ready)
 @onready var wasd_button: Button = $Container/PanelContainer/MarginContainer/VBoxContainer/PlayerControlsRow/WASDButton
 @onready var arrow_button: Button = $Container/PanelContainer/MarginContainer/VBoxContainer/PlayerControlsRow/ArrowButton
+@onready var ctrl_button: Button = $Container/PanelContainer/MarginContainer/VBoxContainer/DashControlsRow/CTRLButton
+@onready var z_button: Button = $Container/PanelContainer/MarginContainer/VBoxContainer/DashControlsRow/ZButton
 @onready var quest_toggle_button: Button = $Container/PanelContainer/MarginContainer/VBoxContainer/QuestToggleRow/QuestToggleButton
 @onready var music_slider: HSlider = $Container/PanelContainer/MarginContainer/VBoxContainer/MusicVolumeRow/MusicSlider
 @onready var sfx_slider: HSlider = $Container/PanelContainer/MarginContainer/VBoxContainer/SFXVolumeRow/SFXSlider

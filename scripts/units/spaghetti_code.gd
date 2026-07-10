@@ -8,6 +8,11 @@ const THROW_PROJECTILE = preload("uid://dieb2klqxxsjl")
 @onready var BOSS_MARKER: Marker2D = $HitPoint
 @export var projectile_speed :=450.0
 
+const BOSS_PROJECTILE = preload("uid://dpqks7y6diyji")
+const SLAM = preload("uid://qvbiy4tq8sr6")
+const ENEMY_HIT = preload("uid://b3k82ni30qus0")
+
+
 const GRID_WIDTH := 4
 const GRID_HEIGHT := 4
 const TILE_SIZE := 64
@@ -35,6 +40,29 @@ func _ready():
 	z_index = 10
 	team = Team.ENEMY
 	add_to_group("enemies")
+
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	get_tree().current_scene.add_child(player)
+
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 
 # ============================================================
 # GRID SETUP (IMPORTANT)
@@ -186,6 +214,7 @@ func jump_slam():
 	# =========================
 	# IMPACT PUNCH
 	# =========================
+	play_sfx(SLAM, -15)
 	var impact = create_tween()
 	impact.set_parallel()
 
@@ -385,6 +414,7 @@ func screen_shake(intensity := 8.0):
 	cam.position = original
 			
 func throw_barrage():
+	play_sfx(BOSS_PROJECTILE, -15)
 	anim_player.play("ATTACK")
 	await get_tree().create_timer(0.25).timeout
 	
@@ -408,7 +438,7 @@ func throw_barrage():
 	await get_tree().create_timer(2.0).timeout
 	
 func shoot_spread():
-
+	play_sfx(BOSS_PROJECTILE, -15)
 	anim_player.play("ATTACK")
 
 	await get_tree().create_timer(0.25).timeout
@@ -434,6 +464,7 @@ func shoot_spread():
 	anim_player.play("IDLE")
 	
 func shoot_row(row: int):
+	play_sfx(BOSS_PROJECTILE, -15)
 	var projectile = ENEMY_BASIC_PROJECTILE.instantiate()
 
 	get_tree().current_scene.add_child(projectile)
@@ -500,7 +531,7 @@ func update_hp_label():
 
 func take_damage(amount: int, damage_type = DamageType.NEUTRAL, chip = null):
 	super.take_damage(amount, damage_type, chip)
-
+	play_sfx(ENEMY_HIT, -15)
 	update_hp_label()
 	if not is_dead:
 		play_hurt()

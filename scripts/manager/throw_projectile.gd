@@ -26,13 +26,11 @@ var bounce_heights := [
 func _ready():
 	add_to_group("enemy_projectiles")
 
-
 # ============================================================
 # ENTRY POINT
 # ============================================================
 
 func throw_bounce():
-
 	global_position = snap_to_tile_center(global_position)
 
 	var first_tile = global_position + Vector2(-TILE_SIZE, 0)
@@ -81,7 +79,6 @@ func bounce():
 # ============================================================
 
 func throw_special(target_tile: Vector2i):
-
 	is_special = true
 	special_target_tile = target_tile
 

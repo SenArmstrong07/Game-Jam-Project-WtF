@@ -9,6 +9,31 @@ const X_OFFSET := 0
 var triggered := false
 var landed := false
 var grid_pos := Vector2i.ZERO
+const BOSS_PROJECTILE = preload("uid://dpqks7y6diyji")
+const TRAP_PROJECTILE = preload("uid://dvj4kvagu5wy2")
+
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	get_tree().current_scene.add_child(player)
+
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 
 func _process(delta):
 	if landed:
@@ -19,6 +44,7 @@ func _process(delta):
 			_on_body_entered(body)
 
 func _ready():
+	play_sfx(BOSS_PROJECTILE, -15)
 	body_entered.connect(_on_body_entered)
 	add_to_group("enemy_projectiles")
 	
@@ -30,7 +56,6 @@ func grid_to_world(cell:Vector2i)->Vector2:
 	)
 	
 func throw_to(target_tile: Vector2i):
-
 	grid_pos = target_tile
 
 	var start := global_position
@@ -88,6 +113,7 @@ func throw_to(target_tile: Vector2i):
 		_on_body_entered(body)
 			
 func start_lifespan():
+	play_sfx(TRAP_PROJECTILE, -15)
 	await get_tree().create_timer(lifespan).timeout
 
 	if landed:

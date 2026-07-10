@@ -8,7 +8,7 @@ class_name Battlescene2
 @onready var ui: CanvasLayer = $PLAYER_HP_BATTLE_UI
 @onready var enemy_hitpoint: Marker2D = $CommonBug/CommonBugMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
-@onready var victory_overlay: Control = $VictoryOverlay
+@onready var victory_overlay: CanvasLayer = $VictoryOverlay
 
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
@@ -330,10 +330,11 @@ func laser_spawn(unit: Unit) -> void:
 	tile_flash.queue_free()
 			
 func _on_select_pressed():
+	if selected_chips.size() < max_selected_chips:
+		return
 
 	selecting_buttons = false
 	_start_battle_phase()
-
 
 func _on_unselect_pressed():
 
@@ -395,9 +396,12 @@ func _update_ui():
 		first_combo_chip,
 		pending_combo
 	)
+
+	# Disable confirm until 5 chips have been selected.
+	battle_preperations.select_button.disabled = selected_chips.size() < max_selected_chips
+
 	print("Hand:", player_hand.size(), " Cursor:", player_chip_index)
-
-
+	
 func update_player_ui():
 	print("Updating player UI")
 
@@ -423,7 +427,7 @@ func spawn_enemy(pos: Vector2i) -> void:
 	# =========================
 	# SET ENEMY STATS HERE
 	# =========================
-	e.max_hp = 150
+	e.max_hp = 200
 
 	e.hp = e.max_hp
 	
@@ -681,6 +685,10 @@ func _apply_current_chip():
 	move_shuffle.update_chip_display(selected_chips, current_chip_index)
 	
 func _start_battle_phase() -> void:
+	if selected_chips.is_empty():
+		print("Cannot start battle without any selected chips.")
+		return
+
 	get_tree().paused = false
 
 	current_phase = BattlePhase.BATTLE

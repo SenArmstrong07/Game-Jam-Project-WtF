@@ -9,7 +9,7 @@ class_name BossScene
 @onready var ui: CanvasLayer = $PLAYER_HP_BATTLE_UI
 @onready var trojan_marker: Marker2D = $TrojanMarker
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
-@onready var victory_overlay: Control = $VictoryOverlay
+@onready var victory_overlay: CanvasLayer = $VictoryOverlay
 
 const QUARANTINE_PROJECTILE = preload("uid://ca4tyfdtbm2xw")
 const PATCH_PROJECTILE = preload("uid://sv6571ybegto")
@@ -69,7 +69,8 @@ func _ready() -> void:
 	victory_overlay.visible = false
 	BgTitleToDial.stop()
 	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
-	
+	SignalBus.victory_continue.connect(_on_victory_continue)
+
 	battle_preperations.visible = false
 	battle_preperations.play_intro()
 	battle_scene = find_battle_scene()
@@ -384,10 +385,11 @@ func laser_spawn(unit: Unit) -> void:
 	
 
 func _on_select_pressed():
+	if selected_chips.size() < max_selected_chips:
+		return
 
 	selecting_buttons = false
 	_start_battle_phase()
-
 
 func _on_unselect_pressed():
 
@@ -448,8 +450,11 @@ func _update_ui():
 		first_combo_chip,
 		pending_combo
 	)
-	print("Hand:", player_hand.size(), " Cursor:", player_chip_index)
 
+	# Disable confirm until 5 chips have been selected.
+	battle_preperations.select_button.disabled = selected_chips.size() < max_selected_chips
+
+	print("Hand:", player_hand.size(), " Cursor:", player_chip_index)
 
 func update_player_ui():
 	print("Updating player UI")
@@ -476,7 +481,7 @@ func spawn_enemy(pos: Vector2i) -> void:
 	# =========================
 	# SET ENEMY STATS HERE
 	# =========================
-	e.max_hp = 600
+	e.max_hp = 1
 
 	e.hp = e.max_hp
 	e.update_hp_label()
@@ -733,6 +738,10 @@ func _apply_current_chip():
 	move_shuffle.update_chip_display(selected_chips, current_chip_index)
 	
 func _start_battle_phase() -> void:
+	if selected_chips.is_empty():
+		print("Cannot start battle without any selected chips.")
+		return
+
 	get_tree().paused = false
 
 	current_phase = BattlePhase.BATTLE
@@ -992,6 +1001,14 @@ func _on_unit_died(unit: Unit) -> void:
 	await get_tree().create_timer(1.0).timeout
 	get_tree().reload_current_scene()
 
+func end_battle() -> void:
+	SignalBus.return_to_overworld()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_O:
+		print("[BATTLE] O pressed - simulating return to overworld")
+		end_battle()
+
 func _check_win_condition():
 	# remove invalid references
 	enemies = enemies.filter(func(e):
@@ -1001,8 +1018,11 @@ func _check_win_condition():
 	if enemies.size() == 0:
 		current_phase = BattlePhase.END
 		battle_active = false
+		battle_preperations.visible = false
+		move_shuffle.hide_bar()
 
 		print("Player wins!")
+		victory_overlay.show_victory()
 		battle_ended.emit(player)
 
 		# HARD STOP ALL ENEMIES
@@ -1011,7 +1031,10 @@ func _check_win_condition():
 				e.queue_free()
 
 		await get_tree().create_timer(0.5).timeout
-		get_tree().reload_current_scene()
+		
+func _on_victory_continue():
+	print("BattleScene received signal!")
+	end_battle()
 		
 func get_alive_enemies() -> Array:
 	return enemies.filter(func(e):

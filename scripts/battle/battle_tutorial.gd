@@ -394,6 +394,8 @@ func _emergency_tutorial_heal() -> void:
 	battle_active = true
 	
 func _on_select_pressed():
+	if selected_chips.size() < max_selected_chips:
+		return
 
 	selecting_buttons = false
 	if !confirm_tutorial_done:
@@ -413,6 +415,7 @@ func _on_select_pressed():
 			"MC",
 			"What are you kidding me! I did not study programming to fight an actual bug!"
 		)
+	selecting_buttons = false
 	_start_battle_phase()
 
 func _on_unselect_pressed():
@@ -495,9 +498,12 @@ func _update_ui():
 		first_combo_chip,
 		pending_combo
 	)
+
+	# Disable confirm until 5 chips have been selected.
+	battle_preperations.select_button.disabled = selected_chips.size() < max_selected_chips
+
 	print("Hand:", player_hand.size(), " Cursor:", player_chip_index)
-
-
+	
 func update_player_ui():
 	print("Updating player UI")
 
@@ -846,6 +852,10 @@ func _apply_current_chip():
 	move_shuffle.update_chip_display(selected_chips, current_chip_index)
 	
 func _start_battle_phase() -> void:
+	if selected_chips.is_empty():
+		print("Cannot start battle without any selected chips.")
+		return
+
 	get_tree().paused = false
 
 	current_phase = BattlePhase.BATTLE
@@ -861,23 +871,6 @@ func _start_battle_phase() -> void:
 	)
 
 	move_shuffle.show_bar()
-
-	await get_tree().process_frame
-
-	if !battle_controls_tutorial_done:
-		battle_controls_tutorial_done = true
-		await get_tree().create_timer(1.5).timeout
-		await tutorial_popup(
-			"MiniBot",
-			"MiniBot",
-			"As you can see on your right is your Module Hand. You can use 'Q' and 'E' to switch between Modules."
-		)
-
-		await tutorial_popup(
-			"MiniBot",
-			"MiniBot",
-			"At the top are your lives. You can only take 5 hits before you're DELETED, so dodge those bullets... unless you want some bullet holes on ya!"
-		)
 
 	var first_chip := selected_chips[0]
 	player.attack_range = first_chip.range_tile

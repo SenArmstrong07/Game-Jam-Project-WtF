@@ -232,12 +232,14 @@ func end_dialogue():
 func type_text() -> void:
 	typing = true
 
+	rich_text_label.text = ""
+
 	for i in range(full_text.length()):
 		if !typing:
 			rich_text_label.text = full_text
 			break
 
-		rich_text_label.text += full_text[i]
+		rich_text_label.text += full_text.substr(i, 1)
 		await get_tree().create_timer(text_speed).timeout
 
 	typing = false

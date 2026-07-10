@@ -55,6 +55,8 @@ var previous_selected_count := 0
 
 @onready var move_panel: NinePatchRect = $SIDE_CONTAINER/NinePatchRect
 var move_panel_start_pos: Vector2
+var last_displayed_chip = null
+var description_flash_tween: Tween
 
 func _ready():
 	
@@ -99,7 +101,7 @@ func _ready():
 	cursor.visible = false
 	cursor.z_index = 100
 
-	$MODULE_DECK/GridContainer.add_child(cursor)
+	$MODULE_DECK.add_child(cursor)
 
 func update_ui(
 	player_hand: Array,
@@ -145,8 +147,12 @@ func update_ui(
 
 				# Move the cursor frame over this slot
 				cursor.visible = true
-				cursor.global_position = deck_slots[i].global_position
+				cursor.position = deck_slots[i].get_global_rect().position - cursor.get_parent().global_position
 				cursor.size = deck_slots[i].size
+
+				if last_displayed_chip != chip:
+					last_displayed_chip = chip
+					flash_description()
 
 				move_icon.texture = chip.icon
 				module_name.text = chip.name
@@ -204,7 +210,46 @@ func update_ui(
 	)
 	
 	previous_selected_count = selected_chips.size()
-			
+
+func flash_description() -> void:
+	if description_flash_tween:
+		description_flash_tween.kill()
+
+	var original_pos = description_bg.position
+	var original_size = description_bg.size
+	var target_scale = Vector2(1.03, 1.03)
+
+	# Offset so scaling happens around the center
+	var offset = (original_size * (target_scale - Vector2.ONE)) * 0.5
+
+	description_bg.scale = target_scale
+	description_bg.position = original_pos - offset
+	description_bg.modulate = Color(1.35, 1.35, 1.35, 1.0)
+
+	description_flash_tween = create_tween()
+	description_flash_tween.set_parallel(true)
+
+	description_flash_tween.tween_property(
+		description_bg,
+		"scale",
+		Vector2.ONE,
+		0.15
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	description_flash_tween.tween_property(
+		description_bg,
+		"position",
+		original_pos,
+		0.15
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	description_flash_tween.tween_property(
+		description_bg,
+		"modulate",
+		Color.WHITE,
+		0.15
+	)
+				
 func draw_player_hand(hand:Array[Chip], selected_index:int):
 
 	for i in range(deck_slots.size()):

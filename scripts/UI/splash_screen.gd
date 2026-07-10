@@ -6,6 +6,7 @@ class_name SplashScreen
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	BattleBgm.stop()	
 	animation_player.play("black_in")
 	await animation_player.animation_finished
 	

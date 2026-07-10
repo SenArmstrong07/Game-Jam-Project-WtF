@@ -5,7 +5,6 @@
 
 [node name="BattleBGM" type="AudioStreamPlayer2D" unique_id=438235275]
 stream = ExtResource("1_8pleg")
-volume_db = -18.912
 autoplay = true
 parameters/looping = true
 script = ExtResource("2_5c5fo")

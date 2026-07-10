@@ -20,7 +20,14 @@
 [ext_resource type="Texture2D" uid="uid://dvmrbwoekfwsp" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_15.png" id="16_8crk6"]
 [ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="17_r3qol"]
 [ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="18_hnpm0"]
+[ext_resource type="Texture2D" uid="uid://ccs2u66saqrun" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_18.png" id="19_80bmh"]
+[ext_resource type="Texture2D" uid="uid://c5l8p5q3wyy0m" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_07.png" id="19_qsr6o"]
 [ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="19_sxqrx"]
+[ext_resource type="PackedScene" uid="uid://b1w6e5v4kh0xq" path="res://scenes/UI/SettingsScene.tscn" id="21_3vs5p"]
+[ext_resource type="Texture2D" uid="uid://dvpi1kjfnwa3c" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_11.png" id="21_8crk6"]
+[ext_resource type="AudioStream" uid="uid://c8b2uawpi0b32" path="res://assets/FX/OverWorld.ogg" id="23_fkalm"]
+[ext_resource type="AudioStream" uid="uid://cykcx5g3pmxkf" path="res://assets/FX/BossSummon.ogg" id="24_upd6r"]
+[ext_resource type="AudioStream" uid="uid://b8ywftsmdwecm" path="res://assets/FX/warning.mp3" id="25_ibjp1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pmfpv"]
 shader = ExtResource("6_ojrtv")
@@ -169,6 +176,56 @@ position = Vector2(145, -162)
 
 [node name="Minimap" parent="." unique_id=1115139525 instance=ExtResource("4_01jcn")]
 
+[node name="BottomAppBar" type="NinePatchRect" parent="Minimap" unique_id=1900000011]
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.92
+anchor_right = 0.8
+anchor_bottom = 0.99
+offset_right = 20.0
+offset_bottom = 19.999939
+texture = ExtResource("9_3vs5p")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
+
+[node name="Apps" type="HBoxContainer" parent="Minimap/BottomAppBar" unique_id=1900000012]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+alignment = 1
+
+[node name="QuestButton" type="Button" parent="Minimap/BottomAppBar/Apps" unique_id=1900000013]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 24
+icon = ExtResource("19_80bmh")
+expand_icon = true
+
+[node name="SettingsButton" type="Button" parent="Minimap/BottomAppBar/Apps" unique_id=1900000014]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 24
+icon = ExtResource("19_qsr6o")
+expand_icon = true
+
+[node name="StatsButton" type="Button" parent="Minimap/BottomAppBar/Apps" unique_id=1900000015]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 24
+icon = ExtResource("21_8crk6")
+expand_icon = true
+
 [node name="Dialogues" type="CanvasLayer" parent="." unique_id=1599703020]
 script = ExtResource("8_k3dwl")
 
@@ -292,7 +349,72 @@ text = "Simulate Enemy Delete"
 
 [node name="Quest_UI" parent="UI" unique_id=834374770 instance=ExtResource("9_quest")]
 
+[node name="SettingsScene" parent="UI" unique_id=12242666 instance=ExtResource("21_3vs5p")]
+
+[node name="ScanPanel" type="Control" parent="UI" unique_id=1900000021]
+visible = false
+layout_mode = 3
+anchor_left = 0.18
+anchor_top = 0.62
+anchor_right = 0.82
+anchor_bottom = 0.88
+
+[node name="BG" type="NinePatchRect" parent="UI/ScanPanel" unique_id=1900000022]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("9_3vs5p")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
+
+[node name="Title" type="Label" parent="UI/ScanPanel" unique_id=1900000023]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.18
+theme_override_font_sizes/font_size = 28
+text = "SYSTEM SCAN"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScanInfo" type="Label" parent="UI/ScanPanel" unique_id=1900000024]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.2
+anchor_right = 0.95
+anchor_bottom = 0.8
+theme_override_font_sizes/font_size = 20
+text = "Scan complete: active threats, hidden objectives, and safe paths are displayed here."
+autowrap_mode = 1
+
+[node name="CloseScan" type="Button" parent="UI/ScanPanel" unique_id=1900000025]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.7
+anchor_top = 0.75
+anchor_right = 0.95
+anchor_bottom = 0.92
+theme_override_font_sizes/font_size = 20
+text = "CLOSE"
+
 [node name="LoadingScreen" parent="." unique_id=1500000010 instance=ExtResource("5_loading")]
 visible = false
 
+[node name="OverworldBGM" type="AudioStreamPlayer" parent="." unique_id=306643137]
+stream = ExtResource("23_fkalm")
+
+[node name="BossEventBGM" type="AudioStreamPlayer" parent="." unique_id=498928780]
+stream = ExtResource("24_upd6r")
+
+[node name="WarningFX" type="AudioStreamPlayer" parent="." unique_id=1519861529]
+stream = ExtResource("25_ibjp1")
+
+[connection signal="pressed" from="Minimap/BottomAppBar/Apps/QuestButton" to="." method="_on_bottom_quest_pressed"]
+[connection signal="pressed" from="Minimap/BottomAppBar/Apps/SettingsButton" to="." method="_on_bottom_settings_pressed"]
+[connection signal="pressed" from="Minimap/BottomAppBar/Apps/StatsButton" to="." method="_on_bottom_stats_pressed"]
 [connection signal="pressed" from="UI/SimulateEnemyDel" to="." method="_on_simulate_remove_enemy_pressed"]
+[connection signal="pressed" from="UI/ScanPanel/CloseScan" to="." method="_on_close_scan_pressed"]

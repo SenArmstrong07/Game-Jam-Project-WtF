@@ -123,32 +123,92 @@ offset_right = 0.027008057
 offset_bottom = 0.029968262
 theme = SubResource("Theme_cq3a5")
 
-[node name="LIST_1" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=818797906]
+[node name="LIST_1" type="HBoxContainer" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=818797906]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_constants/separation = 10
+
+[node name="ICON_1" type="TextureRect" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_1" unique_id=218797907]
+layout_mode = 0
+rect_min_size = Vector2(28, 28)
+stretch_mode = 0
+
+[node name="LIST_1_LABEL" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_1" unique_id=318797908]
+layout_mode = 1
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
 text = "QUEST 1"
 autowrap_mode = 3
 
-[node name="LIST_2" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=622460000]
+[node name="LIST_2" type="HBoxContainer" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=622460000]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_constants/separation = 10
+
+[node name="ICON_2" type="TextureRect" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_2" unique_id=622460001]
+layout_mode = 0
+rect_min_size = Vector2(28, 28)
+stretch_mode = 0
+
+[node name="LIST_2_LABEL" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_2" unique_id=722460002]
+layout_mode = 1
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
 text = "QUEST 2"
 autowrap_mode = 3
 
-[node name="LIST_3" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=2120832458]
+[node name="LIST_3" type="HBoxContainer" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=2120832458]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_constants/separation = 10
+
+[node name="ICON_3" type="TextureRect" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_3" unique_id=2120832459]
+layout_mode = 0
+rect_min_size = Vector2(28, 28)
+stretch_mode = 0
+
+[node name="LIST_3_LABEL" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_3" unique_id=3120832460]
+layout_mode = 1
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
 text = "QUEST 3"
 autowrap_mode = 3
 
-[node name="LIST_4" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1984266454]
+[node name="LIST_4" type="HBoxContainer" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1984266454]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_constants/separation = 10
+
+[node name="ICON_4" type="TextureRect" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_4" unique_id=1984266455]
+layout_mode = 0
+rect_min_size = Vector2(28, 28)
+stretch_mode = 0
+
+[node name="LIST_4_LABEL" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_4" unique_id=2984266456]
+layout_mode = 1
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
 text = "QUEST 4"
 autowrap_mode = 3
 
-[node name="LIST_5" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1974161498]
+[node name="LIST_5" type="HBoxContainer" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER" unique_id=1974161498]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_constants/separation = 10
+
+[node name="ICON_5" type="TextureRect" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_5" unique_id=1974161499]
+layout_mode = 0
+rect_min_size = Vector2(28, 28)
+stretch_mode = 0
+
+[node name="LIST_5_LABEL" type="Label" parent="Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_5" unique_id=2974161500]
+layout_mode = 1
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
-text = "QUEST 5 "
+text = "QUEST 5"
 autowrap_mode = 3

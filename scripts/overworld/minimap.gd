@@ -4,16 +4,19 @@ extends CanvasLayer
 @onready var map_markers: Node2D = %mapMarkers
 @onready var terrain_visuals: Node2D = %TerrainVisuals
 @onready var map_root: Node2D = $SubViewportContainer/SubViewport/Map
+@onready var minimap_ui: Node = $SubViewportContainer/SubViewport/UI
+@onready var player_marker: Sprite2D = %playerMarker
 @onready var marker_scene = preload("res://scenes/overworld/Marker.tscn")
 @onready var world_map_scene = preload("res://scenes/overworld/world_map_ui.tscn")
 @onready var Bounds2DScript = preload("res://scripts/overworld/bounds2d.gd")
 
 var zoom_factor = 8
+var position
 var markers = []
 var player: Node2D
 var tracked_enemies: Dictionary = {}  # Dictionary to track which enemies have markers
 var frontlayer: TileMapLayer
-var marker_layer: Control  # Layer above minimap for markers to render on top
+var marker_layer: Node2D  # Layer above minimap for markers to render on top
 var bounds_drawer: Control  # Control node for drawing world bounds
 var subviewport_container: SubViewportContainer  # Reference to minimap container
 var world_map_ui = null
@@ -52,29 +55,27 @@ func _ready() -> void:
 	
 	# Get reference to frontlayer and connect to enemy_spawned signal
 	frontlayer = get_tree().get_first_node_in_group("frontlayer")
-	if frontlayer:
-		frontlayer.enemy_spawned.connect(_on_enemy_spawned)
+	if frontlayer and frontlayer.has_signal("enemy_spawned"):
+		var handler = Callable(self, "_on_enemy_spawned")
+		if not frontlayer.is_connected("enemy_spawned", handler):
+			frontlayer.enemy_spawned.connect(handler)
+	else:
+		call_deferred("_connect_enemy_signal")
 	
 	# Set up minimap camera
 	if minimap_cam:
 		minimap_cam.enabled = true
 		minimap_cam.zoom = Vector2(0.5, 0.5)  # Zoom out to see more terrain
 	
-	# Create marker layer above the minimap to render markers on top of white border
-	marker_layer = Control.new()
-	marker_layer.name = "MarkerLayer"
-	marker_layer.anchors_preset = Control.PRESET_BOTTOM_RIGHT
-	marker_layer.anchor_left = 1.0
-	marker_layer.anchor_top = 1.0
-	marker_layer.anchor_right = 1.0
-	marker_layer.anchor_bottom = 1.0
-	marker_layer.offset_left = -192.0
-	marker_layer.offset_top = -192.0
-	marker_layer.size = Vector2(192, 192)
-	marker_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(marker_layer)
-	move_child(marker_layer, get_child_count() - 1)  # Move to top layer
-	
+	# Use an overlay marker layer above the minimap border so markers draw in front.
+	marker_layer = get_node_or_null("OverlayMarkers")
+	if marker_layer == null:
+		marker_layer = Node2D.new()
+		marker_layer.name = "OverlayMarkers"
+		add_child(marker_layer)
+	marker_layer.position = Vector2.ZERO
+	marker_layer.z_index = 100
+	marker_layer.z_as_relative = false
 	# Get reference to SubViewportContainer for click detection
 	subviewport_container = find_child("SubViewportContainer")
 	if subviewport_container:
@@ -94,7 +95,10 @@ func _ready() -> void:
 		terrain_visuals.add_child(background)
 		terrain_visuals.move_child(background, 0)  # Move to back so terrain tiles render on top
 		print("[MINIMAP] Background fill added to terrain_visuals")
-	
+
+	# Create markers for any enemies that already exist when the minimap starts.
+	call_deferred("_create_existing_enemy_markers")
+	print(marker_layer.get_child_count())
 	# NOTE: We intentionally do NOT add the world-bounds overlay to the minimap
 	# to avoid drawing the world boundary rectangle inside the minimap UI.
 	# Bounds2DScript is kept available if needed for debug builds, but is not
@@ -104,7 +108,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if player:
 		# Compute desired minimap camera center (map world -> minimap space)
-		var desired_cam_pos = player.position / zoom_factor
+		var desired_cam_pos = player.global_position / zoom_factor
 
 		# If frontlayer/world bounds available, clamp camera so viewport doesn't show beyond world edges
 		if frontlayer and frontlayer.has_method("get_world_bounds"):
@@ -151,6 +155,22 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	pass
 
+func _connect_enemy_signal() -> void:
+	if not is_instance_valid(frontlayer):
+		frontlayer = get_tree().get_first_node_in_group("frontlayer")
+	if frontlayer and frontlayer.has_signal("enemy_spawned"):
+		var handler = Callable(self, "_on_enemy_spawned")
+		if not frontlayer.is_connected("enemy_spawned", handler):
+			frontlayer.enemy_spawned.connect(handler)
+		_create_existing_enemy_markers()
+	else:
+		print("[MINIMAP] WARNING: frontlayer or enemy_spawned signal unavailable")
+
+func _create_existing_enemy_markers() -> void:
+	for enemy in get_tree().get_nodes_in_group("overworldmob"):
+		if enemy and enemy.is_inside_tree() and enemy not in tracked_enemies:
+			var marker = create_marker_for_enemy(enemy)
+			tracked_enemies[enemy] = marker
 
 func _on_enemy_spawned(enemy: Node2D) -> void:
 	# Create marker when enemy is spawned
@@ -160,21 +180,20 @@ func _on_enemy_spawned(enemy: Node2D) -> void:
 
 func create_marker_for_enemy(enemy: Node2D) -> Sprite2D:
 	var marker = marker_scene.instantiate()
-	
-	# Link marker to enemy for continuous position updates
+
+	# Give the marker the enemy reference
 	marker.set_enemy(enemy)
-	
-	# Set initial position immediately to avoid visual glitch
-	marker.update_position(enemy.global_position)
-	
-	# Add to marker layer (above minimap) instead of inside viewport
+
+	# Add it to the minimap
 	marker_layer.add_child(marker)
-	
-	# Connect death signal if it exists
+
+	print("[MINIMAP] Marker created for ", enemy.name)
+
+	# Remove marker when enemy dies
 	if enemy.has_signal("died"):
 		enemy.died.connect(marker.delete_marker)
 		enemy.died.connect(func(): tracked_enemies.erase(enemy))
-	
+
 	return marker
 
 
@@ -247,6 +266,9 @@ func render_terrain_tile(tile_pos: Vector2i, tile_type: int) -> void:
 func _on_minimap_gui_input(event: InputEvent) -> void:
 	"""Handle clicks on the minimap to open the full world map."""
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var cybermap = get_tree().get_first_node_in_group("Cybermap")
+		if cybermap and cybermap.has_method("is_event_in_progress") and cybermap.is_event_in_progress():
+			return
 		# Open the world map UI
 		print("[MINIMAP] CLICK DETECTED")
 		_open_world_map()

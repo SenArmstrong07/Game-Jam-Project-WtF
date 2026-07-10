@@ -45,10 +45,6 @@ position = Vector2(1, -64)
 script = ExtResource("9_utcot")
 
 [node name="VictoryOverlay" parent="." unique_id=1088365696 instance=ExtResource("9_fbnia")]
-offset_left = -369.0
-offset_top = -256.0
-offset_right = -369.0
-offset_bottom = -256.0
 
 [node name="SpawnBeamCenter" type="Line2D" parent="." unique_id=372422596]
 width = 18.0

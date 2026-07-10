@@ -220,11 +220,13 @@ func _pick_random_battle_scene() -> PackedScene:
 	return SignalBus.TROJAN_ELITE
 
 func _apply_battle_scene() -> void:
+	if enemy_tier == EnemyTier.BOSS:
+		make_boss()
+		return
+
 	if battle_scene == SignalBus.TROJAN_ELITE:
-		if enemy_tier != EnemyTier.BOSS:
-			enemy_tier = EnemyTier.ELITE
-			if has_method("make_elite"):
-				make_elite()
+		enemy_tier = EnemyTier.ELITE
+		make_elite()
 	else:
 		enemy_tier = EnemyTier.COMMON
 
@@ -251,7 +253,7 @@ func apply_spawn_type(spawn_type: String) -> void:
 			battle_scene = SignalBus.COMMON_BUG
 			enemy_tier = EnemyTier.COMMON
 		SPAWN_TYPE_BOSS:
-			battle_scene = SignalBus.TROJAN_ELITE
+			battle_scene = SignalBus.BOSS_SPAG
 			enemy_tier = EnemyTier.BOSS
 		_:
 			battle_scene = _pick_random_battle_scene()
@@ -272,3 +274,31 @@ func make_elite() -> void:
 
 	tween.tween_property(self, "scale", Vector2(1.3, 1.3), 0.45)
 	tween.parallel().tween_property($sprite, "modulate", Color.WHITE, 0.45)
+
+func make_boss() -> void:
+	# Bigger than elite
+	scale = Vector2(1.6, 1.6)
+
+	# Purple glow
+	$sprite.modulate = Color(0.75, 0.25, 1.0)
+
+	var tween := create_tween()
+	tween.set_loops()
+
+	# Grow
+	tween.tween_property(self, "scale", Vector2(1.72, 1.72), 0.25)
+	tween.parallel().tween_property(
+		$sprite,
+		"modulate",
+		Color(1.0, 0.4, 1.0),
+		0.25
+	)
+
+	# Shrink
+	tween.tween_property(self, "scale", Vector2(1.6, 1.6), 0.4)
+	tween.parallel().tween_property(
+		$sprite,
+		"modulate",
+		Color(0.75, 0.25, 1.0),
+		0.4
+	)

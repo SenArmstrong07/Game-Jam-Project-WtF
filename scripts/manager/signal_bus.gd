@@ -4,6 +4,8 @@ extends Node
 const COMMON_BUG = preload("res://scenes/battle/Battlescene.tscn")
 const THROW_BUG = preload("res://scenes/battle/Battlescene2.tscn")
 const TROJAN_ELITE = preload("res://scenes/battle/Battlescene3.tscn")
+const BOSS_SPAG = preload("res://scenes/battle/BossScene1.tscn")
+
 
 const BATTLE_POOL = [
 	COMMON_BUG,

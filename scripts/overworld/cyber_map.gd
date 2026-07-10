@@ -638,29 +638,36 @@ func _move_camera_to_position(target_position: Vector2, duration: float) -> void
 
 func _spawn_boss_enemy(spawn_position: Vector2, z_idx: int = -1) -> Node2D:
 	var boss_instance = boss_scene.instantiate()
+
 	if boss_instance is Node2D:
 		boss_instance.global_position = spawn_position
 		boss_instance.name = "BossSummon"
+
 		if z_idx >= 0 and boss_instance is CanvasItem:
 			boss_instance.z_index = z_idx
+
 		add_child(boss_instance)
+
 		if not boss_instance.is_in_group("overworldmob"):
 			boss_instance.add_to_group("overworldmob")
+
+		# Make this enemy a boss
+		boss_instance.apply_spawn_type("boss")
+
 		if boss_instance.has_method("apply_spawn_type"):
 			boss_instance.apply_spawn_type("boss")
 		elif boss_instance.has("enemy_tier"):
 			boss_instance.enemy_tier = 2
+
 		print("[STATE] Spawned overworld boss at: ", spawn_position)
+
 		if frontlayer and frontlayer.has_signal("enemy_spawned"):
-			print("[STATE] Emitting enemy_spawned for minimap")
 			frontlayer.emit_signal("enemy_spawned", boss_instance)
-		else:
-			print("[STATE] frontlayer signal enemy_spawned unavailable")
 
 		return boss_instance
 
 	return null
-
+	
 func get_overworld_state() -> Dictionary:
 	var enemies = []
 	for enemy in get_tree().get_nodes_in_group("overworldmob"):

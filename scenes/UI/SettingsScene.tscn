@@ -68,6 +68,28 @@ theme_override_fonts/font = ExtResource("3_bnk2f")
 theme_override_font_sizes/font_size = 24
 text = "Arrow Keys"
 
+[node name="DashControlsRow" type="HBoxContainer" parent="Container/PanelContainer/MarginContainer/VBoxContainer" unique_id=145254743]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Container/PanelContainer/MarginContainer/VBoxContainer/DashControlsRow" unique_id=2011464958]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_bnk2f")
+theme_override_font_sizes/font_size = 24
+text = "Player Controls"
+
+[node name="CTRLButton" type="Button" parent="Container/PanelContainer/MarginContainer/VBoxContainer/DashControlsRow" unique_id=584799877]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_bnk2f")
+theme_override_font_sizes/font_size = 24
+text = "CTRL"
+
+[node name="ZButton" type="Button" parent="Container/PanelContainer/MarginContainer/VBoxContainer/DashControlsRow" unique_id=587704193]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_bnk2f")
+theme_override_font_sizes/font_size = 24
+text = "Z"
+
 [node name="QuestToggleRow" type="HBoxContainer" parent="Container/PanelContainer/MarginContainer/VBoxContainer" unique_id=706500665]
 layout_mode = 2
 

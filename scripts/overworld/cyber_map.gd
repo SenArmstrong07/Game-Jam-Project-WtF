@@ -17,6 +17,10 @@ var CORRUPTION_SCALE := 1.0
 const BOSS_SUMMON_DELAY_ON_RETURN := 1.5
 const BOSS_POST_SUMMON_PAUSE := 2.4
 const SETTINGS_SCENE_PATH := "res://scenes/UI/SettingsScene.tscn"
+const FULL_HEART = preload("uid://ct06j0bja4ca6")
+const EMPTY_HEART = preload("uid://dqb46x6jpp2bw")
+
+
 @onready var overworld_bgm: AudioStreamPlayer = $OverworldBGM
 @onready var boss_event_bgm: AudioStreamPlayer = $BossEventBGM
 @onready var warning_fx: AudioStreamPlayer = $WarningFX
@@ -83,6 +87,16 @@ func _ready() -> void:
 	else:
 		# Normal startup: capture and store current overworld state
 		store_overworld_state()
+
+#LIFE CHECK:
+func set_lives(current_lives: int) -> void:
+	var hearts = $UI/MarginContainer/LivesUI.get_children()
+
+	for i in range(hearts.size()):
+		var heart := hearts[i] as TextureRect
+		heart.texture = FULL_HEART if i < current_lives else EMPTY_HEART
+
+
 #DIALOGUE STUFF
 func dialogue_pop_up(name: String, portrait_anim: String, message: String):
 

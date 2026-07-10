@@ -914,10 +914,9 @@ func _on_unit_died(unit: Unit) -> void:
 	battle_active = false
 
 	print("Enemy wins!")
+	SignalBus.player_lives = max(0, SignalBus.player_lives - 1)
 	battle_ended.emit(enemies[0] if enemies.size() > 0 else null)
-
-	await get_tree().create_timer(1.0).timeout
-	get_tree().reload_current_scene()
+	await SignalBus.return_to_overworld(true)
 
 func end_battle() -> void:
 	SignalBus.return_to_overworld()

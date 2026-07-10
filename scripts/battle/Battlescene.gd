@@ -389,6 +389,7 @@ func _update_ui():
 		first_combo_chip,
 		pending_combo
 	)
+	print("Hand:", player_hand.size(), " Cursor:", player_chip_index)
 
 func update_player_ui():
 	print("Updating player UI")
@@ -489,21 +490,6 @@ func _handle_preparation_input() -> void:
 	# ----------------------------------
 	if selecting_buttons:
 		return
-		
-	if pending_combo != null:
-
-		if Input.is_action_just_pressed("ui_accept"):
-
-			selected_chips.append(pending_combo)
-			pending_combo = null
-
-			if selected_chips.size() >= max_selected_chips:
-				selecting_buttons = true
-				battle_preperations.select_button.grab_focus()
-				_update_ui()
-				return
-
-		return
 
 	if player_hand.is_empty():
 		return
@@ -591,6 +577,20 @@ func _handle_preparation_input() -> void:
 				player_chip_index = clamp(player_chip_index, 0, player_hand.size() - 1)
 
 			print(combo.name, " created!")
+
+			# Update UI so the combo info is displayed
+			_update_ui()
+
+			# Give the player a moment to see the combo
+			await get_tree().create_timer(0.75).timeout
+
+			# Automatically add the combo
+			selected_chips.append(pending_combo)
+			pending_combo = null
+
+			if selected_chips.size() >= max_selected_chips:
+				selecting_buttons = true
+				battle_preperations.select_button.grab_focus()
 
 			_update_ui()
 			return

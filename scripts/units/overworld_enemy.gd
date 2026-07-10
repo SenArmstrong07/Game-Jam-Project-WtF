@@ -35,22 +35,17 @@ var dash_cooldown_timer : float = 0.0
 var enemy_tier: EnemyTier = EnemyTier.COMMON
 var battle_scene: PackedScene
 
+const SPAWN_TYPE_COMMON := "common"
+const SPAWN_TYPE_THROW := "throw"
+const SPAWN_TYPE_ELITE := "elite"
+
 func _ready() -> void:
 	add_to_group("overworldmob")
 	if battle_scene == null:
-		var roll := randi_range(1, 100)
+		battle_scene = _pick_random_battle_scene()
 
-		if roll <= 38:
-			battle_scene = SignalBus.COMMON_BUG
-		elif roll <= 75:
-			battle_scene = SignalBus.THROW_BUG
-		else:
-			battle_scene = SignalBus.TROJAN_ELITE
-
-	if battle_scene == SignalBus.TROJAN_ELITE:
-		enemy_tier = EnemyTier.ELITE
-		make_elite()
-		
+	_apply_battle_scene()
+	
 	frontlayer = get_tree().get_first_node_in_group("frontlayer")
 	if frontlayer == null:
 		frontlayer = get_parent().get_node_or_null("TileNode/front")
@@ -213,6 +208,44 @@ func spawn_afterimage():
 	ghost.scale = scale
 
 	ghost.setup($sprite)
+
+func _pick_random_battle_scene() -> PackedScene:
+	var roll := randi_range(1, 100)
+	if roll <= 38:
+		return SignalBus.COMMON_BUG
+	if roll <= 75:
+		return SignalBus.THROW_BUG
+	return SignalBus.TROJAN_ELITE
+
+func _apply_battle_scene() -> void:
+	if battle_scene == SignalBus.TROJAN_ELITE:
+		enemy_tier = EnemyTier.ELITE
+		if has_method("make_elite"):
+			make_elite()
+	else:
+		enemy_tier = EnemyTier.COMMON
+
+func get_spawn_type() -> String:
+	if battle_scene == SignalBus.TROJAN_ELITE:
+		return SPAWN_TYPE_ELITE
+	if battle_scene == SignalBus.THROW_BUG:
+		return SPAWN_TYPE_THROW
+	if battle_scene == SignalBus.COMMON_BUG:
+		return SPAWN_TYPE_COMMON
+	return SPAWN_TYPE_COMMON
+
+func apply_spawn_type(spawn_type: String) -> void:
+	match spawn_type:
+		SPAWN_TYPE_ELITE:
+			battle_scene = SignalBus.TROJAN_ELITE
+		SPAWN_TYPE_THROW:
+			battle_scene = SignalBus.THROW_BUG
+		SPAWN_TYPE_COMMON:
+			battle_scene = SignalBus.COMMON_BUG
+		_:
+			battle_scene = _pick_random_battle_scene()
+
+	_apply_battle_scene()
 
 func make_elite() -> void:
 	# Make the enemy slightly larger

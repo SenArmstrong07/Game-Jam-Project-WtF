@@ -505,6 +505,8 @@ func _spawn_saved_enemy_positions(enemy_data: Array) -> void:
 				var new_enemy = enemy_scene.instantiate()
 				var enemy_local_pos = get_parent().to_local(enemy_pos)
 				new_enemy.position = enemy_local_pos
+				if enemy_info.has("enemy_type") and new_enemy.has_method("apply_spawn_type"):
+					new_enemy.apply_spawn_type(str(enemy_info["enemy_type"]))
 				get_parent().add_child.call_deferred(new_enemy)
 				enemy_spawned.emit(new_enemy)
 				spawned += 1

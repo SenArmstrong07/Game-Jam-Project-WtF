@@ -53,6 +53,7 @@ func _ready() -> void:
 		SignalBus.overworld_intro_played = true
 		intro_dialogue_running = true
 		_set_player_controls_locked(true)
+		await get_tree().create_timer(1).timeout
 		await start_overworld_dialogue()
 		intro_dialogue_running = false
 		_set_player_controls_locked(false)
@@ -596,9 +597,13 @@ func get_overworld_state() -> Dictionary:
 			var enemy_node = enemy as Node2D
 			if enemy_node == null:
 				continue
+			var enemy_type := ""
+			if enemy_node.has_method("get_spawn_type"):
+				enemy_type = enemy_node.get_spawn_type()
 			enemies.append({
 				"name": enemy_node.name,
 				"position": enemy_node.global_position,
+				"enemy_type": enemy_type,
 				"distance_to_player": player.global_position.distance_to(enemy_node.global_position)
 			})
 

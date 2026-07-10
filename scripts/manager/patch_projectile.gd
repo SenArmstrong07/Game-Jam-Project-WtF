@@ -1,4 +1,5 @@
 extends Area2D
+const PATCH_MAYBE = preload("uid://ckvnavbanq64e")
 
 var target: Unit
 var damage: int = 10
@@ -9,6 +10,30 @@ var speed := 300.0
 
 func _ready():
 	particles.emitting = true
+	play_sfx(PATCH_MAYBE, -15)
+	
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	get_tree().current_scene.add_child(player)
+
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 
 func _process(delta):
 	if !is_instance_valid(target):

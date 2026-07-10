@@ -6,6 +6,7 @@ const DELETE_PROJECTILE = preload("uid://cxcsd36elkqlv")
 var battle_scene
 signal lives_changed(player: Unit, lives: int)
 @export var hurt_duration := 0.2
+const PLAYER_HIT = preload("uid://cknnjkcfvuie1")
 
 var stunned := false
 var stun_timer := 0.0
@@ -79,9 +80,31 @@ func _ready():
 
 	camera_2d.zoom = Vector2(1.8,1.8)
 
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	add_child(player)
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 
 # Override take_damage function from Unit superclass to implement "1 hit = 1 life" mechanic (PLAYER ONLY)
 func take_damage(amount: int, damage_type := Unit.DamageType.NEUTRAL, chip: Chip = null) -> void:
+	play_sfx(PLAYER_HIT, -10)
 	if is_dead:
 		return
 

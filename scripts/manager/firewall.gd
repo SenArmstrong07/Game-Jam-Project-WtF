@@ -1,6 +1,8 @@
 extends Node2D
 class_name Firewall
 
+const FIREWALL = preload("uid://r7b0kh8j4p6e")
+
 @export var duration := 5.0
 @export var hp := 3
 
@@ -14,6 +16,7 @@ var grid_pos: Vector2i
 @onready var lifetime_timer: Timer = $LifetimeTimer
 
 func _ready():
+	play_sfx(FIREWALL, -15)
 	# =========================
 	# TILE (GROUND LAYER)
 	# =========================
@@ -41,6 +44,30 @@ func _ready():
 	# =========================
 	lifetime_timer.wait_time = duration
 	lifetime_timer.start()
+
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	get_tree().current_scene.add_child(player)
+
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
+
 
 func _process(delta):
 	# pulsing glow effect

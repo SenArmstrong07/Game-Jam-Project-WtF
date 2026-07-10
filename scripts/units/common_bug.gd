@@ -1,6 +1,8 @@
 extends Unit
 
 const EnemyBasicProjectile = preload("res://scenes/Attacks/enemy_basic_projectile.tscn")
+const ENEMY_HIT_SFX = preload("uid://b3k82ni30qus0")
+const ENEMY_PROJECTILE_SFX = preload("uid://bnle2l36i7wf4")
 
 const GRID_WIDTH := 4
 const GRID_HEIGHT := 4
@@ -40,6 +42,8 @@ var lane_switch_interval := 0.6
 var displayed_hp := 0
 var hp_tween: Tween
 
+
+
 func _ready():
 	# Call parent's _ready first to initialize sprite and hp
 	super._ready()
@@ -68,6 +72,28 @@ func init(pos: Vector2i) -> void:
 	grid_pos = pos
 	position = grid_to_world(pos)
 	target_position = position
+
+func play_sfx(
+	stream: AudioStream,
+	volume_db: float = 0.0,
+	pitch_scale: float = 1.0,
+	bus: String = "Master"
+):
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	player.bus = bus
+
+	add_child(player)
+	player.play()
+
+	player.finished.connect(func():
+		player.queue_free()
+	)
 
 func grid_to_world(cell: Vector2i) -> Vector2:
 	var world_grid_x = cell.x + X_OFFSET
@@ -244,10 +270,23 @@ func shoot():
 
 	attack_count += 1
 
+	# Play attack animation
+	if anim_player.sprite_frames.has_animation("Attack"):
+		anim_player.play("Attack")
+
+	# Wait for most of the animation before firing
+	await get_tree().create_timer(0.2).timeout
+
+	if is_dead:
+		return
+
 	if attack_count % 3 == 0:
 		await shoot_double()
 	else:
 		await shoot_single()
+
+	# Return to movement/idle animation
+	play_move_animation(grid_pos, grid_pos)
 
 	await get_tree().create_timer(attack_recovery).timeout
 
@@ -262,13 +301,15 @@ func shoot_single():
 
 	projectile.direction = Vector2.LEFT
 	projectile.damage = attack_power
-
+	play_sfx(ENEMY_PROJECTILE_SFX, -15)
 	get_tree().current_scene.add_child(projectile)
 	
 func shoot_double():
 	print("SPECIAL ATTACK!")
 
 	var spawn_pos = ProjectileShootPoint.global_position
+
+	play_sfx(ENEMY_PROJECTILE_SFX, -15)
 
 	var projectile = EnemyBasicProjectile.instantiate()
 	projectile.global_position = spawn_pos
@@ -280,6 +321,8 @@ func shoot_double():
 
 	if is_dead:
 		return
+
+	play_sfx(ENEMY_PROJECTILE_SFX, -15)
 
 	projectile = EnemyBasicProjectile.instantiate()
 	projectile.global_position = spawn_pos
@@ -314,10 +357,11 @@ func apply_stun(duration: float):
 	stun_tween.tween_property(self, "modulate", Color(1, 1, 0.9), 0.1)
 
 func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
-	var delta = new_pos - old_pos
-	if is_hurt:
+	if is_hurt or attack_locked:
 		return
-		
+
+	var delta = new_pos - old_pos
+
 	if delta.x > 0:
 		anim_player.play("Right")
 	elif delta.x < 0:
@@ -328,27 +372,32 @@ func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
 		anim_player.play("Up")
 	else:
 		anim_player.play("Idle")
-
+		
 func play_hurt():
 	if is_dead or is_hurt:
 		return
 
 	is_hurt = true
-
+	play_sfx(ENEMY_HIT_SFX, -15)
 	anim_player.modulate = Color(1, 0.3, 0.3)
 
 	if anim_player.sprite_frames.has_animation("Hurt"):
 		anim_player.play("Hurt")
 
-	await get_tree().create_timer(0.15).timeout
+		var frame_count = anim_player.sprite_frames.get_frame_count("Hurt")
+		var fps = anim_player.sprite_frames.get_animation_speed("Hurt")
+
+		if fps <= 0:
+			fps = 10.0
+
+		var duration = float(frame_count) / fps
+		await get_tree().create_timer(duration).timeout
 
 	anim_player.modulate = Color.WHITE
-
-	if anim_player.sprite_frames.has_animation("Idle"):
-		anim_player.play("Idle")
-
 	is_hurt = false
 
+	play_move_animation(grid_pos, grid_pos)
+	
 func update_hp_label():
 
 	if hp_tween:

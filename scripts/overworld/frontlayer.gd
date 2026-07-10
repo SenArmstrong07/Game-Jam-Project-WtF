@@ -198,18 +198,19 @@ func _finish_world_setup() -> void:
 	overworld_ready.emit()
 
 	# Enemy restoration
-	if SignalBus.overworld_state.has("enemies"):
-		var saved_enemies: Array = SignalBus.overworld_state["enemies"]
+	var saved_enemies: Array = SignalBus.overworld_state.get("enemies", [])
+	var cached_enemy_count: int = int(SignalBus.overworld_state.get("enemy_count", 0))
 
-		if saved_enemies.is_empty():
-			if SignalBus.summon_boss_on_return:
-				print("[TRANSITION] Skipping normal enemy respawn because boss summon is pending")
-			else:
-				spawn_fixed_enemy_count()
+	if saved_enemies.is_empty():
+		if SignalBus.summon_boss_on_return:
+			print("[TRANSITION] Skipping normal enemy respawn because boss summon is pending")
+		elif cached_enemy_count > 0:
+			print("[TRANSITION] Restoring cached enemy count instead of randomizing it: ", cached_enemy_count)
+			spawn_fixed_enemy_count(cached_enemy_count)
 		else:
-			_spawn_saved_enemy_positions(saved_enemies)
+			spawn_fixed_enemy_count()
 	else:
-		spawn_fixed_enemy_count()
+		_spawn_saved_enemy_positions(saved_enemies)
 		
 		#Check to see if scene is in transition and overworld state isn't empty
 	if SignalBus.in_transition and !SignalBus.overworld_state.is_empty():
@@ -435,9 +436,10 @@ func get_altitude(x: int, y: int) -> float:
 	return altitude.get_noise_2d(x, y) * 10
 
 
-func spawn_fixed_enemy_count() -> void:
-	"""Spawn a fixed number of enemies (random between 3-10) after world generation."""
-	var enemy_count = randi_range(3, 10)
+func spawn_fixed_enemy_count(target_count: int = -1) -> void:
+	"""Spawn a fixed number of enemies after world generation.
+	When a cached count is provided, preserve that count instead of randomizing it."""
+	var enemy_count := target_count if target_count > 0 else randi_range(3, 10)
 	var spawned = 0
 	var max_attempts = enemy_count * 10  # Try up to 10x attempts to place all enemies
 	var attempt = 0

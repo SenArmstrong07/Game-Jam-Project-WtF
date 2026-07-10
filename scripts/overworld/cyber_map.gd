@@ -30,6 +30,9 @@ var boss_dialogue_running := false
 var dialogue_mode := true
 
 func _ready() -> void:
+	if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
+		overworld_state = SignalBus.overworld_state.duplicate(true)
+
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
@@ -52,6 +55,8 @@ func _ready() -> void:
 	corruption_tile_script = load(corruption_tile_script_path)
 	if corruption_tile_script == null:
 		print("[BOSS] Warning: failed to load corruption tile script: ", corruption_tile_script_path)
+
+	set_lives(max(0, SignalBus.player_lives))
 
 	#prep the loading screen to cover the tilenodes
 	var loading_screen = get_node_or_null("LoadingScreen")
@@ -81,20 +86,27 @@ func _ready() -> void:
 	if boss_summon_overlay and not boss_summon_overlay.is_connected("summon_finished", _on_boss_summon_finished):
 		boss_summon_overlay.summon_finished.connect(_on_boss_summon_finished)
 
-	# If we're returning from a battle transition, let the return transition play while the saved state is restored immediately.
+	# If we're returning from a battle transition, preserve the cached state and let the return transition play.
 	if SignalBus.in_transition:
 		SignalBus.in_transition = false
+		if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
+			overworld_state = SignalBus.overworld_state.duplicate(true)
 	else:
-		# Normal startup: capture and store current overworld state
-		store_overworld_state()
+		# Normal startup: capture and store current overworld state only if we still have a live scene snapshot.
+		if not SignalBus.overworld_state.is_empty():
+			overworld_state = SignalBus.overworld_state.duplicate(true)
+		else:
+			store_overworld_state()
 
 #LIFE CHECK:
 func set_lives(current_lives: int) -> void:
 	var hearts = $UI/MarginContainer/LivesUI.get_children()
+	var safe_lives: int = clamp(current_lives, 0, hearts.size())
+	SignalBus.player_lives = safe_lives
 
 	for i in range(hearts.size()):
 		var heart := hearts[i] as TextureRect
-		heart.texture = FULL_HEART if i < current_lives else EMPTY_HEART
+		heart.texture = FULL_HEART if i < safe_lives else EMPTY_HEART
 
 
 #DIALOGUE STUFF
@@ -236,7 +248,12 @@ func _on_world_generation_complete() -> void:
 	if !intro_dialogue_running:
 		_set_player_controls_locked(false)
 	ensure_one_elite()
+	store_overworld_state()
 	_refresh_quest_ui()
+
+	if SignalBus.respawn_to_safe_spawn:
+		_apply_safe_respawn_position()
+		SignalBus.respawn_to_safe_spawn = false
 
 	var loading_screen = get_node_or_null("LoadingScreen")
 	if loading_screen and loading_screen.has_method("_hide_overlay"):
@@ -245,6 +262,42 @@ func _on_world_generation_complete() -> void:
 	if SignalBus.summon_boss_on_return and not boss_summon_in_progress:
 		print("[BOSS] Delaying boss summon on overworld return by ", BOSS_SUMMON_DELAY_ON_RETURN, " seconds")
 		call_deferred("_delayed_return_boss_summon")
+
+func _apply_safe_respawn_position() -> void:
+	if player == null or frontlayer == null:
+		return
+
+	var enemy_position: Vector2 = Vector2.ZERO
+	if SignalBus.current_encounter and is_instance_valid(SignalBus.current_encounter.overworld_enemy):
+		enemy_position = SignalBus.current_encounter.overworld_enemy.global_position
+
+	var bounds = frontlayer.get_world_bounds()
+	var min_x := int(floor(bounds.position.x / frontlayer.tile_size))
+	var min_y := int(floor(bounds.position.y / frontlayer.tile_size))
+	var max_x := int(ceil((bounds.position.x + bounds.size.x) / frontlayer.tile_size))
+	var max_y := int(ceil((bounds.position.y + bounds.size.y) / frontlayer.tile_size))
+
+	var candidate_tiles: Array[Vector2i] = []
+	for x in range(min_x, max_x):
+		for y in range(min_y, max_y):
+			var tile := Vector2i(x, y)
+			if not frontlayer.is_tile_walkable(tile):
+				continue
+			var tile_position : Vector2i = frontlayer.map_to_global(tile)
+			if enemy_position != Vector2.ZERO and tile_position.distance_to(enemy_position) < 800.0:
+				continue
+			candidate_tiles.append(tile)
+
+	if candidate_tiles.is_empty():
+		player.global_position = frontlayer.find_valid_spawn_tile()
+		store_overworld_state()
+		print("[RESPAWN] No safe respawn tiles found, using fallback spawn")
+		return
+
+	var chosen_tile = candidate_tiles[randi() % candidate_tiles.size()]
+	player.global_position = frontlayer.map_to_global(chosen_tile)
+	store_overworld_state()
+	print("[RESPAWN] Player respawned to safe tile: ", chosen_tile)
 
 func ensure_one_elite() -> void:
 	var enemies = get_tree().get_nodes_in_group("overworldmob")
@@ -307,8 +360,14 @@ func _remove_overworld_enemy(enemy: Node2D) -> void:
 	_check_for_boss_summon_validity()
 
 func store_overworld_state() -> void:
-	overworld_state = get_overworld_state()
-	SignalBus.overworld_state = overworld_state
+	var snapshot: Dictionary = get_overworld_state().duplicate(true)
+	if snapshot.get("enemies", []).is_empty() and overworld_state.has("enemies") and not overworld_state["enemies"].is_empty():
+		snapshot["enemies"] = overworld_state["enemies"].duplicate(true)
+		snapshot["enemy_count"] = snapshot["enemies"].size()
+		print("[STATE] Preserved previous enemy roster during overwrite: ", snapshot["enemy_count"])
+
+	overworld_state = snapshot.duplicate(true)
+	SignalBus.overworld_state = overworld_state.duplicate(true)
 	_refresh_quest_ui()
 
 func is_event_in_progress() -> bool:

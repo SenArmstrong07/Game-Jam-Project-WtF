@@ -43,6 +43,8 @@ func get_max_lives() -> int:
 	return max_lives
 	
 func _ready():
+	lives = max_lives
+
 	# placed player
 	add_to_group("player")
 	team = Team.PLAYER

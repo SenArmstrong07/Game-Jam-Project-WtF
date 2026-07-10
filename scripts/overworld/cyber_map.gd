@@ -16,7 +16,10 @@ var CORRUPTION_SCALE := 1.0
 
 const BOSS_SUMMON_DELAY_ON_RETURN := 1.5
 const BOSS_POST_SUMMON_PAUSE := 2.4
-
+const SETTINGS_SCENE_PATH := "res://scenes/UI/SettingsScene.tscn"
+@onready var overworld_bgm: AudioStreamPlayer = $OverworldBGM
+@onready var boss_event_bgm: AudioStreamPlayer = $BossEventBGM
+@onready var warning_fx: AudioStreamPlayer = $WarningFX
 @onready var dialogues: CanvasLayer = $Dialogues
 var intro_dialogue_running := false
 var boss_dialogue_running := false
@@ -27,6 +30,19 @@ func _ready() -> void:
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
 	call_deferred("_refresh_quest_ui")
+
+	if BgTitleToDial:
+		BgTitleToDial.bus = "Music"
+	if BattleBgm:
+		BattleBgm.bus = "Music"
+		
+	if overworld_bgm:
+		overworld_bgm.bus = "Music"
+		overworld_bgm.play()
+	
+	if boss_event_bgm:
+		boss_event_bgm.bus = "Music"
+		boss_event_bgm.finished.connect(_on_boss_event_bgm_finished)
 
 	# Try to load corruption tile script at runtime to avoid preload errors
 	corruption_tile_script = load(corruption_tile_script_path)
@@ -196,6 +212,12 @@ func play_boss_dialogue() -> void:
 		"I'll give you a 'surprise' once I come back..."
 	)
 
+#SOUND STUFF
+func _on_boss_event_bgm_finished() -> void:
+	if overworld_bgm:
+		overworld_bgm.play()
+
+#WORLD STUFF
 func _on_world_generation_complete() -> void:
 	if !intro_dialogue_running:
 		_set_player_controls_locked(false)
@@ -275,6 +297,9 @@ func store_overworld_state() -> void:
 	SignalBus.overworld_state = overworld_state
 	_refresh_quest_ui()
 
+func is_event_in_progress() -> bool:
+	return intro_dialogue_running or boss_dialogue_running or boss_summon_in_progress
+
 func _refresh_quest_ui() -> void:
 	var quest_ui = get_node_or_null("UI/Quest_UI")
 	if quest_ui and quest_ui.has_method("_update_quest_ui"):
@@ -286,6 +311,30 @@ func _set_player_controls_locked(locked: bool) -> void:
 	elif player:
 		player.controls_locked = locked
 
+func _on_bottom_quest_pressed() -> void:
+	var quest_ui = get_node_or_null("UI/Quest_UI")
+	if quest_ui and quest_ui.has_method("toggle_quest_ui"):
+		quest_ui.toggle_quest_ui()
+
+func _on_bottom_settings_pressed() -> void:
+	var settings_ui = get_node_or_null("UI/SettingsScene")
+	if settings_ui and settings_ui.has_method("toggle"):
+		settings_ui.toggle()
+#TO CHANGE PA
+func _on_bottom_stats_pressed() -> void:
+	var scan_panel = get_node_or_null("UI/ScanPanel")
+	if scan_panel:
+		scan_panel.visible = true
+
+func _on_close_settings_pressed() -> void:
+	var settings_panel = get_node_or_null("UI/SettingsPanel")
+	if settings_panel:
+		settings_panel.visible = false
+
+func _on_close_scan_pressed() -> void:
+	var scan_panel = get_node_or_null("UI/ScanPanel")
+	if scan_panel:
+		scan_panel.visible = false
 
 func _restore_overworld_state(state: Dictionary) -> void:
 	if state.is_empty():
@@ -349,6 +398,11 @@ func _begin_boss_summon_sequence() -> void:
 		return
 	print("[BOSS] boss_summon_overlay inside_tree=", boss_summon_overlay.is_inside_tree())
 	_set_player_controls_locked(true)
+	if overworld_bgm.playing:
+		overworld_bgm.stop()
+	if boss_event_bgm:
+		boss_event_bgm.play()
+		warning_fx.play()
 	if frontlayer and frontlayer.has_method("set_camera_follow_enabled"):
 		frontlayer.set_camera_follow_enabled(false)
 	print("[BOSS] Player controls locked")
@@ -365,7 +419,6 @@ func _execute_boss_spawn_sequence(spawn_position: Vector2) -> void:
 	var spawn_point = _create_boss_spawn_point(spawn_position)
 	print("[BOSS] Moving camera to boss spawn")
 	await _move_camera_to_position(spawn_position, 0.9)
-	
 	#give some pause after camera movement
 	await get_tree().create_timer(1).timeout
 	# Play summon animation at spawn point and wait for it to finish
@@ -579,6 +632,10 @@ func _spawn_boss_enemy(spawn_position: Vector2, z_idx: int = -1) -> Node2D:
 		add_child(boss_instance)
 		if not boss_instance.is_in_group("overworldmob"):
 			boss_instance.add_to_group("overworldmob")
+		if boss_instance.has_method("apply_spawn_type"):
+			boss_instance.apply_spawn_type("boss")
+		elif boss_instance.has("enemy_tier"):
+			boss_instance.enemy_tier = 2
 		print("[STATE] Spawned overworld boss at: ", spawn_position)
 		if frontlayer and frontlayer.has_signal("enemy_spawned"):
 			print("[STATE] Emitting enemy_spawned for minimap")

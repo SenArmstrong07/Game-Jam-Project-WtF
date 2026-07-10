@@ -480,6 +480,7 @@ func spawn_fixed_enemy_count() -> void:
 		new_enemy.position = spawn_local_pos
 		get_parent().add_child.call_deferred(new_enemy)
 		spawned_positions.append(spawn_world_pos)
+		await new_enemy.tree_entered
 		enemy_spawned.emit(new_enemy)
 		spawned += 1
 		

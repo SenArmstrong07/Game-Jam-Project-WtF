@@ -1,11 +1,22 @@
 extends CanvasLayer
 
 @onready var container: Control = $Container
-@onready var label_1: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_1
-@onready var label_2: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_2
-@onready var label_3: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_3
-@onready var label_4: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_4
-@onready var label_5: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_5
+@onready var label_1: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_1/LIST_1_LABEL
+@onready var label_2: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_2/LIST_2_LABEL
+@onready var label_3: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_3/LIST_3_LABEL
+@onready var label_4: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_4/LIST_4_LABEL
+@onready var label_5: Label = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_5/LIST_5_LABEL
+@onready var icon_1: TextureRect = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_1/ICON_1
+@onready var icon_2: TextureRect = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_2/ICON_2
+@onready var icon_3: TextureRect = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_3/ICON_3
+@onready var icon_4: TextureRect = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_4/ICON_4
+@onready var icon_5: TextureRect = $Container/TEXT_CONTAINER/QUEST_CONTAINER/LIST_5/ICON_5
+
+var icon_textures: Dictionary = {
+	"common": preload("res://assets/ui/enemy_marker.png"),
+	"elite": preload("res://assets/ui/elite_marker.png"),
+	"boss": preload("res://assets/ui/boss_marker.png")
+}
 
 var mission_states: Dictionary = {
 	"debug_viruses": {"completed": false, "count": 0},
@@ -41,10 +52,19 @@ func _process(_delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_quest"):
+		var cybermap = get_tree().get_first_node_in_group("Cybermap")
+		if cybermap and cybermap.has_method("is_event_in_progress") and cybermap.is_event_in_progress():
+			return
 		if visible:
 			_hide_with_slide()
 		else:
 			_show_with_slide()
+
+func toggle_quest_ui() -> void:
+	if visible:
+		_hide_with_slide()
+	else:
+		_show_with_slide()
 
 func _show_with_slide() -> void:
 	visible = true
@@ -64,6 +84,7 @@ func _update_quest_ui() -> void:
 	var enemies = get_tree().get_nodes_in_group("overworldmob")
 	var common_remaining := 0
 	var elite_remaining := 0
+	var boss_present := false
 
 	for enemy in enemies:
 		if not is_instance_valid(enemy):
@@ -71,6 +92,8 @@ func _update_quest_ui() -> void:
 		var tier = enemy.get("enemy_tier")
 		if tier == 1:
 			elite_remaining += 1
+		elif tier == 2:
+			boss_present = true
 		else:
 			common_remaining += 1
 
@@ -79,39 +102,53 @@ func _update_quest_ui() -> void:
 	mission_states["debug_viruses"]["completed"] = common_remaining <= 0
 	mission_states["debug_elites"]["completed"] = elite_remaining <= 0
 
-	if mission_states["debug_viruses"]["completed"] and mission_states["debug_elites"]["completed"]:
-		_set_label_state(label_1, "", false, false)
-		_set_label_state(label_2, "", false, false)
-		_set_label_state(label_3, "3. DEFEAT THE FINAL BOSS.", false, true)
-		_set_label_state(label_4, "", false, false)
-		_set_label_state(label_5, "", false, false)
+	if boss_present:
+		_set_label_state(label_1, icon_1, null, "", false, false)
+		_set_label_state(label_2, icon_2, null, "", false, false)
+		_set_label_state(label_3, icon_3, icon_textures["boss"], "3. DEFEAT THE FINAL BOSS", false, true)
+		_set_label_state(label_4, icon_4, null, "", false, false)
+		_set_label_state(label_5, icon_5, null, "", false, false)
 		mission_states["final_boss"]["completed"] = false
+		return
+
+	if mission_states["debug_viruses"]["completed"] and mission_states["debug_elites"]["completed"]:
+		_set_label_state(label_1, icon_1, null, "", false, false)
+		_set_label_state(label_2, icon_2, null, "", false, false)
+		_set_label_state(label_3, icon_3, icon_textures["boss"], "3. DEFEAT THE FINAL BOSS", false, true)
+		_set_label_state(label_4, icon_4, null, "", false, false)
+		_set_label_state(label_5, icon_5, null, "", false, false)
 		return
 
 	_set_label_state(
 		label_1,
+		icon_1,
+		icon_textures["common"],
 		"1. D3BUG VIRUSES - %d left" % common_remaining,
 		mission_states["debug_viruses"]["completed"],
 		true
 	)
 	_set_label_state(
 		label_2,
+		icon_2,
+		icon_textures["elite"],
 		"2. D3BUG ELITE VIRUSES - %d left" % elite_remaining,
 		mission_states["debug_elites"]["completed"],
 		true
 	)
-	_set_label_state(label_3, "", false, false)
-	_set_label_state(label_4, "", false, false)
-	_set_label_state(label_5, "", false, false)
+	_set_label_state(label_3, icon_3, null, "", false, false)
+	_set_label_state(label_4, icon_4, null, "", false, false)
+	_set_label_state(label_5, icon_5, null, "", false, false)
 
-func _set_label_state(label: Label, text: String, completed: bool, visible_flag: bool) -> void:
-	if label == null:
+func _set_label_state(label: Label, icon: TextureRect, icon_texture: Texture2D, text: String, completed: bool, visible_flag: bool) -> void:
+	if label == null or icon == null:
 		return
 	label.visible = visible_flag
+	icon.visible = visible_flag
 	if not visible_flag:
 		return
 	label.text = text
 	label.modulate = Color(0.75, 1.0, 0.75) if completed else Color.WHITE
+	icon.texture = icon_texture
 
 func _set_mission_state(mission_key: String, completed: bool) -> void:
 	if mission_states.has(mission_key):

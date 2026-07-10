@@ -17,7 +17,8 @@ var patrol_change_interval: float = 3.0  # Change target every 3 seconds
 # FOR BATTLESCENE ASSIGNMENT OF SPAWNED ENEMY
 enum EnemyTier {
 	COMMON,
-	ELITE
+	ELITE,
+	BOSS
 }
 #Dash settings
 @export var after_image_scene: PackedScene
@@ -38,6 +39,7 @@ var battle_scene: PackedScene
 const SPAWN_TYPE_COMMON := "common"
 const SPAWN_TYPE_THROW := "throw"
 const SPAWN_TYPE_ELITE := "elite"
+const SPAWN_TYPE_BOSS := "boss"
 
 func _ready() -> void:
 	add_to_group("overworldmob")
@@ -219,13 +221,16 @@ func _pick_random_battle_scene() -> PackedScene:
 
 func _apply_battle_scene() -> void:
 	if battle_scene == SignalBus.TROJAN_ELITE:
-		enemy_tier = EnemyTier.ELITE
-		if has_method("make_elite"):
-			make_elite()
+		if enemy_tier != EnemyTier.BOSS:
+			enemy_tier = EnemyTier.ELITE
+			if has_method("make_elite"):
+				make_elite()
 	else:
 		enemy_tier = EnemyTier.COMMON
 
 func get_spawn_type() -> String:
+	if enemy_tier == EnemyTier.BOSS:
+		return SPAWN_TYPE_BOSS
 	if battle_scene == SignalBus.TROJAN_ELITE:
 		return SPAWN_TYPE_ELITE
 	if battle_scene == SignalBus.THROW_BUG:
@@ -238,12 +243,19 @@ func apply_spawn_type(spawn_type: String) -> void:
 	match spawn_type:
 		SPAWN_TYPE_ELITE:
 			battle_scene = SignalBus.TROJAN_ELITE
+			enemy_tier = EnemyTier.ELITE
 		SPAWN_TYPE_THROW:
 			battle_scene = SignalBus.THROW_BUG
+			enemy_tier = EnemyTier.COMMON
 		SPAWN_TYPE_COMMON:
 			battle_scene = SignalBus.COMMON_BUG
+			enemy_tier = EnemyTier.COMMON
+		SPAWN_TYPE_BOSS:
+			battle_scene = SignalBus.TROJAN_ELITE
+			enemy_tier = EnemyTier.BOSS
 		_:
 			battle_scene = _pick_random_battle_scene()
+			enemy_tier = EnemyTier.COMMON
 
 	_apply_battle_scene()
 

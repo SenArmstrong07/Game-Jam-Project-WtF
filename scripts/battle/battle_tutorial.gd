@@ -1,6 +1,11 @@
 extends BattleBase
 class_name BattleTutorial
 
+@onready var beam_center: Line2D = $SpawnBeamCenter
+@onready var beam_left: Line2D = $SpawnBeamLeft
+@onready var beam_right: Line2D = $SpawnBeamRight
+
+@onready var camera: Camera2D = $Camera2D
 @onready var ui: CanvasLayer = $PLAYER_HP_BATTLE_UI
 @onready var player_muzzle: Marker2D =  $PlayerCharacter/PlayerMarker
 
@@ -63,6 +68,13 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
+	player.visible = false
+	
+	for e in enemies:
+		e.visible = false
+
+	battle_preperations.visible = false
+	ui.visible = false
 	BgTitleToDial.stop()
 	BattleBgm.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleBgm.play_music(preload("res://assets/FX/BattleBGMTest.mp3"))
@@ -96,8 +108,241 @@ func _ready() -> void:
 	battle_preperations.unselect_button.pressed.connect(_on_unselect_pressed)
 
 	await get_tree().process_frame
+	await play_battle_intro()
+	
 	_start_preparation_phase()
+	
+func play_battle_intro() -> void:
 
+	player.visible = false
+
+	for enemy in enemies:
+		enemy.visible = false
+
+	ui.visible = false
+	battle_preperations.visible = false
+
+	await get_tree().create_timer(0.2).timeout
+
+	await get_tree().create_timer(0.15).timeout
+	
+	await camera.play_intro()
+	# Spawn player
+	await laser_spawn(player)
+
+	# Spawn enemies one after another
+	for enemy in enemies:
+		await get_tree().create_timer(0.1).timeout
+		await laser_spawn(enemy)
+
+	await get_tree().create_timer(0.2).timeout
+
+	ui.visible = true
+	battle_preperations.play_intro()
+
+	# Wait until the animation finishes
+	if battle_preperations.has_signal("intro_finished"):
+		await battle_preperations.intro_finished
+	else:
+		await get_tree().create_timer(1).timeout
+	
+func laser_spawn(unit: Unit) -> void:
+
+	var top: Vector2 = unit.global_position - Vector2(0, 300)
+	var bottom: Vector2 = unit.global_position + Vector2(0, 16)
+
+	unit.visible = false
+
+	var beams: Array[Line2D] = [
+		beam_center,
+		beam_left,
+		beam_right
+	]
+
+	for beam: Line2D in beams:
+		beam.visible = true
+		beam.modulate = Color.WHITE
+		beam.clear_points()
+
+
+	# Beam setup
+	beam_center.width = 32
+	beam_left.width = 16
+	beam_right.width = 16
+
+	beam_center.add_point(top)
+	beam_center.add_point(top)
+
+	beam_left.add_point(top + Vector2(-22, 0))
+	beam_left.add_point(top + Vector2(-22, 0))
+
+	beam_right.add_point(top + Vector2(22, 0))
+	beam_right.add_point(top + Vector2(22, 0))
+
+
+	# Beam travelling down
+	var duration: float = 0.14
+	var elapsed: float = 0.0
+
+	while elapsed < duration:
+
+		var ratio: float = elapsed / duration
+		var y: float = lerp(top.y, bottom.y, ratio)
+
+		beam_center.set_point_position(1, Vector2(top.x, y))
+		beam_left.set_point_position(1, Vector2(top.x - 22, y))
+		beam_right.set_point_position(1, Vector2(top.x + 22, y))
+
+		elapsed += get_process_delta_time()
+		await get_tree().process_frame
+
+
+	# Beam hits tile
+	beam_center.set_point_position(1, Vector2(top.x, bottom.y))
+	beam_left.set_point_position(1, Vector2(top.x - 22, bottom.y))
+	beam_right.set_point_position(1, Vector2(top.x + 22, bottom.y))
+
+
+	# Create tile lightning effect
+	var tile_flash := ColorRect.new()
+
+	tile_flash.color = Color.WHITE
+	tile_flash.size = Vector2(64,64)
+
+	tile_flash.global_position = unit.global_position - Vector2(32,32)
+
+	# behind unit
+	tile_flash.z_index = unit.z_index - 1
+
+	# starting opacity
+	tile_flash.modulate.a = 0.15
+
+	add_child(tile_flash)
+
+
+	unit.visible = true
+
+
+	var sprite := unit.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+
+	# Strong lightning while laser stays
+
+	for i in range(5):
+
+		if sprite:
+			sprite.modulate = Color(4,4,5)
+
+		tile_flash.modulate.a = 0.45
+
+
+		await get_tree().create_timer(0.035).timeout
+
+
+		if sprite:
+			sprite.modulate = Color.WHITE
+
+		tile_flash.modulate.a = 0.12
+
+
+		await get_tree().create_timer(0.04).timeout
+
+
+	# Beam collapse
+
+	var collapse_time: float = 0.10
+	elapsed = 0.0
+
+
+	while elapsed < collapse_time:
+
+		var ratio: float = elapsed / collapse_time
+		var offset: float = lerp(22.0,0.0,ratio)
+
+		beam_left.set_point_position(
+			0,
+			top + Vector2(-offset,0)
+		)
+
+		beam_left.set_point_position(
+			1,
+			bottom + Vector2(-offset,0)
+		)
+
+
+		beam_right.set_point_position(
+			0,
+			top + Vector2(offset,0)
+		)
+
+		beam_right.set_point_position(
+			1,
+			bottom + Vector2(offset,0)
+		)
+
+
+		beam_center.width = lerp(32.0,0.0,ratio)
+		beam_left.width = lerp(16.0,0.0,ratio)
+		beam_right.width = lerp(16.0,0.0,ratio)
+
+
+		var alpha: float = lerp(1.0,0.0,ratio)
+
+		beam_center.modulate.a = alpha
+		beam_left.modulate.a = alpha
+		beam_right.modulate.a = alpha
+
+
+		elapsed += get_process_delta_time()
+		await get_tree().process_frame
+
+
+
+	# Remove laser
+	for beam: Line2D in beams:
+		beam.visible = false
+		beam.clear_points()
+
+
+	# Residual fading electricity
+
+	for i in range(3):
+
+		if sprite:
+			sprite.modulate = Color(2.5,2.5,3)
+
+		tile_flash.modulate.a = 0.25
+
+
+		await get_tree().create_timer(0.08).timeout
+
+
+		if sprite:
+			sprite.modulate = Color.WHITE
+
+		tile_flash.modulate.a = 0.05
+
+
+		await get_tree().create_timer(0.12).timeout
+
+
+
+	# Final fade
+
+	var fade := create_tween()
+
+	fade.tween_property(
+		tile_flash,
+		"modulate:a",
+		0.0,
+		0.3
+	)
+
+
+	await fade.finished
+
+
+	tile_flash.queue_free()
+	
 func _on_player_hp_changed(unit: Unit, hp: int) -> void:
 	if emergency_heal_used:
 		return
@@ -920,7 +1165,7 @@ func _check_win_condition():
 		await tutorial_popup(
 			"MiniBot",
 			"MiniBot",
-			"Im Sendfing you to the CyberMap now go and eliminate all bugs you'll see!"
+			"Im Sending you to the CyberMap now go and eliminate all bugs you'll see!"
 		)
 		await tutorial_popup(
 			"Cody",

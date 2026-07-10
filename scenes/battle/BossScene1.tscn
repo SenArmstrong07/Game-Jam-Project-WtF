@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://6hbsmgfnmld0" path="res://scenes/battle/GridMap.tscn" id="6_kyoar"]
 [ext_resource type="PackedScene" uid="uid://bd000x17iehe0" path="res://scenes/units/player_character.tscn" id="7_2sq3g"]
 [ext_resource type="PackedScene" uid="uid://djdrn1tgj56hi" path="res://scenes/battle/Grid.tscn" id="8_m3obh"]
+[ext_resource type="Script" uid="uid://btu1psebyotve" path="res://scripts/UI/camera_pan.gd" id="9_g0cpk"]
+[ext_resource type="PackedScene" uid="uid://dsmug4l5iu1ma" path="res://scenes/UI/VictoryOverlay.tscn" id="10_8l8mu"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6l7n5"]
 shader = ExtResource("4_vyuyg")
@@ -19,8 +21,6 @@ script = ExtResource("1_crujw")
 
 [node name="PLAYER_HP_BATTLE_UI" parent="." unique_id=1987469340 instance=ExtResource("3_g0cpk")]
 
-[node name="Unit" parent="." unique_id=1715206411 instance=ExtResource("3_8l8mu")]
-
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1470599231]
 texture_repeat = 2
 material = SubResource("ShaderMaterial_6l7n5")
@@ -29,6 +29,8 @@ offset_top = -220.0
 offset_right = 973.0
 offset_bottom = 548.0
 texture = ExtResource("5_f0aoi")
+
+[node name="Unit" parent="." unique_id=1715206411 instance=ExtResource("3_8l8mu")]
 
 [node name="GridMap" parent="." unique_id=1241810169 instance=ExtResource("6_kyoar")]
 position = Vector2(1, 2)
@@ -40,3 +42,22 @@ position = Vector2(1, -64)
 [node name="Grid" parent="." unique_id=651052919 instance=ExtResource("8_m3obh")]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1004523237]
+script = ExtResource("9_g0cpk")
+
+[node name="VictoryOverlay" parent="." unique_id=1088365696 instance=ExtResource("10_8l8mu")]
+offset_left = -369.0
+offset_top = -256.0
+offset_right = -369.0
+offset_bottom = -256.0
+
+[node name="SpawnBeamCenter" type="Line2D" parent="." unique_id=465820259]
+width = 18.0
+default_color = Color(0.4, 1, 1, 1)
+
+[node name="SpawnBeamLeft" type="Line2D" parent="." unique_id=391552512]
+width = 8.0
+default_color = Color(0.57254905, 1, 1, 1)
+
+[node name="SpawnBeamRight" type="Line2D" parent="." unique_id=155546180]
+width = 8.0
+default_color = Color(0.57254905, 1, 1, 1)

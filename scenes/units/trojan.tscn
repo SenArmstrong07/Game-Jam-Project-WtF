@@ -221,7 +221,7 @@ position = Vector2(0, -10)
 script = ExtResource("1_6l7n5")
 max_hp = 200
 
-[node name="TrojanSprite" type="AnimatedSprite2D" parent="." unique_id=1862863905]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1862863905]
 position = Vector2(-0.5, -18)
 scale = Vector2(2.03125, 1.4)
 sprite_frames = SubResource("SpriteFrames_7nrbm")

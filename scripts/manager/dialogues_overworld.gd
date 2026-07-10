@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 signal tutorial_closed
-
+@onready var dialogue_bar_text_container: NinePatchRect = $DialogueBar/DialogueBar
 @onready var dialogue_bar: Control = $DialogueBar
 @onready var portrait: AnimatedSprite2D = $DialogueBar/CharacterPict/Portrait
 @onready var rich_text_label: RichTextLabel = $DialogueBar/DialogueBar/RichTextLabel
@@ -60,15 +60,18 @@ func _type_text() -> void:
 #OPENING ANIMATION
 func _play_open_animation() -> void:
 
-	dialogue_bar.scale = Vector2(1.0, 0.0)
-	dialogue_bar.modulate.a = 1.0
+	dialogue_bar_text_container.scale = Vector2(
+	dialogue_bar_start_scale.x,
+	0.0
+)
+	dialogue_bar_text_container.modulate.a = 1.0
 
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
 
 	tween.tween_property(
-		dialogue_bar,
+		dialogue_bar_text_container,
 		"scale",
 		dialogue_bar_start_scale,
 		0.22
@@ -84,15 +87,15 @@ func _play_close_animation() -> void:
 	tween.set_ease(Tween.EASE_IN)
 
 	tween.tween_property(
-		dialogue_bar,
+		dialogue_bar_text_container,
 		"scale",
-		Vector2(1.0, 0.0),
+		Vector2(dialogue_bar_start_scale.x, 0.0),
 		0.18
 	)
 
 	await tween.finished
 
-	dialogue_bar.scale = dialogue_bar_start_scale
+	dialogue_bar_text_container.scale = dialogue_bar_start_scale
 	
 func _unhandled_input(event):
 

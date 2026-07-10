@@ -1,6 +1,6 @@
 extends Unit
 
-@onready var anim_player: AnimatedSprite2D = $throwbugsprite
+@onready var anim_player: AnimatedSprite2D = $AnimatedSprite2D
 const EnemyThrowProjectile = preload("res://scenes/Attacks/Throw_Projectile.tscn")
 
 @onready var player_character: Unit = $"../PlayerCharacter"

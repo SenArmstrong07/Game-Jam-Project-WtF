@@ -371,9 +371,9 @@ anchor_top = 0.149
 anchor_right = 0.984
 anchor_bottom = 0.92800003
 offset_left = -0.08001709
-offset_top = -0.2800064
+offset_top = -1.2800064
 offset_right = 0.47998047
-offset_bottom = -0.16003418
+offset_bottom = -1.1600342
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_p0yp4")
@@ -390,19 +390,6 @@ offset_right = 292.168
 offset_bottom = 581.169
 rotation = -1.0576695
 texture = ExtResource("12_eybqm")
-
-[node name="RED_WIRE_DECOR" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=1490874251]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.55700004
-anchor_top = 0.55300003
-anchor_right = 0.61
-anchor_bottom = 0.624
-offset_left = 1.3379822
-offset_top = -4.233032
-offset_right = 0.73999023
-offset_bottom = 4.9360046
-texture = ExtResource("13_k6hmf")
 
 [node name="WIRE_DECOR" type="NinePatchRect" parent="BATTLE_PREPERATIONS" unique_id=138453950]
 layout_mode = 1
@@ -699,6 +686,20 @@ offset_right = -183.43323
 offset_bottom = -473.62592
 rotation = -4.712389
 texture = ExtResource("22_s0e4k")
+
+[node name="RED_WIRE_DECOR" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER" unique_id=1490874251]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.55700004
+anchor_top = 0.55300003
+anchor_right = 0.61
+anchor_bottom = 0.624
+offset_left = 206.08482
+offset_top = -57.756985
+offset_right = 229.32343
+offset_bottom = -35.78018
+rotation = -4.717625
+texture = ExtResource("13_k6hmf")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="BATTLE_PREPERATIONS/SIDE_CONTAINER" unique_id=57970132]
 layout_mode = 0

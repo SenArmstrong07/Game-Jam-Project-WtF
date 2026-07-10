@@ -5,7 +5,7 @@ extends Unit
 @onready var trojan_marker: Marker2D = $HitPoint
 
 @onready var player_character: Unit = $"../PlayerCharacter"
-@onready var anim_player: AnimatedSprite2D = $TrojanSprite
+@onready var anim_player: AnimatedSprite2D = $AnimatedSprite2D
 
 const TROJAN_PROJECTILE = preload("uid://c7kgeep4y4jl1")
 const TROJAN_THROWABLE = preload("uid://b6oe25yx1mgl3")

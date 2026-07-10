@@ -188,7 +188,7 @@ animations = [{
 [node name="ThrowBug" type="CharacterBody2D" unique_id=703377799]
 script = ExtResource("1_rcbuq")
 
-[node name="throwbugsprite" type="AnimatedSprite2D" parent="." unique_id=1208414409]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1208414409]
 position = Vector2(1.6000007, -27.500002)
 scale = Vector2(1.9, 1.825)
 sprite_frames = SubResource("SpriteFrames_bjqgx")

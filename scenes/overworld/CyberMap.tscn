@@ -178,7 +178,7 @@ anchor_top = 0.65500003
 anchor_right = 1.001
 anchor_bottom = 1.0
 offset_top = 62.399963
-offset_right = -120.28003
+offset_right = -5.2800293
 grow_horizontal = 2
 grow_vertical = 0
 texture = ExtResource("9_3vs5p")
@@ -200,7 +200,7 @@ patch_margin_right = 2
 patch_margin_bottom = 2
 
 [node name="Portrait" type="AnimatedSprite2D" parent="Dialogues/DialogueBar/CharacterPict" unique_id=1930027949]
-position = Vector2(115.000015, 131)
+position = Vector2(124.00003, 131)
 scale = Vector2(13.1640625, 14.733594)
 sprite_frames = SubResource("SpriteFrames_udnmi")
 animation = &"MiniBot"
@@ -214,7 +214,7 @@ anchor_right = 0.994
 anchor_bottom = 0.96800005
 offset_left = -6.630005
 offset_top = 4.0
-offset_right = 127.96594
+offset_right = 0.65600586
 offset_bottom = 6.967987
 texture = ExtResource("14_x6swk")
 patch_margin_left = 15

@@ -20,6 +20,7 @@
 [ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="11_m3sbs"]
 [ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="12_gupeu"]
 [ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="13_tb2s4"]
+[ext_resource type="Script" uid="uid://btu1psebyotve" path="res://scripts/UI/camera_pan.gd" id="21_ssvqq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6cyn7"]
 atlas = ExtResource("5_x2d3q")
@@ -241,3 +242,16 @@ position = Vector2(1, -64)
 [node name="Grid" parent="." unique_id=651052919 instance=ExtResource("8_08fsj")]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1004523237]
+script = ExtResource("21_ssvqq")
+
+[node name="SpawnBeamCenter" type="Line2D" parent="." unique_id=376743086]
+width = 18.0
+default_color = Color(0.4, 1, 1, 1)
+
+[node name="SpawnBeamLeft" type="Line2D" parent="." unique_id=2010130464]
+width = 8.0
+default_color = Color(0.57254905, 1, 1, 1)
+
+[node name="SpawnBeamRight" type="Line2D" parent="." unique_id=1851078038]
+width = 8.0
+default_color = Color(0.57254905, 1, 1, 1)

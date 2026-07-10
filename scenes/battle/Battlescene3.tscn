@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bd000x17iehe0" path="res://scenes/units/player_character.tscn" id="7_b2kb6"]
 [ext_resource type="PackedScene" uid="uid://djdrn1tgj56hi" path="res://scenes/battle/Grid.tscn" id="8_x1cae"]
 [ext_resource type="PackedScene" uid="uid://dsmug4l5iu1ma" path="res://scenes/UI/VictoryOverlay.tscn" id="9_fbnia"]
+[ext_resource type="Script" uid="uid://btu1psebyotve" path="res://scripts/UI/camera_pan.gd" id="9_utcot"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6l7n5"]
 shader = ExtResource("4_fbnia")
@@ -20,8 +21,6 @@ script = ExtResource("1_fbnia")
 
 [node name="PLAYER_HP_BATTLE_UI" parent="." unique_id=1987469340 instance=ExtResource("3_utcot")]
 
-[node name="Unit" parent="." unique_id=1715206411 instance=ExtResource("3_aec6e")]
-
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1470599231]
 texture_repeat = 2
 material = SubResource("ShaderMaterial_6l7n5")
@@ -30,6 +29,8 @@ offset_top = -220.0
 offset_right = 973.0
 offset_bottom = 548.0
 texture = ExtResource("5_hexn2")
+
+[node name="Unit" parent="." unique_id=1715206411 instance=ExtResource("3_aec6e")]
 
 [node name="GridMap" parent="." unique_id=1241810169 instance=ExtResource("6_qkxww")]
 position = Vector2(1, 2)
@@ -41,9 +42,22 @@ position = Vector2(1, -64)
 [node name="Grid" parent="." unique_id=651052919 instance=ExtResource("8_x1cae")]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1004523237]
+script = ExtResource("9_utcot")
 
 [node name="VictoryOverlay" parent="." unique_id=1088365696 instance=ExtResource("9_fbnia")]
 offset_left = -369.0
 offset_top = -256.0
 offset_right = -369.0
 offset_bottom = -256.0
+
+[node name="SpawnBeamCenter" type="Line2D" parent="." unique_id=372422596]
+width = 18.0
+default_color = Color(0.4, 1, 1, 1)
+
+[node name="SpawnBeamLeft" type="Line2D" parent="." unique_id=1647927649]
+width = 8.0
+default_color = Color(0.73333335, 1, 1, 1)
+
+[node name="SpawnBeamRight" type="Line2D" parent="." unique_id=1847277802]
+width = 8.0
+default_color = Color(0.73333335, 1, 1, 1)

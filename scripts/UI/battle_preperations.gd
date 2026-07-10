@@ -1,5 +1,17 @@
 extends Control
 
+#ELEMENTS DESIGNS
+@onready var multiclor_wire: NinePatchRect = $MULTICLOR_WIRE
+@onready var red_wire_decor: NinePatchRect = $RED_WIRE_DECOR
+@onready var wire_decor: NinePatchRect = $WIRE_DECOR
+@onready var bg_screen: NinePatchRect = $BG_SCREEN
+@onready var blue_wire_decor: NinePatchRect = $BLUE_WIRE_DECOR
+@onready var button_bg: NinePatchRect = $BUTTON_BG
+@onready var blue_wire_2: NinePatchRect = $BLUE_WIRE_2
+
+@onready var combine_title: NinePatchRect = $COMBINE_TITLE
+@onready var combine_bg: NinePatchRect = $COMBINE_BG
+@onready var battle_preperations: Control = $"."
 @onready var move_description: RichTextLabel = $DESCRIPTION_BG/MOVE_DESCRIPTION
 @onready var module_name: Label = $DESCRIPTION_BG/HBoxContainer/VBoxContainer/MODULE_NAME
 @onready var module_damage: Label = $DESCRIPTION_BG/HBoxContainer/VBoxContainer/MODULE_DAMAGE
@@ -295,81 +307,162 @@ func shake_move_panel():
 
 	tween.tween_property(move_panel, "position",
 		move_panel_start_pos, 0.02)
-
+		
+	await tween.finished
+	
 func play_intro():
 
-	modulate.a = 0.0
-
-	var deck_start = module_deck.position
-	var desc_start = description_bg.position
-	var side_start = side_container.position
-	var button_start = button_container.position
-	var combo_start = combo_bg.scale
-
-	module_deck.position.x -= 500
-	description_bg.position.y -= 250
-	side_container.position.x += 400
-	button_container.position.y += 200
-	combo_bg.scale = Vector2.ZERO
-
+	modulate.a = 0
 	cursor.visible = false
 
-	var t = create_tween()
+	# Save original positions
+	var deck_pos = module_deck.position
+	var desc_pos = description_bg.position
+	var side_pos = side_container.position
+	var button_bg_pos = button_bg.position
+	var button_container_pos = button_container.position
+	var combine_title_pos = combine_title.position
+	var combine_bg_pos = combine_bg.position
 
-	t.set_parallel(true)
+	# Move offscreen
+	module_deck.position.x -= 500
+	description_bg.position.y -= 220
+	side_container.position.x += 320
 
-	# Screen fade
-	t.tween_property(self, "modulate:a", 1.0, 0.15)
+	button_bg.position.y += 180
+	button_container.position.y += 180
+
+	combine_title.position.y += 180
+	combine_bg.position.y += 180
+
+	# Hide everything
+	module_deck.visible = false
+	description_bg.visible = false
+	side_container.visible = false
+	button_bg.visible = false
+	button_container.visible = false
+	combine_title.visible = false
+	combine_bg.visible = false
+
+	create_tween().tween_property(self, "modulate:a", 1.0, 0.12)
 
 	# Deck
-	t.parallel().tween_property(
-		module_deck,
-		"position",
-		deck_start,
-		0.30
-	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await animate_module_deck(deck_pos)
 
-	await get_tree().create_timer(0.05).timeout
+	await get_tree().create_timer(0.02).timeout
 
-	create_tween().tween_property(
-		description_bg,
-		"position",
-		desc_start,
-		0.25
-	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# Description
+	await heavy_drop(description_bg, desc_pos)
 
-	await get_tree().create_timer(0.05).timeout
+	await get_tree().create_timer(0.02).timeout
 
-	create_tween().tween_property(
-		side_container,
-		"position",
-		side_start,
-		0.25
-	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# Side panel
+	await heavy_drop(side_container, side_pos)
 
-	await get_tree().create_timer(0.05).timeout
+	await get_tree().create_timer(0.02).timeout
 
-	create_tween().tween_property(
-		button_container,
-		"position",
-		button_start,
-		0.22
-	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# Buttons together
+	button_bg.visible = true
+	button_container.visible = true
 
-	create_tween().tween_property(
-		combo_bg,
-		"scale",
-		combo_start,
-		0.22
-	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	heavy_drop(button_bg, button_bg_pos)
+	heavy_drop(button_container, button_container_pos)
 
-	await get_tree().create_timer(0.30).timeout
+	await get_tree().create_timer(0.22).timeout
 
+	# Combine UI together
+	combine_title.visible = true
+	combine_bg.visible = true
+
+	heavy_drop(combine_title, combine_title_pos)
+	heavy_drop(combine_bg, combine_bg_pos)
+
+	await get_tree().create_timer(0.22).timeout
+
+	# Cursor
 	cursor.visible = true
-	cursor.scale = Vector2(1.5, 1.5)
+	cursor.scale = Vector2(1.35, 1.35)
 
 	create_tween()\
 		.tween_property(cursor, "scale", Vector2.ONE, 0.12)\
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
+
+func animate_module_deck(target: Vector2) -> void:
+
+	module_deck.visible = true
+
+	var t = create_tween()
+
+	t.set_trans(Tween.TRANS_EXPO)
+	t.set_ease(Tween.EASE_OUT)
+
+	t.tween_property(
+		module_deck,
+		"position",
+		target + Vector2(-8, 0),
+		0.18
+	)
+
+	t.tween_property(
+		module_deck,
+		"position",
+		target + Vector2(3, 0),
+		0.05
+	)
+
+	t.tween_property(
+		module_deck,
+		"position",
+		target,
+		0.03
+	)
+
+	await t.finished
+
+	heavy_shake(module_deck)
 		
+func heavy_drop(panel: Control, target: Vector2) -> void:
+
+	panel.visible = true
+
+	var t = create_tween()
+
+	t.set_trans(Tween.TRANS_EXPO)
+	t.set_ease(Tween.EASE_OUT)
+
+	t.tween_property(
+		panel,
+		"position",
+		target + Vector2(0, 6),
+		0.20
+	)
+
+	t.tween_property(
+		panel,
+		"position",
+		target - Vector2(0, 2),
+		0.04
+	)
+
+	t.tween_property(
+		panel,
+		"position",
+		target,
+		0.03
+	)
+
+	await t.finished
+
+	heavy_shake(panel)
+	
+func heavy_shake(panel: Control) -> void:
+
+	var p = panel.position
+
+	var t = create_tween()
+
+	t.tween_property(panel, "position", p + Vector2(-3, 0), 0.012)
+	t.tween_property(panel, "position", p + Vector2(2, 0), 0.012)
+	t.tween_property(panel, "position", p + Vector2(-1, 0), 0.012)
+	t.tween_property(panel, "position", p, 0.018)

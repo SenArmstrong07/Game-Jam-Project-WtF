@@ -88,6 +88,8 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 	
 
 func _process(delta):
+	if attack_locked:
+		return
 	if battle_scene.current_phase != BattleBase.BattlePhase.BATTLE:
 		return
 
@@ -118,6 +120,9 @@ func _process(delta):
 
 		position = target_position
 		moving = false
+
+		if !attack_locked and !is_hurt:
+			anim_player.play("IDLE")
 	# Don't think while stunned
 	if stunned:
 		return
@@ -129,7 +134,7 @@ func _process(delta):
 	# ==========================================
 	# Movement
 	# ==========================================
-	if !moving and follow_timer >= follow_interval:
+	if !moving and !attack_locked and follow_timer >= follow_interval:
 		follow_timer = 0.0
 		random_move()
 
@@ -234,21 +239,28 @@ func random_move():
 			return
 			
 func perform_attack():
-
-	if attack_locked or is_dead:
+	if attack_locked or is_dead or is_hurt:
 		return
 
 	attack_locked = true
+
+	anim_player.play("ATTACK")
+
+	# Wait only until the frame where the attack should happen
+	await get_tree().create_timer(0.12).timeout
 
 	if randi() % 100 < 65:
 		throw_trap()
 	else:
 		shoot_projectile()
 
-	await get_tree().create_timer(attack_recovery).timeout
+	# Finish the rest of the animation
+	await get_tree().create_timer(0.18).timeout
 
-	if is_instance_valid(self):
-		attack_locked = false
+	attack_locked = false
+
+	if !moving:
+		anim_player.play("IDLE")
 		
 # ============================================================
 # SHOOT LOGIC
@@ -297,7 +309,6 @@ func shoot_projectile():
 	projectile.shooter = self
 	
 func throw_trap():
-
 	var candidates: Array[Vector2i] = []
 
 	for x in range(GRID_WIDTH):
@@ -380,46 +391,47 @@ func apply_stun(duration: float):
 
 func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
 
-	if is_hurt:
+	if is_hurt or attack_locked:
 		return
 
 	var delta := new_pos - old_pos
 
-	# Horizontal movement
-	if delta.x != 0:
-		anim_player.flip_h = delta.x > 0
-		anim_player.play("MOVE")
+	if delta.x > 0:
+		anim_player.play("MOVE_FORWARD")
 
-	# Vertical movement
+	elif delta.x < 0:
+		anim_player.play("MOVE_BACKWARD")
+
 	elif delta.y != 0:
-		anim_player.flip_h = false
 		anim_player.play("UP_AND_DOWN")
 
-	# No movement
 	else:
-		anim_player.flip_h = false
 		anim_player.play("IDLE")
-
 func play_hurt():
+
 	if is_dead or is_hurt:
 		return
 
 	is_hurt = true
 
 	anim_player.modulate = Color(1, 0.3, 0.3)
+	anim_player.play("HURT")
 
-	if anim_player.sprite_frames.has_animation("Hurt"):
-		anim_player.play("Hurt")
+	var frames = anim_player.sprite_frames
+	var frame_count = frames.get_frame_count("HURT")
+	var fps = frames.get_animation_speed("HURT")
 
-	await get_tree().create_timer(0.15).timeout
+	if fps <= 0:
+		fps = 10.0
+
+	await get_tree().create_timer(frame_count / fps).timeout
 
 	anim_player.modulate = Color.WHITE
-
-	if anim_player.sprite_frames.has_animation("Idle"):
-		anim_player.play("Idle")
-
 	is_hurt = false
 
+	if !moving and !attack_locked:
+		anim_player.play("IDLE")
+		
 func update_hp_label():
 
 	if hp_tween:

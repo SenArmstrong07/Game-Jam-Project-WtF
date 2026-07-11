@@ -134,8 +134,7 @@ func dialogue_pop_up(name: String, portrait_anim: String, message: String, portr
 	dialogues.show_tutorial(
 		name,
 		portrait_anim,
-		message,
-		portrait_scale
+		message
 	)
 
 	await dialogues.tutorial_closed

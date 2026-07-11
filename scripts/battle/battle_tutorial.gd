@@ -1009,22 +1009,21 @@ func use_backup(chip: Chip):
 	print("BACKUP restored ", chip.power, " life")
 	
 func use_delete(chip: Chip):
+	player.play_attack()
+
 	var projectile = DELETE_PROJECTILE.instantiate()
 	get_tree().current_scene.add_child(projectile)
 
-	# spawn at player muzzle
 	projectile.global_position = player_muzzle.global_position
 	projectile.direction = Vector2.RIGHT
-
-	# base damage from chip
 	projectile.damage = chip.power
-
-	# IMPORTANT: pass chip so super effective works later if needed
 	projectile.chip = chip
 
 	print("DELETE used for ", chip.power, " base damage")
-	
+
 func use_patch(chip: Chip):
+	player.play_attack()
+
 	var projectile = PATCH_PROJECTILE.instantiate()
 	get_tree().current_scene.add_child(projectile)
 
@@ -1037,6 +1036,8 @@ func use_patch(chip: Chip):
 	print("PATCH used")
 
 func use_quarantine(chip: Chip):
+	player.play_attack()
+
 	var projectile = QUARANTINE_PROJECTILE.instantiate()
 	get_tree().current_scene.add_child(projectile)
 
@@ -1086,7 +1087,7 @@ func _on_firewall_destroyed(tile: Vector2i):
 	blocked_tiles.erase(tile)
 
 func use_reformat(chip: Chip):
-
+	player.play_attack()
 	var projectile = REFORMAT_PROJECTILE.instantiate()
 
 	get_tree().current_scene.add_child(projectile)

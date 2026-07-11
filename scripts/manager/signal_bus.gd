@@ -16,6 +16,9 @@ const BATTLE_POOL = [
 #story signals
 var overworld_intro_played := false
 var boss_dialogue_played := false
+var final_boss_defeated := false
+var final_boss_ending_played := false
+var final_boss_return_position: Vector2 = Vector2.ZERO
 
 var current_encounter: EncounterData
 var in_transition := false
@@ -72,6 +75,8 @@ func save_current_game_state(explicit_save: bool = false) -> bool:
 	config.set_value("save_state", "max_player_lives", max_player_lives)
 	config.set_value("save_state", "overworld_intro_played", overworld_intro_played)
 	config.set_value("save_state", "boss_dialogue_played", boss_dialogue_played)
+	config.set_value("save_state", "final_boss_defeated", final_boss_defeated)
+	config.set_value("save_state", "final_boss_ending_played", final_boss_ending_played)
 	config.set_value("save_state", "summon_boss_on_return", summon_boss_on_return)
 	config.set_value("save_state", "overworld_state", snapshot)
 
@@ -96,10 +101,21 @@ func load_saved_game_state() -> Dictionary:
 	max_player_lives = int(config.get_value("save_state", "max_player_lives", max_player_lives))
 	overworld_intro_played = bool(config.get_value("save_state", "overworld_intro_played", overworld_intro_played))
 	boss_dialogue_played = bool(config.get_value("save_state", "boss_dialogue_played", boss_dialogue_played))
+	final_boss_defeated = bool(config.get_value("save_state", "final_boss_defeated", final_boss_defeated))
+	final_boss_ending_played = bool(config.get_value("save_state", "final_boss_ending_played", final_boss_ending_played))
 	summon_boss_on_return = bool(config.get_value("save_state", "summon_boss_on_return", summon_boss_on_return))
 
 	return overworld_state.duplicate(true)
 
+
+func reset_story_flags() -> void:
+	overworld_intro_played = false
+	boss_dialogue_played = false
+	final_boss_defeated = false
+	final_boss_ending_played = false
+	final_boss_return_position = Vector2.ZERO
+	summon_boss_on_return = false
+	current_encounter = null
 
 func cache_overworld_state() -> void:
 	var snapshot: Dictionary = {}
@@ -162,16 +178,24 @@ func return_to_overworld(lost_battle: bool = false):
 		await get_tree().process_frame
 
 	if not lost_battle and current_encounter != null:
-		#Return to overworld and remove defeated enemy from overworld state
-		var defeated_pos = current_encounter.overworld_enemy_position
-		if overworld_state.has("enemies"):
-			overworld_state["enemies"] = overworld_state["enemies"].filter(
-				func(e):
-					return e["position"] != defeated_pos
-			)
-			if overworld_state["enemies"].is_empty():
-				summon_boss_on_return = true
-				print("[SIGNAL_BUS] Last overworld enemy defeated; boss summon queued on return")
+		var is_final_boss_battle := current_encounter.battle_scene == BOSS_SPAG
+		if is_final_boss_battle:
+			final_boss_defeated = true
+			final_boss_ending_played = false
+			final_boss_return_position = current_encounter.overworld_enemy_position
+			summon_boss_on_return = false
+			print("[SIGNAL_BUS] Final boss defeated; ending sequence queued on return")
+		else:
+			#Return to overworld and remove defeated enemy from overworld state
+			var defeated_pos = current_encounter.overworld_enemy_position
+			if overworld_state.has("enemies"):
+				overworld_state["enemies"] = overworld_state["enemies"].filter(
+					func(e):
+						return e["position"] != defeated_pos
+				)
+				if overworld_state["enemies"].is_empty():
+					summon_boss_on_return = true
+					print("[SIGNAL_BUS] Last overworld enemy defeated; boss summon queued on return")
 
 	in_transition = true
 

@@ -11,6 +11,7 @@ const RETURN_FADE_TIME := 0.2
 @onready var reconstruction_overlay: ColorRect = $ReconstructionOverlay
 @onready var flash: ColorRect = $Flash
 @onready var fade: ColorRect = $Fade
+@onready var glitch_player: AudioStreamPlayer = $GlitchPlayer
 
 
 # Called when the node enters the scene tree for the first time.
@@ -76,11 +77,18 @@ func capture_screen(target: TextureRect) -> void:
 		print("[EncounterTransition] capture_screen: failed to create texture from image")
 
 
+func _play_glitch_sfx() -> void:
+	if is_instance_valid(glitch_player):
+		glitch_player.stop()
+		glitch_player.play()
+
+
 func play_out() -> void:
 	if not is_instance_valid(glitch_overlay):
 		print("[EncounterTransition] play_out: glitch_overlay is unavailable")
 		return
 
+	_play_glitch_sfx()
 	_set_visible(glitch_overlay, true)
 	_set_visible(fade, true)
 	_set_alpha(fade, 0.0)
@@ -198,6 +206,7 @@ func play_return_fade() -> void:
 	reset()
 	visible = true
 
+	_play_glitch_sfx()
 	_set_visible(glitch_overlay, true)
 	_set_alpha(glitch_overlay, 0.35)
 

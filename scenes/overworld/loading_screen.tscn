@@ -1,6 +1,31 @@
 [gd_scene format=3 uid="uid://bp7rq1s1rj2x8"]
 
 [ext_resource type="Script" uid="uid://b43gjying1v5m" path="res://scripts/overworld/loading_screen.gd" id="1_loading"]
+[ext_resource type="FontFile" uid="uid://ctgejobb4njpx" path="res://assets/fonts/ARCADECLASSIC.TTF" id="2_yu3x3"]
+[ext_resource type="Texture2D" uid="uid://6wpkx7xbjdlu" path="res://assets/ui/Circle_2/circle_orange_1.png" id="3_circle_orange_1"]
+[ext_resource type="Texture2D" uid="uid://70my7yy1k3iv" path="res://assets/ui/Circle_2/circle_orange_2.png" id="4_circle_orange_2"]
+[ext_resource type="Texture2D" uid="uid://ckgniryr7dmyr" path="res://assets/ui/Circle_2/circle_orange_3.png" id="5_circle_orange_3"]
+[ext_resource type="Texture2D" uid="uid://s6r7ncmqsoh1" path="res://assets/ui/Circle_2/circle_orange_4.png" id="6_circle_orange_4"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_loading"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_circle_orange_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_circle_orange_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_circle_orange_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_circle_orange_4")
+}],
+"loop": 1,
+"name": &"spin",
+"speed": 10.0
+}]
 
 [node name="LoadingScreen" type="CanvasLayer" unique_id=1234567890]
 script = ExtResource("1_loading")
@@ -18,18 +43,24 @@ anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 490.0
-offset_top = 310.0
+offset_top = 254.0
 offset_right = -490.0
-offset_bottom = -310.0
+offset_bottom = -323.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="LoadingLabel" type="Label" parent="VBoxContainer" unique_id=1234567893]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_yu3x3")
+theme_override_font_sizes/font_size = 30
 text = "Generating world..."
+horizontal_alignment = 1
 
-[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer" unique_id=1234567894]
+[node name="LoadingSpinner" type="AnimatedSprite2D" parent="VBoxContainer" unique_id=1234567894]
 unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 4
+position = Vector2(145.00002, 73)
+scale = Vector2(5.500002, 4.7499995)
+sprite_frames = SubResource("SpriteFrames_loading")
+animation = &"spin"
+autoplay = "spin"

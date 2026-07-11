@@ -30,11 +30,12 @@ const EMPTY_HEART = preload("uid://dqb46x6jpp2bw")
 var intro_dialogue_running := false
 var boss_dialogue_running := false
 var dialogue_mode := true
+var final_boss_ending_running := false
 
 func _ready() -> void:
 	if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
 		overworld_state = SignalBus.overworld_state.duplicate(true)
-	simulate_enemy_del.visible = false
+	#simulate_enemy_del.visible = false
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
@@ -268,7 +269,7 @@ func _on_boss_event_bgm_finished() -> void:
 
 #WORLD STUFF
 func _on_world_generation_complete() -> void:
-	if !intro_dialogue_running:
+	if !intro_dialogue_running and not final_boss_ending_running:
 		_set_player_controls_locked(false)
 	ensure_one_elite()
 	store_overworld_state()
@@ -282,9 +283,157 @@ func _on_world_generation_complete() -> void:
 	if loading_screen and loading_screen.has_method("_hide_overlay"):
 		loading_screen._hide_overlay()
 	
+	if _should_start_final_boss_ending():
+		_start_final_boss_ending_sequence()
+		return
+
 	if SignalBus.summon_boss_on_return and not boss_summon_in_progress:
 		print("[BOSS] Delaying boss summon on overworld return by ", BOSS_SUMMON_DELAY_ON_RETURN, " seconds")
 		call_deferred("_delayed_return_boss_summon")
+
+func _should_start_final_boss_ending() -> bool:
+	return SignalBus.final_boss_defeated and not SignalBus.final_boss_ending_played and not final_boss_ending_running
+
+func _start_final_boss_ending_sequence(initial_boss: Node2D = null) -> void:
+	if not _should_start_final_boss_ending():
+		return
+
+	final_boss_ending_running = true
+	SignalBus.final_boss_ending_played = true
+	_set_player_controls_locked(true)
+	print("[ENDING] Final boss ending sequence starting")
+	call_deferred("_run_final_boss_ending_sequence", initial_boss)
+
+func _run_final_boss_ending_sequence(initial_boss: Node2D = null) -> void:
+	await _fade_out_final_boss(initial_boss)
+	await _fade_out_corruption_tiles()
+	await _run_final_boss_dialogue()
+	await _show_ending_congratulations()
+
+func _fade_out_final_boss(initial_boss: Node2D = null) -> void:
+	var boss: Node2D = initial_boss
+	if boss == null or not is_instance_valid(boss):
+		boss = _find_final_boss_node()
+	if boss == null or not is_instance_valid(boss):
+		boss = _spawn_final_boss_ending_node()
+	if boss == null or not is_instance_valid(boss):
+		return
+
+	if boss.has_method("freeze_for_ending"):
+		boss.freeze_for_ending()
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(boss, "modulate:a", 0.0, 2.6)
+	tween.tween_property(boss, "scale", boss.scale * 0.55, 2.6)
+	tween.tween_property(boss, "rotation", boss.rotation + deg_to_rad(90.0), 2.6)
+
+	var sprite = boss.get_node_or_null("sprite")
+	if sprite and sprite is CanvasItem:
+		tween.tween_property(sprite, "modulate:a", 0.0, 2.6)
+
+	await tween.finished
+	if is_instance_valid(boss):
+		boss.queue_free()
+
+func _spawn_final_boss_ending_node() -> Node2D:
+	var spawn_position: Vector2 = SignalBus.final_boss_return_position
+	if spawn_position == Vector2.ZERO:
+		spawn_position = player.global_position
+
+	var boss := boss_scene.instantiate() as Node2D
+	if boss == null:
+		return null
+
+	boss.global_position = spawn_position
+	boss.name = "FinalBossEnding"
+	boss.z_index = 7
+	add_child(boss)
+
+	if boss.has_method("apply_spawn_type"):
+		boss.apply_spawn_type("boss")
+	elif boss.has("enemy_tier"):
+		boss.enemy_tier = 2
+
+	if boss.has_method("make_boss"):
+		boss.make_boss()
+
+	return boss
+
+func _fade_out_corruption_tiles() -> void:
+	var overlays: Array[Node2D] = []
+	if frontlayer:
+		for child in frontlayer.get_children():
+			if child is Node2D and child.get_script() != null:
+				var child_script: Script = child.get_script()
+				var script_path: String = child_script.resource_path
+				if script_path == corruption_tile_script_path:
+					overlays.append(child)
+
+	if overlays.is_empty():
+		return
+
+	var tweens: Array[Tween] = []
+	for overlay in overlays:
+		if not is_instance_valid(overlay):
+			continue
+		var tween := create_tween()
+		tween.tween_property(overlay, "modulate:a", 0.0, 2.0)
+		tweens.append(tween)
+
+	await get_tree().create_timer(2.0).timeout
+	for overlay in overlays:
+		if is_instance_valid(overlay):
+			overlay.queue_free()
+
+func _find_final_boss_node() -> Node2D:
+	for enemy in get_tree().get_nodes_in_group("overworldmob"):
+		if enemy == null or not enemy.is_inside_tree():
+			continue
+		if enemy is Node2D and enemy.has_method("get_spawn_type") and enemy.get_spawn_type() == "boss":
+			return enemy as Node2D
+	return null
+
+func _run_final_boss_dialogue() -> void:
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"You did it, Cody! You defeated the final virus and cleansed the Cyber World."
+	)
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Yeah, because apparently I needed to fight a glowing nightmare just to get a break.",
+		Vector2(10, 10)
+	)
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"The corruption is fading. Your mission is complete."
+	)
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Great. Next time, maybe send the memo before turning my life into a bug hunt.",
+		Vector2(10, 10)
+	)
+
+func _show_ending_congratulations() -> void:
+	var dialog := AcceptDialog.new()
+	dialog.title = "Victory"
+	dialog.dialog_text = "You defeated the final boss and restored the Cyber World."
+	dialog.exclusive = true
+	dialog.ok_button_text = "Return to Title"
+	add_child(dialog)
+	dialog.popup_centered()
+
+	var _result = await dialog.confirmed
+	if is_instance_valid(dialog):
+		dialog.queue_free()
+	_return_to_title_screen()
+
+func _return_to_title_screen() -> void:
+	get_tree().change_scene_to_file("res://scenes/UI/TitleScreen.tscn")
 
 func _apply_safe_respawn_position() -> void:
 	if player == null or frontlayer == null:
@@ -370,6 +519,20 @@ func _remove_overworld_enemy(enemy: Node2D) -> void:
 	print("[BOSS] Removing enemy, id=", enemy.get_instance_id(), " name=", enemy.name)
 	if not enemy or not enemy.is_inside_tree():
 		return
+
+	var is_final_boss := false
+	if enemy.has_method("get_spawn_type"):
+		is_final_boss = enemy.get_spawn_type() == "boss"
+
+	if is_final_boss:
+		SignalBus.final_boss_defeated = true
+		SignalBus.final_boss_ending_played = false
+		print("[ENDING] Simulated overworld boss removal detected")
+		store_overworld_state()
+		print("[ENDING] Starting final boss ending sequence")
+		_start_final_boss_ending_sequence(enemy)
+		return
+
 	if enemy.has_method("disappear"):
 		enemy.disappear()
 	else:

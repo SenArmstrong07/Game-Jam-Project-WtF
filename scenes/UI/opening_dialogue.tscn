@@ -7,82 +7,100 @@
 [ext_resource type="FontFile" uid="uid://c7d7oqgkcat4c" path="res://assets/fonts/Neutora Demo.otf" id="3_5p8dl"]
 [ext_resource type="Texture2D" uid="uid://kyv8ikn0084b" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_79.png" id="3_ha0qe"]
 [ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="4_usdpe"]
-[ext_resource type="Texture2D" uid="uid://bxtavjpme4moy" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/MainCharacter/Character_Shot_RP1 (40x40).png" id="5_dg0tl"]
-[ext_resource type="Texture2D" uid="uid://bfkgeogwobj82" path="res://assets/MiniBt/Slash-Interact-GuardStance_S.png" id="6_ebi12"]
+[ext_resource type="Texture2D" uid="uid://bgkhglmvemtwy" path="res://assets/characters/MC/Idle/ITdoodIdle1.png" id="5_8htv2"]
+[ext_resource type="Texture2D" uid="uid://dkkhv6ulugswd" path="res://assets/MiniBt/Idle.png" id="6_5p8dl"]
+[ext_resource type="Texture2D" uid="uid://b5maqb17njvu4" path="res://assets/characters/MC/Idle/ITdoodIdle2.png" id="6_mttey"]
 [ext_resource type="Texture2D" uid="uid://bhnre5btuttrj" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_08.png" id="7_6cyn7"]
+[ext_resource type="Texture2D" uid="uid://f7tn0i6uopr2" path="res://assets/characters/MC/Idle/ITdoodIdle3.png" id="7_10nn4"]
 [ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="7_loxho"]
 [ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="8_8oe3e"]
+[ext_resource type="Texture2D" uid="uid://dq5mwhlc7w0s1" path="res://assets/characters/MC/Idle/ITdoodIdle4.png" id="8_rm5rj"]
+[ext_resource type="Texture2D" uid="uid://taq0xic2t0vq" path="res://assets/characters/MC/Idle/ITdoodIdle5.png" id="9_rftwu"]
+[ext_resource type="Texture2D" uid="uid://bxsliv6wgrurk" path="res://assets/characters/MC/Idle/ITdoodIdle6.png" id="10_5us57"]
 [ext_resource type="Texture2D" uid="uid://dvmrbwoekfwsp" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_15.png" id="10_gm4ip"]
 [ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="11_k238p"]
+[ext_resource type="Texture2D" uid="uid://dmq01a6113s1w" path="res://assets/characters/MC/Idle/ITdoodIdle7.png" id="11_uhyrs"]
+[ext_resource type="Texture2D" uid="uid://b1g0w2pgejyqx" path="res://assets/characters/MC/Idle/ITdoodIdle8.png" id="12_8wyya"]
+[ext_resource type="Texture2D" uid="uid://bsh151vsjgsn1" path="res://assets/characters/MC/Idle/ITdoodIdle9.png" id="13_hyiwr"]
+[ext_resource type="Texture2D" uid="uid://ksl80n4pms0r" path="res://assets/characters/MC/Idle/ITdoodIdle10.png" id="14_5vmrd"]
 [ext_resource type="Script" uid="uid://dodkvxb75nag8" path="res://scripts/UI/Dialoguetransition.gd" id="14_ofbof"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6cyn7"]
-atlas = ExtResource("5_dg0tl")
-region = Rect2(0, 0, 40, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ebi12"]
-atlas = ExtResource("5_dg0tl")
-region = Rect2(40, 0, 40, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gm4ip"]
-atlas = ExtResource("6_ebi12")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_k238p"]
-atlas = ExtResource("6_ebi12")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ofbof"]
-atlas = ExtResource("6_ebi12")
-region = Rect2(32, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5p8dl"]
-atlas = ExtResource("6_ebi12")
-region = Rect2(0, 16, 16, 16)
+[ext_resource type="Texture2D" uid="uid://bmd1agers7uc" path="res://assets/characters/MC/Idle/ITdoodIdle11.png" id="15_cl0r3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s4fvl"]
-atlas = ExtResource("6_ebi12")
+atlas = ExtResource("6_5p8dl")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8opgy"]
+atlas = ExtResource("6_5p8dl")
 region = Rect2(16, 16, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ku0n6"]
-atlas = ExtResource("6_ebi12")
+[sub_resource type="AtlasTexture" id="AtlasTexture_8htv2"]
+atlas = ExtResource("6_5p8dl")
 region = Rect2(32, 16, 16, 16)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_1y54r"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_mttey"]
+atlas = ExtResource("6_5p8dl")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7nrbm"]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6cyn7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ebi12")
-}],
-"loop": 1,
-"name": &"MC",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gm4ip")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_k238p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ofbof")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5p8dl")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_s4fvl")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ku0n6")
+"texture": SubResource("AtlasTexture_8opgy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8htv2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mttey")
 }],
 "loop": 1,
-"name": &"MiniBot",
+"name": &"minibot",
 "speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cq3a5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_8htv2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_mttey")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_10nn4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_rm5rj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_rftwu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_5us57")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_uhyrs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_8wyya")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_hyiwr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_5vmrd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_cl0r3")
+}],
+"loop": 1,
+"name": &"mc",
+"speed": 8.0
 }]
 
 [node name="Opening_dialogue" type="Node2D" unique_id=1859898110]
@@ -132,20 +150,33 @@ patch_margin_top = 2
 patch_margin_right = 2
 patch_margin_bottom = 2
 
-[node name="Portrait" type="AnimatedSprite2D" parent="Dialogue_UI/DialogueBar/CharacterPict" unique_id=359185577]
-position = Vector2(119.00001, 157)
-scale = Vector2(14.65625, 15.717185)
-sprite_frames = SubResource("SpriteFrames_1y54r")
-animation = &"MiniBot"
-autoplay = "MiniBot"
-frame_progress = 0.0068495143
+[node name="Control" type="Control" parent="Dialogue_UI/DialogueBar/CharacterPict" unique_id=2095770842]
+clip_contents = true
+anchors_preset = 0
+offset_left = 4.0
+offset_right = 247.0
+offset_bottom = 220.0
+
+[node name="minibot" type="AnimatedSprite2D" parent="Dialogue_UI/DialogueBar/CharacterPict/Control" unique_id=2057203317]
+position = Vector2(115.49999, 167.49998)
+scale = Vector2(16.062498, 16.937502)
+sprite_frames = SubResource("SpriteFrames_7nrbm")
+animation = &"minibot"
+autoplay = "minibot"
+frame_progress = 0.35016948
+
+[node name="mc" type="AnimatedSprite2D" parent="Dialogue_UI/DialogueBar/CharacterPict/Control" unique_id=1451428539]
+position = Vector2(111, 312)
+sprite_frames = SubResource("SpriteFrames_cq3a5")
+animation = &"mc"
+frame_progress = 0.5090097
 
 [node name="NinePatchRect" type="NinePatchRect" parent="Dialogue_UI/DialogueBar/CharacterPict" unique_id=706717372]
 layout_mode = 0
-offset_left = -11.0
-offset_top = -11.0
-offset_right = 258.0
-offset_bottom = 238.0
+offset_left = -9.0
+offset_top = -15.0
+offset_right = 260.0
+offset_bottom = 234.0
 texture = ExtResource("3_ha0qe")
 patch_margin_left = 15
 patch_margin_top = 15
@@ -225,6 +256,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Transition" type="CanvasLayer" parent="." unique_id=200842130]
+visible = false
 script = ExtResource("14_ofbof")
 
 [node name="Transition_rect" type="ColorRect" parent="Transition" unique_id=1361569860]

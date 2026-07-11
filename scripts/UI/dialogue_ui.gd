@@ -1,6 +1,7 @@
 extends Control
 
-@onready var portrait: AnimatedSprite2D = $DialogueBar/CharacterPict/Portrait
+@onready var mc: AnimatedSprite2D = $DialogueBar/CharacterPict/Control/mc
+@onready var mini_bot: AnimatedSprite2D = $DialogueBar/CharacterPict/Control/minibot
 @onready var rich_text_label: RichTextLabel = $DialogueBar/DialogueBar/RichTextLabel
 @onready var character_name: Label = $DialogueBar/CharacterTag/CharacterName
 @onready var bg_image: TextureRect = $BG_Image
@@ -160,12 +161,19 @@ var dialogue_index = 0
 func _ready() -> void:
 	dialogue_bar_start_position = dialogue_bar.position
 	dialogue_bar_start_scale = dialogue_bar.scale
-	
-	#Make scaling happen around the center
+
+	# Make scaling happen around the center
 	dialogue_bar.pivot_offset = dialogue_bar.size / 2.0
+
+	# Hide portraits initially
+	mc.hide()
+	mini_bot.hide()
+
 	BattleBgm.stop()
 	BgTitleToDial.play_music(preload("res://assets/FX/TitleScreen.ogg"))
-	show_dialogue()   # Set the correct name, portrait, background, etc.
+
+	show_dialogue()
+
 	await play_intro_transition("IN THE FUTURE\nFAR FROM NOW...")
 	transition_finished = true
 	
@@ -200,19 +208,39 @@ func _input(event):
 	else:
 		next_dialogue()
 
-func show_dialogue():
+func show_dialogue() -> void:
 	if dialogue_index >= dialogue.size():
 		end_dialogue()
 		return
 
 	var current = dialogue[dialogue_index]
 
+	# Character name
 	character_name.text = current["name"]
-	portrait.play(current["animation"])
 
+	# Hide both portraits first
+	mc.hide()
+	mini_bot.hide()
+
+	# Stop any previous animations
+	mc.stop()
+	mini_bot.stop()
+
+	# Show the correct portrait
+	match current["animation"]:
+		"MC":
+			mc.show()
+			mc.play("mc")
+
+		"MiniBot":
+			mini_bot.show()
+			mini_bot.play("minibot")
+
+	# Change background if specified
 	if current.has("background"):
 		bg_image.texture = current["background"]
 
+	# Dialogue text
 	full_text = current["text"]
 	rich_text_label.text = ""
 	next_arrow.hide()

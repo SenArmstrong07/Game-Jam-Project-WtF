@@ -155,7 +155,8 @@ func _process(delta):
 func jump_slam():
 	jumping = true
 	attack_locked = true
-
+	
+	anim_player.play("JUMP")
 	var start_pos = global_position
 	var target_tile: Vector2i = player_character.grid_pos
 
@@ -415,7 +416,7 @@ func screen_shake(intensity := 8.0):
 			
 func throw_barrage():
 	play_sfx(BOSS_PROJECTILE, -15)
-	anim_player.play("ATTACK")
+	anim_player.play("THROW_ATTACK")
 	await get_tree().create_timer(0.25).timeout
 	
 	var rows = [0,1,2,3]
@@ -487,18 +488,18 @@ func play_hurt():
 
 	anim_player.modulate = Color(1, 0.3, 0.3)
 
-	if anim_player.sprite_frames.has_animation("Hurt"):
-		anim_player.play("Hurt")
+	if anim_player.sprite_frames.has_animation("HURT"):
+		anim_player.play("HURT")
 
 	await get_tree().create_timer(0.15).timeout
 
 	anim_player.modulate = Color.WHITE
 
-	if anim_player.sprite_frames.has_animation("Idle"):
-		anim_player.play("Idle")
+	if anim_player.sprite_frames.has_animation("IDLE"):
+		anim_player.play("IDLE")
 
 	is_hurt = false
-
+	
 func update_hp_label():
 
 	if hp_tween:

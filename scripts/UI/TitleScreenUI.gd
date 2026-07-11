@@ -20,6 +20,7 @@ var labels : Array[Label]
 var settings_scene_instance: CanvasLayer
 
 func _on_new_game_pressed():
+	SignalBus.reset_story_flags()
 	new_button.disabled = true
 	continue_button.disabled = true
 	exit_button.disabled = true

@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-@onready var progress_bar: ProgressBar = %ProgressBar
+@onready var loading_spinner: AnimatedSprite2D = %LoadingSpinner
 @onready var loading_label: Label = %LoadingLabel
 var frontlayer: TileMapLayer
 
@@ -21,7 +21,8 @@ func _ready() -> void:
 		frontlayer.world_generation_progress.connect(_on_generation_progress)
 		frontlayer.world_generation_complete.connect(_on_generation_complete)
 		
-		progress_bar.value = 0
+		loading_spinner.stop()
+		loading_spinner.frame = 0
 		loading_label.text = "Generating world..."
 	else:
 		print("ERROR: Could not find frontlayer")
@@ -32,18 +33,15 @@ func _on_generation_started() -> void:
 		_hide_overlay()
 		return
 
-	progress_bar.value = 0
 	loading_label.text = "Generating world..."
 	_show_overlay()
 
 
 func _on_generation_progress(progress: float) -> void:
-	progress_bar.value = int(progress * 100)
 	loading_label.text = "Generating world... %d%%" % [int(progress * 100)]
 
 
 func _on_generation_complete() -> void:
-	progress_bar.value = 100
 	loading_label.text = "World ready! Starting game..."
 	
 	if SignalBus.in_transition or not SignalBus.overworld_state.is_empty():
@@ -56,8 +54,9 @@ func _on_generation_complete() -> void:
 
 func _show_overlay(message: String = "Generating world...") -> void:
 	loading_label.text = message
-	progress_bar.value = 0
+	loading_spinner.play("spin")
 	visible = true
 
 func _hide_overlay() -> void:
+	loading_spinner.stop()
 	visible = false

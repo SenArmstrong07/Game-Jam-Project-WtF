@@ -35,6 +35,7 @@ var dash_cooldown_timer : float = 0.0
 
 var enemy_tier: EnemyTier = EnemyTier.COMMON
 var battle_scene: PackedScene
+var is_ending_sequence_active := false
 
 const SPAWN_TYPE_COMMON := "common"
 const SPAWN_TYPE_THROW := "throw"
@@ -56,6 +57,11 @@ func _ready() -> void:
 	pick_new_patrol_target()
 
 func _physics_process(delta: float) -> void:
+	if is_ending_sequence_active:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+
 	var target_world_pos: Vector2 = patrol_target
 	
 	#Dashers
@@ -156,6 +162,15 @@ func trigger_battle() -> void:
 		cybermap.store_overworld_state()
 
 	SignalBus.start_battle(self)
+
+func freeze_for_ending() -> void:
+	is_ending_sequence_active = true
+	player_chase = false
+	player = null
+	velocity = Vector2.ZERO
+	visible = true
+	if has_method("stop"):
+		$sprite.stop()
 
 func disappear() -> void:
 	# Remove any marker linked by minimap system if present

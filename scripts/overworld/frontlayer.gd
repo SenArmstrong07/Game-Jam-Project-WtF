@@ -322,24 +322,65 @@ func is_tile_walkable(tile: Vector2i) -> bool:
 	return get_cell_source_id(tile) != -1
 
 
+func is_global_rect_walkable(global_rect: Rect2) -> bool:
+	"""Return true when all tiles overlapped by the global rectangle are walkable."""
+	if global_rect.size.x <= 0 or global_rect.size.y <= 0:
+		return is_position_on_walkable_tile(global_rect.position)
+
+	var min_tile = global_to_map(global_rect.position)
+	var max_tile = global_to_map(global_rect.position + global_rect.size - Vector2(0.001, 0.001))
+	for x in range(min_tile.x, max_tile.x + 1):
+		for y in range(min_tile.y, max_tile.y + 1):
+			if not is_tile_walkable(Vector2i(x, y)):
+				return false
+	return true
+
+
+func get_player_collision_radius_tiles() -> Vector2i:
+	var radius = Vector2i(1, 1)
+	if player and player.has_node("CollisionShape2D"):
+		var collision_node = player.get_node("CollisionShape2D")
+		var shape = collision_node.shape
+		if shape is RectangleShape2D:
+			radius.x = int(ceil((abs(shape.size.x) * 0.5) / tile_size))
+			radius.y = int(ceil((abs(shape.size.y) * 0.5) / tile_size))
+	return radius
+
+
+func is_tile_region_walkable(center_tile: Vector2i, tile_radius: Vector2i) -> bool:
+	if tile_radius == Vector2i.ZERO:
+		return is_tile_walkable(center_tile)
+
+	for x in range(center_tile.x - tile_radius.x, center_tile.x + tile_radius.x + 1):
+		for y in range(center_tile.y - tile_radius.y, center_tile.y + tile_radius.y + 1):
+			if not is_tile_walkable(Vector2i(x, y)):
+				return false
+	return true
+
+
 func is_position_on_walkable_tile(position: Vector2) -> bool:
 	var tile = global_to_map(position)
 	return is_tile_walkable(tile)
 
 
 func resolve_spawn_position() -> Vector2:
+	var tile_radius = get_player_collision_radius_tiles()
+
 	if SignalBus.overworld_state.has("player_position"):
 		var saved_player_pos = SignalBus.overworld_state["player_position"]
 		if saved_player_pos is Vector2i:
-			var candidate_position = map_to_global(saved_player_pos)
-			if is_position_on_walkable_tile(candidate_position):
-				return candidate_position
+			if is_tile_region_walkable(saved_player_pos, tile_radius):
+				return map_to_global(saved_player_pos)
+		elif saved_player_pos is Vector2:
+			var saved_tile = global_to_map(saved_player_pos)
+			if is_tile_region_walkable(saved_tile, tile_radius):
+				return map_to_global(saved_tile)
 	elif SignalBus.overworld_state.has("player_tile"):
 		var saved_tile = SignalBus.overworld_state["player_tile"]
-		if saved_tile is Vector2i and is_tile_walkable(saved_tile):
+		if saved_tile is Vector2i and is_tile_region_walkable(saved_tile, tile_radius):
 			return map_to_global(saved_tile)
 
-	return find_valid_spawn_tile()
+	return find_valid_spawn_tile(tile_radius)
 
 
 func get_walkable_neighbor_tiles(tile: Vector2i) -> Array[Vector2i]:
@@ -361,7 +402,7 @@ func get_walkable_neighbor_tiles(tile: Vector2i) -> Array[Vector2i]:
 	return neighbors
 
 
-func find_valid_spawn_tile() -> Vector2:
+func find_valid_spawn_tile(tile_radius: Vector2i = Vector2i.ZERO) -> Vector2:
 	"""Find the closest walkable terrain tile to the world center for spawning the player."""
 	var best_tile: Vector2i = Vector2i.ZERO
 	var best_distance: float = INF
@@ -369,6 +410,8 @@ func find_valid_spawn_tile() -> Vector2:
 	for x in range(-world_bounds * width, (world_bounds + 1) * width):
 		for y in range(-world_bounds * height, (world_bounds + 1) * height):
 			var tile = Vector2i(x, y)
+			if tile_radius != Vector2i.ZERO and not is_tile_region_walkable(tile, tile_radius):
+				continue
 			if not is_tile_walkable(tile):
 				continue
 

@@ -13,8 +13,8 @@
 [ext_resource type="Texture2D" uid="uid://o7ek3g0lgsse" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_80.png" id="9_3vs5p"]
 [ext_resource type="PackedScene" uid="uid://bv4o4e802i33r" path="res://scenes/UI/quest_ui.tscn" id="9_quest"]
 [ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="10_fkalm"]
-[ext_resource type="Texture2D" uid="uid://bxtavjpme4moy" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/MainCharacter/Character_Shot_RP1 (40x40).png" id="11_upd6r"]
 [ext_resource type="Texture2D" uid="uid://bfkgeogwobj82" path="res://assets/MiniBt/Slash-Interact-GuardStance_S.png" id="12_ibjp1"]
+[ext_resource type="Texture2D" uid="uid://bp7dsdhhknyba" path="res://assets/characters/MC/mc_VN.png" id="13_80bmh"]
 [ext_resource type="Texture2D" uid="uid://bhnre5btuttrj" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_08.png" id="14_x6swk"]
 [ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="15_80bmh"]
 [ext_resource type="Texture2D" uid="uid://dvmrbwoekfwsp" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_15.png" id="16_8crk6"]
@@ -80,14 +80,6 @@ texture_region_size = Vector2i(64, 64)
 tile_size = Vector2i(64, 64)
 sources/0 = SubResource("TileSetAtlasSource_udnr2")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6cyn7"]
-atlas = ExtResource("11_upd6r")
-region = Rect2(0, 0, 40, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ebi12"]
-atlas = ExtResource("11_upd6r")
-region = Rect2(40, 0, 40, 40)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_gm4ip"]
 atlas = ExtResource("12_ibjp1")
 region = Rect2(0, 0, 16, 16)
@@ -116,10 +108,7 @@ region = Rect2(32, 16, 16, 16)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6cyn7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ebi12")
+"texture": ExtResource("13_80bmh")
 }],
 "loop": 1,
 "name": &"MC",
@@ -240,7 +229,7 @@ layout_mode = 0
 offset_left = 8.0
 offset_top = 6.0
 offset_right = 267.0
-offset_bottom = 178.0
+offset_bottom = 181.0
 texture = ExtResource("10_fkalm")
 patch_margin_left = 2
 patch_margin_top = 2
@@ -248,8 +237,8 @@ patch_margin_right = 2
 patch_margin_bottom = 2
 
 [node name="Portrait" type="AnimatedSprite2D" parent="Dialogues/DialogueBar/CharacterPict" unique_id=1930027949]
-position = Vector2(124.00003, 131)
-scale = Vector2(13.1640625, 14.733594)
+position = Vector2(133.5, 136)
+scale = Vector2(16.437502, 16.000002)
 sprite_frames = SubResource("SpriteFrames_udnmi")
 animation = &"MC"
 autoplay = "MiniBot"

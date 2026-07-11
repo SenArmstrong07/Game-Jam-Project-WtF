@@ -68,13 +68,10 @@ func _physics_process(delta: float) -> void:
 			desired_velocity = input_dir.normalized() * max_speed
 
 	var next_global_position := global_position + desired_velocity * delta
-	var next_tile := frontlayer.local_to_map(frontlayer.to_local(next_global_position))
+	var next_collision_rect := _get_collision_rect_at_position(next_global_position)
 
-	if frontlayer and frontlayer.is_tile_walkable(next_tile):
-		if is_dashing:
-			velocity = desired_velocity
-		else:
-			velocity = desired_velocity
+	if frontlayer and frontlayer.is_global_rect_walkable(next_collision_rect):
+		velocity = desired_velocity
 	else:
 		velocity = Vector2.ZERO
 		if is_dashing:
@@ -117,6 +114,14 @@ func _get_next_walkable_tile(input_dir: Vector2) -> Vector2i:
 		return next_tile
 
 	return Vector2i(-1, -1)
+
+func _get_collision_rect_at_position(global_pos: Vector2) -> Rect2:
+	var collision_shape_node = $CollisionShape2D
+	var shape = collision_shape_node.shape
+	if shape is RectangleShape2D:
+		var half_size = shape.size * 0.5
+		return Rect2(global_pos + collision_shape_node.position - half_size, shape.size)
+	return Rect2(global_pos, Vector2.ZERO)
 
 #Dashing
 func start_dash():

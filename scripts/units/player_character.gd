@@ -7,7 +7,7 @@ var battle_scene
 signal lives_changed(player: Unit, lives: int)
 @export var hurt_duration := 0.2
 const PLAYER_HIT = preload("uid://cknnjkcfvuie1")
-
+var attacking := false
 var stunned := false
 var stun_timer := 0.0
 
@@ -136,6 +136,8 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 
 #player controls
 func _unhandled_input(event):
+	if movement_locked or attacking:
+		return
 	if battle_scene == null:
 		return
 
@@ -410,7 +412,9 @@ func dash_to_tile(target: Vector2):
 func _on_dash_finished():
 	position = target_position
 	moving = false
-	anim_player.play("Idle")
+
+	if !attacking and !is_hurt and !is_dead:
+		anim_player.play("Idle")
 		
 func create_dash_afterimage():
 
@@ -444,3 +448,29 @@ func find_battle_scene():
 		node = node.get_parent()
 
 	return null
+	
+func play_attack() -> void:
+	if attacking or is_hurt or is_dead:
+		return
+
+	attacking = true
+	movement_locked = true
+
+	anim_player.play("Attack")
+
+	var frames := anim_player.sprite_frames
+	var frame_count := frames.get_frame_count("Attack")
+	var fps := frames.get_animation_speed("Attack")
+
+	if fps <= 0:
+		fps = 12.0
+
+	var duration := frame_count / fps
+
+	await get_tree().create_timer(duration).timeout
+
+	attacking = false
+	movement_locked = false
+
+	if !moving and !is_hurt and !is_dead:
+		anim_player.play("Idle")

@@ -7,88 +7,106 @@
 [ext_resource type="Texture2D" uid="uid://o7ek3g0lgsse" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_80.png" id="3_ssvqq"]
 [ext_resource type="Texture2D" uid="uid://bysu6mfntht4l" path="res://assets/ui/Battle_BG.png" id="4_f6qu4"]
 [ext_resource type="Texture2D" uid="uid://dwx04rooc1g6t" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_07.png" id="4_s8smd"]
-[ext_resource type="Texture2D" uid="uid://bxtavjpme4moy" path="res://assets/characters/MeGaMan/Reploid_Pack1_Free/Animations/MainCharacter/Character_Shot_RP1 (40x40).png" id="5_x2d3q"]
 [ext_resource type="PackedScene" uid="uid://cqk87mlrchf2c" path="res://scenes/units/Unit.tscn" id="5_x4a8o"]
-[ext_resource type="Texture2D" uid="uid://bfkgeogwobj82" path="res://assets/MiniBt/Slash-Interact-GuardStance_S.png" id="6_l53hm"]
+[ext_resource type="Texture2D" uid="uid://dkkhv6ulugswd" path="res://assets/MiniBt/Idle.png" id="6_tb2s4"]
 [ext_resource type="PackedScene" uid="uid://6hbsmgfnmld0" path="res://scenes/battle/GridMap.tscn" id="6_uyhnq"]
 [ext_resource type="Texture2D" uid="uid://kyv8ikn0084b" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_79.png" id="7_br7dd"]
+[ext_resource type="Texture2D" uid="uid://bgkhglmvemtwy" path="res://assets/characters/MC/Idle/ITdoodIdle1.png" id="7_e6xy3"]
 [ext_resource type="PackedScene" uid="uid://bd000x17iehe0" path="res://scenes/units/player_character.tscn" id="7_pfgp0"]
 [ext_resource type="Texture2D" uid="uid://bhnre5btuttrj" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/1 Frames/Frame_08.png" id="8_5x66o"]
 [ext_resource type="PackedScene" uid="uid://djdrn1tgj56hi" path="res://scenes/battle/Grid.tscn" id="8_08fsj"]
+[ext_resource type="Texture2D" uid="uid://b5maqb17njvu4" path="res://assets/characters/MC/Idle/ITdoodIdle2.png" id="8_lry56"]
+[ext_resource type="Texture2D" uid="uid://f7tn0i6uopr2" path="res://assets/characters/MC/Idle/ITdoodIdle3.png" id="9_ca5ix"]
 [ext_resource type="FontFile" uid="uid://b4418r80lncyy" path="res://assets/ui/BoldPixels.ttf" id="9_xmo67"]
 [ext_resource type="Texture2D" uid="uid://dvmrbwoekfwsp" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_15.png" id="10_sqaer"]
+[ext_resource type="Texture2D" uid="uid://dq5mwhlc7w0s1" path="res://assets/characters/MC/Idle/ITdoodIdle4.png" id="10_wusow"]
+[ext_resource type="Texture2D" uid="uid://taq0xic2t0vq" path="res://assets/characters/MC/Idle/ITdoodIdle5.png" id="11_550wa"]
 [ext_resource type="Script" uid="uid://wejrcqamtfhq" path="res://scripts/UI/next_arrow.gd" id="11_m3sbs"]
+[ext_resource type="Texture2D" uid="uid://bxsliv6wgrurk" path="res://assets/characters/MC/Idle/ITdoodIdle6.png" id="12_2en5i"]
 [ext_resource type="Texture2D" uid="uid://b4cgg6k86fjft" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/5 Logo/Logo1.png" id="12_gupeu"]
+[ext_resource type="Texture2D" uid="uid://dmq01a6113s1w" path="res://assets/characters/MC/Idle/ITdoodIdle7.png" id="13_ji18s"]
 [ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="13_tb2s4"]
+[ext_resource type="Texture2D" uid="uid://b1g0w2pgejyqx" path="res://assets/characters/MC/Idle/ITdoodIdle8.png" id="14_3myh3"]
+[ext_resource type="Texture2D" uid="uid://bsh151vsjgsn1" path="res://assets/characters/MC/Idle/ITdoodIdle9.png" id="15_72ohf"]
+[ext_resource type="Texture2D" uid="uid://ksl80n4pms0r" path="res://assets/characters/MC/Idle/ITdoodIdle10.png" id="16_wmxat"]
+[ext_resource type="Texture2D" uid="uid://bmd1agers7uc" path="res://assets/characters/MC/Idle/ITdoodIdle11.png" id="17_nnxpj"]
 [ext_resource type="Script" uid="uid://btu1psebyotve" path="res://scripts/UI/camera_pan.gd" id="21_ssvqq"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6cyn7"]
-atlas = ExtResource("5_x2d3q")
-region = Rect2(0, 0, 40, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ebi12"]
-atlas = ExtResource("5_x2d3q")
-region = Rect2(40, 0, 40, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gm4ip"]
-atlas = ExtResource("6_l53hm")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_k238p"]
-atlas = ExtResource("6_l53hm")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ofbof"]
-atlas = ExtResource("6_l53hm")
-region = Rect2(32, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5p8dl"]
-atlas = ExtResource("6_l53hm")
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4fvl"]
+atlas = ExtResource("6_tb2s4")
 region = Rect2(0, 16, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_s4fvl"]
-atlas = ExtResource("6_l53hm")
+[sub_resource type="AtlasTexture" id="AtlasTexture_8opgy"]
+atlas = ExtResource("6_tb2s4")
 region = Rect2(16, 16, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ku0n6"]
-atlas = ExtResource("6_l53hm")
+[sub_resource type="AtlasTexture" id="AtlasTexture_8htv2"]
+atlas = ExtResource("6_tb2s4")
 region = Rect2(32, 16, 16, 16)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_e6xy3"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_mttey"]
+atlas = ExtResource("6_tb2s4")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t4mkq"]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6cyn7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ebi12")
-}],
-"loop": 1,
-"name": &"MC",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gm4ip")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_k238p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ofbof")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5p8dl")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_s4fvl")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ku0n6")
+"texture": SubResource("AtlasTexture_8opgy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8htv2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mttey")
 }],
 "loop": 1,
-"name": &"MiniBot",
+"name": &"minibot",
 "speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yxa8k"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_e6xy3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_lry56")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ca5ix")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_wusow")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_550wa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_2en5i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_ji18s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_3myh3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_72ohf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_wmxat")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_nnxpj")
+}],
+"loop": 1,
+"name": &"mc",
+"speed": 8.0
 }]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1uck2"]
@@ -117,31 +135,44 @@ patch_margin_top = 10
 patch_margin_right = 10
 patch_margin_bottom = 10
 
-[node name="CharacterPict" type="NinePatchRect" parent="TUTORIALS/DialogueBar" unique_id=2085330830]
+[node name="CharacterPict" type="NinePatchRect" parent="TUTORIALS/DialogueBar" unique_id=2028918002]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 11.0
-offset_right = 256.0
-offset_bottom = 240.0
+offset_left = 17.0
+offset_top = -32.0
+offset_right = 263.0
+offset_bottom = 198.0
 texture = ExtResource("4_s8smd")
 patch_margin_left = 2
 patch_margin_top = 2
 patch_margin_right = 2
 patch_margin_bottom = 2
 
-[node name="Portrait" type="AnimatedSprite2D" parent="TUTORIALS/DialogueBar/CharacterPict" unique_id=541123909]
-position = Vector2(126.375015, 124.13129)
-scale = Vector2(15.578126, 14.733594)
-sprite_frames = SubResource("SpriteFrames_e6xy3")
-animation = &"MiniBot"
-autoplay = "MiniBot"
+[node name="Control" type="Control" parent="TUTORIALS/DialogueBar/CharacterPict" unique_id=847198343]
+clip_contents = true
+anchors_preset = 0
+offset_left = 4.0
+offset_top = -26.0
+offset_right = 240.0
+offset_bottom = 235.0
 
-[node name="NinePatchRect" type="NinePatchRect" parent="TUTORIALS/DialogueBar/CharacterPict" unique_id=1661028825]
+[node name="minibot" type="AnimatedSprite2D" parent="TUTORIALS/DialogueBar/CharacterPict/Control" unique_id=2038911448]
+position = Vector2(113, 192)
+scale = Vector2(16.062498, 16.937502)
+sprite_frames = SubResource("SpriteFrames_t4mkq")
+animation = &"minibot"
+autoplay = "minibot"
+
+[node name="mc" type="AnimatedSprite2D" parent="TUTORIALS/DialogueBar/CharacterPict/Control" unique_id=1060581093]
+position = Vector2(97, 336)
+sprite_frames = SubResource("SpriteFrames_yxa8k")
+animation = &"mc"
+
+[node name="NinePatchRect" type="NinePatchRect" parent="TUTORIALS/DialogueBar/CharacterPict" unique_id=2009151591]
 layout_mode = 0
-offset_left = -11.0
-offset_top = -20.0
-offset_right = 261.0
-offset_bottom = 148.0
+offset_left = -15.0
+offset_top = -7.0
+offset_right = 249.0
+offset_bottom = 248.0
 texture = ExtResource("7_br7dd")
 patch_margin_left = 15
 patch_margin_top = 15
@@ -155,7 +186,7 @@ anchor_left = 0.215
 anchor_right = 0.994
 anchor_bottom = 0.96800005
 offset_left = -6.630005
-offset_top = 1.0
+offset_top = -8.0
 offset_right = 12.692017
 offset_bottom = 6.967987
 texture = ExtResource("8_5x66o")
@@ -198,9 +229,9 @@ anchors_preset = -1
 anchor_top = -0.402
 anchor_right = 0.21300001
 offset_left = -3.0
-offset_top = 0.09799957
+offset_top = -43.902004
 offset_right = -0.06600952
-offset_bottom = 4.0
+offset_bottom = -40.0
 texture = ExtResource("12_gupeu")
 
 [node name="CharacterName" type="Label" parent="TUTORIALS/DialogueBar/CharacterTag" unique_id=643829850]

@@ -1,83 +1,148 @@
 [gd_scene format=3 uid="uid://byhjd0o6svh3m"]
 
 [ext_resource type="Script" uid="uid://bsccs5bu4nmyc" path="res://scripts/units/spaghetti_code.gd" id="1_vww3g"]
-[ext_resource type="Texture2D" uid="uid://w8pwuvaijk64" path="res://assets/characters/Glacier_Man_Asset_Pack/Glacier_Man_Enemies/PNG/Walrus_Bot.png" id="2_lacfg"]
+[ext_resource type="Texture2D" uid="uid://qgtc3itt05wm" path="res://assets/characters/Boss/Boss_Hurt_Animation/Frame_1_Boss_Hurt.PNG" id="2_ooto3"]
 [ext_resource type="FontFile" uid="uid://dl3c76h3ngx1y" path="res://assets/fonts/Nebal.ttf" id="3_lacfg"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dh1tq"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(0, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hwwkw"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(64, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jnw5q"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(128, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5xggc"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(192, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_udw15"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(256, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_feq7x"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(256, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hxqka"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(320, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_agd3e"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(384, 0, 64, 40)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_a4rul"]
-atlas = ExtResource("2_lacfg")
-region = Rect2(448, 0, 64, 40)
+[ext_resource type="Texture2D" uid="uid://b25pqe0oabdgs" path="res://assets/characters/Boss/Boss_Hurt_Animation/Frame_2_Boss_Hurt.PNG" id="3_nwxbp"]
+[ext_resource type="Texture2D" uid="uid://2fkltkr6wfmg" path="res://assets/characters/Boss/Boss_Hurt_Animation/Frame_3_Boss_Hurt.PNG" id="4_35m02"]
+[ext_resource type="Texture2D" uid="uid://uwbp8vw01if4" path="res://assets/characters/Boss/Boss_Hurt_Animation/Frame_4_Boss_Hurt.PNG" id="5_rl8hk"]
+[ext_resource type="Texture2D" uid="uid://did03nsngkkkw" path="res://assets/characters/Boss/Boss_Hurt_Animation/Frame_5_Boss_Hurt.PNG" id="6_ka3mt"]
+[ext_resource type="Texture2D" uid="uid://tsarywgt66wj" path="res://assets/characters/Boss/Boss_Hurt_Animation/Frame_6_Boss_Hurt.PNG" id="7_gojlj"]
+[ext_resource type="Texture2D" uid="uid://d3bui4lmq6hvj" path="res://assets/characters/Boss/Glitch_Attack/Frame_1_Glitch_Attack.PNG" id="8_18r4f"]
+[ext_resource type="Texture2D" uid="uid://b5er0nainlfls" path="res://assets/characters/Boss/Glitch_Attack/Frame_2_Glitch_Attack.PNG" id="9_k8pu4"]
+[ext_resource type="Texture2D" uid="uid://6tuy0g68brn" path="res://assets/characters/Boss/Glitch_Attack/Frame_3_Glitch_Attack.PNG" id="10_njt4x"]
+[ext_resource type="Texture2D" uid="uid://c80i2x43xjapg" path="res://assets/characters/Boss/Glitch_Attack/Frame_4_Glitch_Attack.PNG" id="11_8nhit"]
+[ext_resource type="Texture2D" uid="uid://ctohk1wwkxqtj" path="res://assets/characters/Boss/Glitch_Attack/Frame_5_Glitch_Attack.PNG" id="12_tiy72"]
+[ext_resource type="Texture2D" uid="uid://hs0h2vl8xar1" path="res://assets/characters/Boss/Glitch_Attack/Frame_6_Glitch_Attack.PNG" id="13_wfdjo"]
+[ext_resource type="Texture2D" uid="uid://dfgqhtwm4aa2o" path="res://assets/characters/Boss/Jump_Attack/Frame_1_Boss_Jump_Attack.PNG" id="14_l1il5"]
+[ext_resource type="Texture2D" uid="uid://bs2h54o5v4ifh" path="res://assets/characters/Boss/Jump_Attack/Frame_2_Boss_Jump_Attack.PNG" id="15_2lqm5"]
+[ext_resource type="Texture2D" uid="uid://ca4daty1qne3d" path="res://assets/characters/Boss/Jump_Attack/Frame_3_Boss_Jump_Attack.PNG" id="16_erdad"]
+[ext_resource type="Texture2D" uid="uid://dfjd3vccb0m6n" path="res://assets/characters/Boss/Jump_Attack/Frame_4_Boss_Jump_Attack.PNG" id="17_jc283"]
+[ext_resource type="Texture2D" uid="uid://br6rpvud2cmd6" path="res://assets/characters/Boss/Jump_Attack/Frame_5_Boss_Jump_Attack.PNG" id="18_56o8h"]
+[ext_resource type="Texture2D" uid="uid://nxjx7wwrs6s4" path="res://assets/characters/Boss/Jump_Attack/Frame_6_Boss_Jump_Attack.PNG" id="19_dvvwm"]
+[ext_resource type="Texture2D" uid="uid://cdahl5wk6eig0" path="res://assets/characters/Boss/Ball_Attack(Incomplete_Body_Anim)/Frame_1.PNG" id="20_18r4f"]
+[ext_resource type="Texture2D" uid="uid://lgtwhg4q0rjb" path="res://assets/characters/Boss/Ball_Attack(Incomplete_Body_Anim)/Frame_2.PNG" id="21_k8pu4"]
+[ext_resource type="Texture2D" uid="uid://cyqg00gyfgam6" path="res://assets/characters/Boss/Ball_Attack(Incomplete_Body_Anim)/Frame_3.PNG" id="22_njt4x"]
+[ext_resource type="Texture2D" uid="uid://crityxptskjsn" path="res://assets/characters/Boss/Ball_Attack(Incomplete_Body_Anim)/Frame_4.PNG" id="23_8nhit"]
+[ext_resource type="Texture2D" uid="uid://dwttdr7udo4qr" path="res://assets/characters/Boss/Ball_Attack(Incomplete_Body_Anim)/Frame_5.PNG" id="24_tiy72"]
+[ext_resource type="Texture2D" uid="uid://bghtdfa2xsoyc" path="res://assets/characters/Boss/Ball_Attack(Incomplete_Body_Anim)/Frame_6.PNG" id="25_wfdjo"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7nrbm"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_dh1tq")
+"texture": ExtResource("2_ooto3")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hwwkw")
+"texture": ExtResource("3_nwxbp")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_jnw5q")
+"texture": ExtResource("4_35m02")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_5xggc")
+"texture": ExtResource("5_rl8hk")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_udw15")
+"texture": ExtResource("6_ka3mt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_gojlj")
 }],
 "loop": 1,
 "name": &"ATTACK",
-"speed": 6.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_feq7x")
+"texture": ExtResource("2_ooto3")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hxqka")
+"texture": ExtResource("3_nwxbp")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_agd3e")
+"texture": ExtResource("4_35m02")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_a4rul")
+"texture": ExtResource("5_rl8hk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ka3mt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_gojlj")
+}],
+"loop": 1,
+"name": &"HURT",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_18r4f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_k8pu4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_njt4x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_8nhit")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tiy72")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_wfdjo")
 }],
 "loop": 1,
 "name": &"IDLE",
-"speed": 7.0
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_l1il5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_2lqm5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_erdad")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_jc283")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_56o8h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_dvvwm")
+}],
+"loop": 1,
+"name": &"JUMP",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("20_18r4f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_k8pu4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_njt4x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_8nhit")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_tiy72")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_wfdjo")
+}],
+"loop": 1,
+"name": &"THROW_ATTACK",
+"speed": 12.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cq3a5"]
@@ -87,27 +152,28 @@ height = 96.0
 script = ExtResource("1_vww3g")
 
 [node name="BossSC_Sprite" type="AnimatedSprite2D" parent="." unique_id=815644950]
-position = Vector2(21.999996, -59.000004)
-scale = Vector2(2.5156248, 2.6750002)
+position = Vector2(-0.9999995, -72)
+scale = Vector2(0.6025391, 0.596875)
 sprite_frames = SubResource("SpriteFrames_7nrbm")
-animation = &"ATTACK"
+animation = &"THROW_ATTACK"
 autoplay = "IDLE"
-frame_progress = 0.777204
+frame_progress = 0.07932698
 
 [node name="HPLabel" type="Label" parent="." unique_id=2079531193]
 texture_filter = 1
-offset_left = 13.0
-offset_top = -98.0
-offset_right = 53.0
-offset_bottom = -75.0
+offset_left = -24.0
+offset_top = -160.0
+offset_right = 16.0
+offset_bottom = -137.0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_lacfg")
 theme_override_font_sizes/font_size = 15
+metadata/_edit_use_anchors_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=715328508]
 position = Vector2(-25, -65)
 shape = SubResource("CapsuleShape2D_cq3a5")
 
 [node name="HitPoint" type="Marker2D" parent="." unique_id=719587077]
-position = Vector2(-41.000004, -82)
+position = Vector2(-45.000004, -70)
 scale = Vector2(1.0000001, 1.0000001)

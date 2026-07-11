@@ -35,7 +35,7 @@ var final_boss_ending_running := false
 func _ready() -> void:
 	if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
 		overworld_state = SignalBus.overworld_state.duplicate(true)
-	#simulate_enemy_del.visible = false
+	simulate_enemy_del.visible = false
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")

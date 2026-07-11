@@ -1191,11 +1191,6 @@ func _on_unit_died(unit: Unit) -> void:
 	await get_tree().create_timer(1.0).timeout
 	get_tree().change_scene_to_file("res://scenes/UI/TitleScreen.tscn")
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_O:
-		print("[BATTLE] O pressed - simulating return to overworld")
-
-
 func _check_win_condition():
 	enemies = enemies.filter(func(e):
 		return is_instance_valid(e) and not e.is_dead

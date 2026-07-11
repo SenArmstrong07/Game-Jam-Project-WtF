@@ -1011,11 +1011,6 @@ func _on_unit_died(unit: Unit) -> void:
 func end_battle() -> void:
 	SignalBus.return_to_overworld()
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_O:
-		print("[BATTLE] O pressed - simulating return to overworld")
-		end_battle()
-
 func _check_win_condition():
 	# remove invalid references
 	enemies = enemies.filter(func(e):

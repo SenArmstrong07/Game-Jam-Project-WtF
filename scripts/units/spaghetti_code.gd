@@ -41,6 +41,18 @@ func _ready():
 	team = Team.ENEMY
 	add_to_group("enemies")
 
+
+func wait_for_battle() -> bool:
+	while is_inside_tree():
+		var battle := get_tree().get_first_node_in_group("battle_scene")
+
+		if battle and battle.current_phase == BattleBase.BattlePhase.BATTLE:
+			return true
+
+		await get_tree().process_frame
+
+	return false
+	
 func play_sfx(
 	stream: AudioStream,
 	volume_db: float = 0.0,
@@ -155,11 +167,11 @@ func _process(delta):
 func jump_slam():
 	jumping = true
 	attack_locked = true
-	
+
 	anim_player.play("JUMP")
+
 	var start_pos = global_position
 	var target_tile: Vector2i = player_character.grid_pos
-
 	var sprite_offset := anim_player.position
 
 	var target = Vector2(
@@ -168,11 +180,11 @@ func jump_slam():
 	)
 
 	target -= sprite_offset
-	
+
 	show_jump_warning(target_tile)
 
 	# =========================
-	# JUMP UP (squash + lift)
+	# JUMP UP
 	# =========================
 	var up = create_tween()
 	up.set_parallel()
@@ -182,14 +194,19 @@ func jump_slam():
 	up.tween_property(self, "rotation", deg_to_rad(-8), jump_time * 0.5)
 
 	await up.finished
+	await wait_for_battle()
 
-	# small air hang feel
+	# Air hang
 	var hang = create_tween()
 	hang.tween_property(self, "scale", Vector2(0.6, 0.6), 0.1)
+
 	await hang.finished
+	await wait_for_battle()
 
 	visible = false
+
 	await get_tree().create_timer(0.6).timeout
+	await wait_for_battle()
 
 	global_position = Vector2(target.x, -jump_height)
 	visible = true
@@ -197,9 +214,10 @@ func jump_slam():
 	show_jump_warning(target_tile)
 
 	await get_tree().create_timer(0.4).timeout
+	await wait_for_battle()
 
 	# =========================
-	# DESCEND (drop + prepare impact)
+	# DESCEND
 	# =========================
 	var down = create_tween()
 	down.set_parallel()
@@ -211,11 +229,13 @@ func jump_slam():
 	down.tween_property(self, "scale", Vector2(1.4, 0.6), jump_time * 0.5)
 
 	await down.finished
+	await wait_for_battle()
 
 	# =========================
-	# IMPACT PUNCH
+	# IMPACT
 	# =========================
 	play_sfx(SLAM, -15)
+
 	var impact = create_tween()
 	impact.set_parallel()
 
@@ -224,10 +244,11 @@ func jump_slam():
 	impact.tween_property(self, "rotation", 0.0, 0.1)
 
 	slam_damage(target_tile)
-	break_slam_tiles(target_tile) 
+	break_slam_tiles(target_tile)
 	screen_shake(10.0)
 
 	await impact.finished
+	await wait_for_battle()
 
 	# =========================
 	# RETURN
@@ -238,10 +259,11 @@ func jump_slam():
 		.set_ease(Tween.EASE_OUT)
 
 	await retreat.finished
+	await wait_for_battle()
 
 	jumping = false
 	attack_locked = false
-
+	
 func break_slam_tiles(center: Vector2i):
 
 	var tiles = [
@@ -357,7 +379,7 @@ func start_attack():
 	if basic_attack_count >= 3:
 		basic_attack_count = 0
 
-		if randf() < 0.5:
+		if randf() < 1:
 			await jump_slam()
 		else:
 			await throw_barrage()

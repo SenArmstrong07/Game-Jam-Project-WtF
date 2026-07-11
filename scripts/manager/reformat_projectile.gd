@@ -10,7 +10,7 @@ var chip: Chip
 func _ready():
 	print("REFORMAT SPAWNED")
 	play_sfx(DELETE_BUT_4_REFORMAT, -15, -1.0)
-	
+	add_to_group("projectiles")
 func play_sfx(
 	stream: AudioStream,
 	volume_db: float = 0.0,

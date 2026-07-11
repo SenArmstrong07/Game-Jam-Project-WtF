@@ -11,6 +11,7 @@ var speed := 300.0
 func _ready():
 	particles.emitting = true
 	play_sfx(PATCH_MAYBE, -15)
+	add_to_group("projectiles")
 	
 func play_sfx(
 	stream: AudioStream,

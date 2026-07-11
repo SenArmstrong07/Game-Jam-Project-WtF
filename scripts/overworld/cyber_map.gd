@@ -63,13 +63,24 @@ func _ready() -> void:
 
 	#prep the loading screen to cover the tilenodes
 	var loading_screen = get_node_or_null("LoadingScreen")
-	var should_show_loading_screen: bool = !SignalBus.in_transition && SignalBus.overworld_state.is_empty()
+	var should_show_loading_screen: bool = !SignalBus.in_transition && (
+		SignalBus.is_loading_saved_game or SignalBus.overworld_state.is_empty()
+	)
 	if should_show_loading_screen:
 		_set_player_controls_locked(true)
 		if loading_screen and loading_screen.has_method("_show_overlay"):
-			loading_screen._show_overlay("Generating world...")
+			var loading_message := "Generating world..."
+			if SignalBus.is_loading_saved_game:
+				loading_message = "Loading saved world..."
+			loading_screen._show_overlay(loading_message)
 	else:
 		_set_player_controls_locked(false)
+		if loading_screen and loading_screen.has_method("_hide_overlay"):
+			loading_screen._hide_overlay()
+
+	if SignalBus.is_loading_saved_game:
+		SignalBus.is_loading_saved_game = false
+		await get_tree().create_timer(0.45).timeout
 		if loading_screen and loading_screen.has_method("_hide_overlay"):
 			loading_screen._hide_overlay()
 
@@ -380,7 +391,6 @@ func store_overworld_state() -> void:
 
 	overworld_state = snapshot.duplicate(true)
 	SignalBus.overworld_state = overworld_state.duplicate(true)
-	SignalBus.save_current_game_state()
 	_refresh_quest_ui()
 
 func is_event_in_progress() -> bool:

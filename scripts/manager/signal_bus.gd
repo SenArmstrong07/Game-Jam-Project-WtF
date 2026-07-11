@@ -21,6 +21,7 @@ var current_encounter: EncounterData
 var in_transition := false
 var summon_boss_on_return := false
 var overworld_state: Dictionary = {}
+var is_loading_saved_game := false
 var player_lives: int = 5
 var max_player_lives: int = 5
 var respawn_to_safe_spawn := false
@@ -37,10 +38,14 @@ func has_saved_game_state() -> bool:
 	var err := config.load(SAVE_GAME_PATH)
 	if err != OK:
 		return false
-	return config.has_section("save_state") and config.has_section_key("save_state", "overworld_state")
+	if not config.has_section("save_state"):
+		return false
+	if not config.has_section_key("save_state", "overworld_state"):
+		return false
+	return bool(config.get_value("save_state", "is_explicit_save", false))
 
 
-func save_current_game_state() -> bool:
+func save_current_game_state(explicit_save: bool = false) -> bool:
 	var snapshot: Dictionary = {}
 	var scene_root = get_tree().current_scene
 	if not is_instance_valid(scene_root):
@@ -62,6 +67,7 @@ func save_current_game_state() -> bool:
 	var config := ConfigFile.new()
 	config.set_value("save_state", "version", 1)
 	config.set_value("save_state", "timestamp", Time.get_datetime_string_from_system(false, true))
+	config.set_value("save_state", "is_explicit_save", explicit_save)
 	config.set_value("save_state", "player_lives", player_lives)
 	config.set_value("save_state", "max_player_lives", max_player_lives)
 	config.set_value("save_state", "overworld_intro_played", overworld_intro_played)

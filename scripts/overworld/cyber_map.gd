@@ -17,6 +17,7 @@ var CORRUPTION_SCALE := 1.0
 const BOSS_SUMMON_DELAY_ON_RETURN := 1.5
 const BOSS_POST_SUMMON_PAUSE := 2.4
 const SETTINGS_SCENE_PATH := "res://scenes/UI/SettingsScene.tscn"
+const GAME_OVER_SCENE_PATH := "res://scenes/UI/GameOverScene.tscn"
 const FULL_HEART = preload("uid://ct06j0bja4ca6")
 const EMPTY_HEART = preload("uid://dqb46x6jpp2bw")
 
@@ -32,13 +33,14 @@ var boss_dialogue_running := false
 var dialogue_mode := true
 var final_boss_ending_running := false
 @onready var fade_to_black: ColorRect = $UI/FADE_TO_BLACK
+var game_over_sequence_started := false
 
 func _ready() -> void:
 	fade_to_black.visible = false
 	fade_to_black.modulate.a = 0.0
 	if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
 		overworld_state = SignalBus.overworld_state.duplicate(true)
-	#simulate_enemy_del.visible = false
+	simulate_enemy_del.visible = false
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
@@ -104,6 +106,8 @@ func _ready() -> void:
 	if boss_summon_overlay and not boss_summon_overlay.is_connected("summon_finished", _on_boss_summon_finished):
 		boss_summon_overlay.summon_finished.connect(_on_boss_summon_finished)
 
+	call_deferred("_check_game_over_state")
+
 	# If we're returning from a battle transition, preserve the cached state and let the return transition play.
 	if SignalBus.in_transition:
 		SignalBus.in_transition = false
@@ -117,6 +121,29 @@ func _ready() -> void:
 			store_overworld_state()
 
 #LIFE CHECK:
+func _process(_delta: float) -> void:
+	_check_game_over_state()
+
+func _check_game_over_state() -> void:
+	if game_over_sequence_started:
+		return
+	if SignalBus.player_lives <= 0:
+		game_over_sequence_started = true
+		_trigger_game_over()
+
+func _trigger_game_over() -> void:
+	_set_player_controls_locked(true)
+	if overworld_bgm:
+		overworld_bgm.stop()
+	if boss_event_bgm:
+		boss_event_bgm.stop()
+	if warning_fx:
+		warning_fx.stop()
+	call_deferred("_change_to_game_over_scene")
+
+func _change_to_game_over_scene() -> void:
+	get_tree().change_scene_to_file(GAME_OVER_SCENE_PATH)
+
 func set_lives(current_lives: int) -> void:
 	var hearts = $UI/MarginContainer/LivesUI.get_children()
 	var safe_lives: int = clamp(current_lives, 0, hearts.size())

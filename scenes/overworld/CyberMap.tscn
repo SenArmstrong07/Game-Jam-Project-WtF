@@ -392,11 +392,11 @@ layout_mode = 2
 layout_mode = 2
 texture = ExtResource("22_8crk6")
 
-[node name="Life2" type="TextureRect" parent="UI/MarginContainer/LivesUI" unique_id=1106051945]
+[node name="Life2" type="TextureRect" parent="UI/MarginContainer/LivesUI" unique_id=1787589401]
 layout_mode = 2
 texture = ExtResource("22_8crk6")
 
-[node name="Life3" type="TextureRect" parent="UI/MarginContainer/LivesUI" unique_id=924590698]
+[node name="Life3" type="TextureRect" parent="UI/MarginContainer/LivesUI" unique_id=798823041]
 layout_mode = 2
 texture = ExtResource("22_8crk6")
 

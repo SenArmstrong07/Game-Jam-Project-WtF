@@ -40,9 +40,9 @@ func _set_z_index(node: CanvasItem, index: int) -> void:
 		node.z_index = index
 
 
-func _set_visible(node: CanvasItem, is_visible: bool) -> void:
+func _set_visible(node: CanvasItem, should_show: bool) -> void:
 	if is_instance_valid(node):
-		node.visible = is_visible
+		node.visible = should_show
 
 
 func _set_alpha(node: CanvasItem, alpha: float) -> void:
@@ -82,6 +82,18 @@ func _play_glitch_sfx() -> void:
 		glitch_player.stop()
 		glitch_player.play()
 
+func _wait_for_current_scene() -> Node:
+	var tree := get_tree()
+	if tree == null:
+		return null
+
+	for i in range(3):
+		await tree.process_frame
+		var scene_root := tree.current_scene
+		if is_instance_valid(scene_root):
+			return scene_root
+
+	return null
 
 func play_out() -> void:
 	if not is_instance_valid(glitch_overlay):
@@ -154,7 +166,11 @@ func transition_to_battle(battlescene: String) -> void:
 	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw
 
-	print("Current scene:", get_tree().current_scene.name)
+	var scene_root := await _wait_for_current_scene()
+	if is_instance_valid(scene_root):
+		print("Current scene:", scene_root.name)
+	else:
+		print("Current scene unavailable during transition")
 
 	_set_visible(overworld_shot, false)
 
@@ -205,26 +221,32 @@ func transition_to_overworld() -> void:
 func play_return_fade() -> void:
 	reset()
 	visible = true
+	await get_tree().process_frame
 
 	_play_glitch_sfx()
+	_set_visible(overworld_shot, true)
 	_set_visible(glitch_overlay, true)
+	_set_visible(fade, true)
+	_set_alpha(overworld_shot, 1.0)
 	_set_alpha(glitch_overlay, 0.35)
+	_set_alpha(fade, 0.0)
 
 	var mat := glitch_overlay.material as ShaderMaterial
 	if mat == null:
 		_set_visible(glitch_overlay, false)
+		_set_visible(fade, false)
 		return
+
+	mat.set_shader_parameter("glitch_strength", 1.0)
 
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_EXPO)
 	tween.set_ease(Tween.EASE_OUT)
 
-	var loop_count := 0
-	while loop_count < 3:
-		loop_count += 1
+	for i in range(3):
 		tween.tween_method(
 			func(v):
-				if mat:
+				if mat != null:
 					mat.set_shader_parameter("glitch_strength", v),
 			1.0,
 			0.0,
@@ -232,15 +254,20 @@ func play_return_fade() -> void:
 		)
 		tween.tween_method(
 			func(v):
-				if mat:
+				if mat != null:
 					mat.set_shader_parameter("glitch_strength", v),
 			0.0,
 			1.0,
 			GLITCH_IN_TIME / 3.0
 		)
 
+	tween.parallel().tween_property(glitch_overlay, "modulate:a", 0.0, GLITCH_IN_TIME)
+	tween.parallel().tween_property(fade, "modulate:a", 0.35, GLITCH_IN_TIME * 0.5)
+
 	await tween.finished
+	_set_visible(overworld_shot, false)
 	_set_visible(glitch_overlay, false)
+	_set_visible(fade, false)
 
 
 func reset() -> void:

@@ -204,7 +204,6 @@ func _finish_world_setup() -> void:
 	is_world_ready = true
 	world_generation_complete.emit()
 	overworld_ready.emit()
-	overworld_ready.emit()
 
 	# Enemy restoration
 	var saved_enemies: Array = SignalBus.overworld_state.get("enemies", [])

@@ -202,4 +202,4 @@ position = Vector2(0, -23)
 shape = SubResource("CapsuleShape2D_8jovo")
 
 [node name="HitPoint" type="Marker2D" parent="." unique_id=1919250889]
-position = Vector2(-16, -48)
+position = Vector2(8, -23)

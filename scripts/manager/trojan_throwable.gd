@@ -36,6 +36,10 @@ func play_sfx(
 	)
 
 func _process(delta):
+	var battle = get_tree().get_first_node_in_group("battle_scene")
+
+	if battle and battle.current_phase != Battlescene.BattlePhase.BATTLE:
+		return
 	if landed:
 
 		modulate.a = 1 + sin(Time.get_ticks_msec() / 120.0) * 0.5

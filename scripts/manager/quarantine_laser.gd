@@ -12,6 +12,7 @@ var hit := false
 func _ready():
 	body_entered.connect(_on_body_entered)
 	play_sfx(ISOLATION, -15)
+	add_to_group("projectiles")
 	
 func play_sfx(
 	stream: AudioStream,

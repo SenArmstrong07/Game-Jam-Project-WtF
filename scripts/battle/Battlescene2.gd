@@ -64,6 +64,7 @@ var enemy_spawn_positions := [
 ]
 
 func _ready() -> void:
+	add_to_group("battle_scene")
 	player.visible = false
 	
 	for e in enemies:
@@ -479,7 +480,8 @@ func is_enemy_on_tile(pos: Vector2i) -> bool:
 	
 func _start_preparation_phase() -> void:
 	current_phase = BattlePhase.PREPARATION
-
+	freeze_battle()
+	
 	player_ui.hide_hp_ui()
 	move_shuffle.hide_bar()
 
@@ -495,6 +497,44 @@ func _start_preparation_phase() -> void:
 
 	_update_ui()
 
+func freeze_battle():
+	battle_active = false
+	player.movement_locked = true
+
+	for enemy in enemies:
+		if is_instance_valid(enemy):
+			enemy.set_process(false)
+			enemy.set_physics_process(false)
+
+	for projectile in get_tree().get_nodes_in_group("projectiles"):
+		if is_instance_valid(projectile):
+			projectile.set_process(false)
+			projectile.set_physics_process(false)
+
+	for projectile in get_tree().get_nodes_in_group("enemy_projectiles"):
+		if is_instance_valid(projectile):
+			projectile.set_process(false)
+			projectile.set_physics_process(false)
+				
+func unfreeze_battle():
+	battle_active = true
+	player.movement_locked = false
+
+	for enemy in enemies:
+		if is_instance_valid(enemy):
+			enemy.set_process(true)
+			enemy.set_physics_process(true)
+
+	for projectile in get_tree().get_nodes_in_group("projectiles"):
+		if is_instance_valid(projectile):
+			projectile.set_process(true)
+			projectile.set_physics_process(true)
+
+	for projectile in get_tree().get_nodes_in_group("enemy_projectiles"):
+		if is_instance_valid(projectile):
+			projectile.set_process(true)
+			projectile.set_physics_process(true)
+		
 func move_cursor_right():
 	if player_hand.is_empty():
 		return
@@ -721,7 +761,7 @@ func _start_battle_phase() -> void:
 	if selected_chips.is_empty():
 		print("Cannot start battle without any selected chips.")
 		return
-
+	unfreeze_battle()
 	get_tree().paused = false
 
 	current_phase = BattlePhase.BATTLE

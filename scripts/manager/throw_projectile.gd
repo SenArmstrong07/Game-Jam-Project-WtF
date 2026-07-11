@@ -26,25 +26,26 @@ var bounce_heights := [
 func _ready():
 	add_to_group("enemy_projectiles")
 
+func _process(delta):
+	var battle = get_tree().get_first_node_in_group("battle_scene")
+
+	if battle and battle.current_phase != Battlescene.BattlePhase.BATTLE:
+		return
 # ============================================================
 # ENTRY POINT
 # ============================================================
-
 func throw_bounce():
 	global_position = snap_to_tile_center(global_position)
 
-	var first_tile = global_position + Vector2(-TILE_SIZE, 0)
+	# Throw from the front/lower part of the sprite.
+	global_position += Vector2(-16, 24)
 
-	await bounce_to_tile(
-		first_tile,
-		bounce_heights[0],
-		0.40
-	)
+	var first_tile = snap_to_tile_center(global_position) + Vector2(-TILE_SIZE, 0)
+
+	await bounce_to_tile(first_tile, bounce_heights[0], 0.40)
 
 	on_land(global_position)
-
 	bounce()
-
 
 # ============================================================
 # BOUNCE LOOP
@@ -225,30 +226,37 @@ func show_tile_warning(tile_pos: Vector2):
 # ============================================================
 # MOVEMENT
 # ============================================================
+
 func bounce_to_tile(target_pos: Vector2, arc_height: float, duration: float) -> void:
-	var start_pos = global_position
-	var elapsed := 0.0
+	var start_pos: Vector2 = global_position
+	var elapsed: float = 0.0
 
 	while elapsed < duration:
 		if !is_inside_tree():
 			return
 
-		var tree: SceneTree = get_tree()
-		if tree == null:
-			return
+		var battle := get_tree().get_first_node_in_group("battle_scene")
 
-		await tree.process_frame
+		while battle and battle.current_phase != Battlescene2.BattlePhase.BATTLE:
+			await get_tree().process_frame
+
+			if !is_inside_tree():
+				return
+
+			battle = get_tree().get_first_node_in_group("battle_scene")
+
+		await get_tree().process_frame
 
 		elapsed += get_process_delta_time()
 
-		var t: float = clamp(elapsed / duration, 0.0, 1.0)
+		var t: float = clampf(elapsed / duration, 0.0, 1.0)
 
 		global_position = start_pos.lerp(target_pos, t)
 		global_position.y -= sin(t * PI) * arc_height
 
 	if is_inside_tree():
 		global_position = target_pos
-	
+		
 # ============================================================
 # CLEANUP
 # ============================================================

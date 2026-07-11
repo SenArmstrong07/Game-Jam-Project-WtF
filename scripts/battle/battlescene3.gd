@@ -458,7 +458,7 @@ func spawn_enemy(pos: Vector2i) -> void:
 	# =========================
 	# SET ENEMY STATS HERE
 	# =========================
-	e.max_hp = 300
+	e.max_hp = 400
 
 	e.hp = e.max_hp
 	e.update_hp_label()

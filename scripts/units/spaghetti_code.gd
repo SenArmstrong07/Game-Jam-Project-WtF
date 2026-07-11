@@ -6,7 +6,7 @@ extends Unit
 const ENEMY_BASIC_PROJECTILE = preload("uid://cnt0okx0i7ily")
 const THROW_PROJECTILE = preload("uid://dieb2klqxxsjl")
 @onready var BOSS_MARKER: Marker2D = $HitPoint
-@export var projectile_speed :=450.0
+@export var projectile_speed := 500.0
 
 const BOSS_PROJECTILE = preload("uid://dpqks7y6diyji")
 const SLAM = preload("uid://qvbiy4tq8sr6")
@@ -19,7 +19,7 @@ const TILE_SIZE := 64
 const X_OFFSET := 4
 
 var attack_timer := 0.0
-var attack_interval := 1.5
+var attack_interval := 1.25
 var attack_locked := false
 var basic_attack_count := 0
 var attack_pause := false

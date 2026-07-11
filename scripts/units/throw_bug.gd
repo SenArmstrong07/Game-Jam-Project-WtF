@@ -253,6 +253,12 @@ func shoot():
 
 	attack_count += 1
 
+	if anim_player.sprite_frames.has_animation("Attack"):
+		await play_animation_once("Attack")
+
+	if is_dead:
+		return
+
 	if attack_count % 3 == 0:
 		await shoot_special()
 	else:
@@ -260,12 +266,13 @@ func shoot():
 
 	await get_tree().create_timer(attack_recovery).timeout
 
-	# Safety in case the enemy died during the attack
 	if !is_instance_valid(self):
 		return
 
 	attack_locked = false
 	movement_locked = false
+
+	play_move_animation(grid_pos, grid_pos)
 	
 func shoot_bounce():
 
@@ -318,10 +325,11 @@ func apply_stun(duration: float):
 	stun_tween.tween_property(self, "modulate", Color(1, 1, 0.9), 0.1)
 
 func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
-	var delta = new_pos - old_pos
-	if is_hurt:
+	if is_hurt or attack_locked:
 		return
-		
+
+	var delta = new_pos - old_pos
+
 	if delta.x > 0:
 		anim_player.play("Move_forward")
 	elif delta.x < 0:
@@ -332,7 +340,24 @@ func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
 		anim_player.play("Move_up")
 	else:
 		anim_player.play("Idle")
+		
+func play_animation_once(anim_name: String, speed_multiplier := 1.0) -> void:
+	if !anim_player.sprite_frames.has_animation(anim_name):
+		return
 
+	anim_player.play(anim_name)
+
+	var frame_count := anim_player.sprite_frames.get_frame_count(anim_name)
+	var fps := anim_player.sprite_frames.get_animation_speed(anim_name)
+
+	if fps <= 0:
+		fps = 10.0
+
+	var duration := float(frame_count) / fps
+	duration /= speed_multiplier
+
+	await get_tree().create_timer(duration).timeout
+	
 func play_hurt():
 	if is_dead or is_hurt:
 		return
@@ -341,18 +366,14 @@ func play_hurt():
 
 	anim_player.modulate = Color(1, 0.3, 0.3)
 
-	if anim_player.sprite_frames.has_animation("Hurt"):
-		anim_player.play("Hurt")
-
-	await get_tree().create_timer(0.15).timeout
+	await play_animation_once("Hurt", 2)
 
 	anim_player.modulate = Color.WHITE
 
-	if anim_player.sprite_frames.has_animation("Idle"):
-		anim_player.play("Idle")
-
 	is_hurt = false
 
+	play_move_animation(grid_pos, grid_pos)
+	
 func update_hp_label():
 
 	if hp_tween:

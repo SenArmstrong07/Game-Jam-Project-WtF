@@ -31,8 +31,11 @@ var intro_dialogue_running := false
 var boss_dialogue_running := false
 var dialogue_mode := true
 var final_boss_ending_running := false
+@onready var fade_to_black: ColorRect = $UI/FADE_TO_BLACK
 
 func _ready() -> void:
+	fade_to_black.visible = false
+	fade_to_black.modulate.a = 0.0
 	if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
 		overworld_state = SignalBus.overworld_state.duplicate(true)
 	#simulate_enemy_del.visible = false
@@ -312,6 +315,7 @@ func _start_final_boss_ending_sequence(initial_boss: Node2D = null) -> void:
 func _run_final_boss_ending_sequence(initial_boss: Node2D = null) -> void:
 	await get_tree().create_timer(1.0).timeout
 	print("[ENDING] Scene transition complete, starting disintegration")
+
 	await _fade_out_final_boss(initial_boss)
 	await _fade_out_corruption_tiles()
 	await _run_final_boss_dialogue()
@@ -319,19 +323,19 @@ func _run_final_boss_ending_sequence(initial_boss: Node2D = null) -> void:
 
 func _fade_out_final_boss(initial_boss: Node2D = null) -> void:
 	var boss: Node2D = initial_boss
-	if boss == null or not is_instance_valid(boss):
+
+	if boss == null or !is_instance_valid(boss):
 		boss = _find_final_boss_node()
-	if boss == null or not is_instance_valid(boss):
-		boss = _spawn_final_boss_ending_node()
-	if boss == null or not is_instance_valid(boss):
+
+	# Boss is already gone (because the battle removed it).
+	# Just continue to the ending instead of spawning another one.
+	if boss == null or !is_instance_valid(boss):
 		return
 
-	print("[ENDING] Freezing boss before disintegration")
 	if boss.has_method("freeze_for_ending"):
 		boss.freeze_for_ending()
 
 	await get_tree().create_timer(0.3).timeout
-	print("[ENDING] Starting disintegration animation")
 
 	var tween := create_tween()
 	tween.set_parallel(true)
@@ -339,14 +343,15 @@ func _fade_out_final_boss(initial_boss: Node2D = null) -> void:
 	tween.tween_property(boss, "scale", boss.scale * 0.55, 2.6)
 	tween.tween_property(boss, "rotation", boss.rotation + deg_to_rad(90.0), 2.6)
 
-	var sprite = boss.get_node_or_null("sprite")
-	if sprite and sprite is CanvasItem:
+	var sprite := boss.get_node_or_null("sprite")
+	if sprite:
 		tween.tween_property(sprite, "modulate:a", 0.0, 2.6)
 
 	await tween.finished
+
 	if is_instance_valid(boss):
 		boss.queue_free()
-
+		
 func _spawn_final_boss_ending_node() -> Node2D:
 	var spawn_position: Vector2 = SignalBus.final_boss_return_position
 	if spawn_position == Vector2.ZERO:
@@ -405,44 +410,98 @@ func _find_final_boss_node() -> Node2D:
 			return enemy as Node2D
 	return null
 
+
 func _run_final_boss_dialogue() -> void:
 	await dialogue_pop_up(
 		"MiniBot",
 		"MiniBot",
-		"You did it, Cody! You defeated the final virus and cleansed the Cyber World."
+		"Well done, Cody. Every bug has been removed. System stability has been restored."
 	)
+
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"Yeah, because apparently I needed to fight a glowing nightmare just to get a break.",
-		Vector2(10, 10)
-	)
-	await dialogue_pop_up(
-		"MiniBot",
-		"MiniBot",
-		"The corruption is fading. Your mission is complete."
-	)
-	await dialogue_pop_up(
-		"Cody",
-		"MC",
-		"Great. Next time, maybe send the memo before turning my life into a bug hunt.",
+		"Funny... I should feel like I won, but it feels like I left something behind.",
 		Vector2(10, 10)
 	)
 
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Residual errors are expected. They will disappear shortly."
+	)
+
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Errors...? No... they felt more like memories.",
+		Vector2(10, 10)
+	)
+
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Memories can become corrupted. Removing them was necessary to preserve normal operation."
+	)
+
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"...Why does it sound like you're talking about me?",
+		Vector2(10, 10)
+	)
+
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Your mission is complete. Please return to your default state."
+	)
+
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"I don't know what you are talking about?!",
+		Vector2(10, 10)
+	)
+
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"That is... acceptable."
+	)
+
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"...I have a feeling we've had this conversation before.",
+		Vector2(10, 10)
+	)
+
+	await dialogue_pop_up(
+		"MiniBot",
+		"MiniBot",
+		"Traces still remain, Initiating Restart. . ."
+	)
+
+	await dialogue_pop_up(
+		"Cody",
+		"MC",
+		"Hey!, What are you talking about",
+		Vector2(10, 10)
+	)
+	
 func _show_ending_congratulations() -> void:
-	var dialog := AcceptDialog.new()
-	dialog.title = "Victory"
-	dialog.dialog_text = "You defeated the final boss and restored the Cyber World."
-	dialog.exclusive = true
-	dialog.ok_button_text = "Return to Title"
-	add_child(dialog)
-	dialog.popup_centered()
+	fade_to_black.visible = true
+	fade_to_black.modulate.a = 0.0
 
-	var _result = await dialog.confirmed
-	if is_instance_valid(dialog):
-		dialog.queue_free()
-	_return_to_title_screen()
+	var tween := create_tween()
+	tween.tween_property(fade_to_black, "modulate:a", 1.0, 2.0)
 
+	await tween.finished
+	await get_tree().create_timer(1.0).timeout
+
+	get_tree().change_scene_to_file("res://scenes/UI/TitleScreen.tscn")
+	
 func _return_to_title_screen() -> void:
 	get_tree().change_scene_to_file("res://scenes/UI/TitleScreen.tscn")
 

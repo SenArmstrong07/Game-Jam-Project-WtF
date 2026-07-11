@@ -456,6 +456,7 @@ text = "SETTINGS
 "
 
 [node name="Exit_button" type="Button" parent="TitleScreenUI/Menu_Buttons" unique_id=362748349]
+visible = false
 layout_mode = 2
 theme = SubResource("Theme_udspj")
 theme_override_constants/icon_max_width = 100

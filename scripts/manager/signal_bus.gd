@@ -25,9 +25,74 @@ var player_lives: int = 5
 var max_player_lives: int = 5
 var respawn_to_safe_spawn := false
 
+const SAVE_GAME_PATH := "user://saved_game.cfg"
+
 # Victory signals
 signal battle_won
 signal victory_continue
+
+
+func has_saved_game_state() -> bool:
+	var config := ConfigFile.new()
+	var err := config.load(SAVE_GAME_PATH)
+	if err != OK:
+		return false
+	return config.has_section("save_state") and config.has_section_key("save_state", "overworld_state")
+
+
+func save_current_game_state() -> bool:
+	var snapshot: Dictionary = {}
+	var scene_root = get_tree().current_scene
+	if not is_instance_valid(scene_root):
+		scene_root = get_tree().get_first_node_in_group("Cybermap")
+
+	if is_instance_valid(scene_root):
+		if scene_root.has_method("get_overworld_state"):
+			snapshot = scene_root.get_overworld_state().duplicate(true)
+		elif scene_root.has_method("store_overworld_state"):
+			scene_root.store_overworld_state()
+			snapshot = overworld_state.duplicate(true)
+
+	if snapshot.is_empty() and not overworld_state.is_empty():
+		snapshot = overworld_state.duplicate(true)
+
+	if snapshot.is_empty():
+		return false
+
+	var config := ConfigFile.new()
+	config.set_value("save_state", "version", 1)
+	config.set_value("save_state", "timestamp", Time.get_datetime_string_from_system(false, true))
+	config.set_value("save_state", "player_lives", player_lives)
+	config.set_value("save_state", "max_player_lives", max_player_lives)
+	config.set_value("save_state", "overworld_intro_played", overworld_intro_played)
+	config.set_value("save_state", "boss_dialogue_played", boss_dialogue_played)
+	config.set_value("save_state", "summon_boss_on_return", summon_boss_on_return)
+	config.set_value("save_state", "overworld_state", snapshot)
+
+	var err := config.save(SAVE_GAME_PATH)
+	return err == OK
+
+
+func load_saved_game_state() -> Dictionary:
+	var config := ConfigFile.new()
+	var err := config.load(SAVE_GAME_PATH)
+	if err != OK:
+		return {}
+
+	var loaded_state: Dictionary = config.get_value("save_state", "overworld_state", {})
+	if loaded_state is Dictionary and not loaded_state.is_empty():
+		overworld_state = loaded_state.duplicate(true)
+		SignalBus.overworld_state = overworld_state.duplicate(true)
+	else:
+		return {}
+
+	player_lives = int(config.get_value("save_state", "player_lives", player_lives))
+	max_player_lives = int(config.get_value("save_state", "max_player_lives", max_player_lives))
+	overworld_intro_played = bool(config.get_value("save_state", "overworld_intro_played", overworld_intro_played))
+	boss_dialogue_played = bool(config.get_value("save_state", "boss_dialogue_played", boss_dialogue_played))
+	summon_boss_on_return = bool(config.get_value("save_state", "summon_boss_on_return", summon_boss_on_return))
+
+	return overworld_state.duplicate(true)
 
 
 func cache_overworld_state() -> void:

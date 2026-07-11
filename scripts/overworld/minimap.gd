@@ -5,7 +5,6 @@ extends CanvasLayer
 @onready var terrain_visuals: Node2D = %TerrainVisuals
 @onready var map_root: Node2D = $SubViewportContainer/SubViewport/Map
 @onready var minimap_ui: Node = $SubViewportContainer/SubViewport/UI
-@onready var player_marker: Sprite2D = %playerMarker
 @onready var marker_scene = preload("res://scenes/overworld/Marker.tscn")
 @onready var world_map_scene = preload("res://scenes/overworld/world_map_ui.tscn")
 @onready var Bounds2DScript = preload("res://scripts/overworld/bounds2d.gd")

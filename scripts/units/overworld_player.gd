@@ -157,20 +157,27 @@ func _update_facing() -> void:
 	if last_direction == Vector2.ZERO:
 		return
 
-	# This is where you'd hook up animations
-	# Example logic for directional states:
+	var is_moving := velocity.length() > 5.0 and !is_dashing
 
 	if abs(last_direction.x) > abs(last_direction.y):
 		if last_direction.x > 0:
-			# Facing right
-			pass
+			if is_moving:
+				$PlayerSprite.play("right_walk")
+			else:
+				$PlayerSprite.play("right_idle")
 		else:
-			# Facing left
-			pass
+			if is_moving:
+				$PlayerSprite.play("left_walk")
+			else:
+				$PlayerSprite.play("left_idle")
 	else:
 		if last_direction.y > 0:
-			# Facing down
-			pass
+			if is_moving:
+				$PlayerSprite.play("front_walk")
+			else:
+				$PlayerSprite.play("front_idle")
 		else:
-			# Facing up
-			pass
+			if is_moving:
+				$PlayerSprite.play("back_walk")
+			else:
+				$PlayerSprite.play("back_idle")

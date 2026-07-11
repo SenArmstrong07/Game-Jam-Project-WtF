@@ -78,7 +78,7 @@ func _physics_process(delta: float) -> void:
 	#Chasers
 	if player_chase and is_instance_valid(player):
 		target_world_pos = player.global_position
-		$sprite.play("s_walk")
+		play_dash_animation()
 		update_sprite_direction(target_world_pos)
 	else:
 		patrol_timer += delta
@@ -87,7 +87,7 @@ func _physics_process(delta: float) -> void:
 			patrol_timer = 0.0
 
 		if global_position.distance_to(patrol_target) > 4.0:
-			$sprite.play("s_walk")
+			play_walk_animation()
 			update_sprite_direction(patrol_target)
 		else:
 			$sprite.stop()
@@ -199,6 +199,18 @@ func update_sprite_direction(target_pos: Vector2) -> void:
 		$sprite.flip_h = true
 	elif horizontal_delta < -2.0:
 		$sprite.flip_h = false
+
+func play_walk_animation():
+	if enemy_tier == EnemyTier.BOSS:
+		$sprite.play("boss_s_walk")
+	else:
+		$sprite.play("s_walk")
+
+func play_dash_animation():
+	if enemy_tier == EnemyTier.BOSS:
+		$sprite.play("boss_s_walk") # if you have one
+	else:
+		$sprite.play("dash")
 
 func spawn_afterimage():
 	var ghost = after_image_scene.instantiate()

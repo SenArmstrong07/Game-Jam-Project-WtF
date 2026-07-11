@@ -35,7 +35,7 @@ var final_boss_ending_running := false
 func _ready() -> void:
 	if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
 		overworld_state = SignalBus.overworld_state.duplicate(true)
-	simulate_enemy_del.visible = false
+	#simulate_enemy_del.visible = false
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
@@ -279,6 +279,10 @@ func _on_world_generation_complete() -> void:
 		_apply_safe_respawn_position()
 		SignalBus.respawn_to_safe_spawn = false
 
+	if SignalBus.boss_victory_offset_player:
+		_apply_boss_victory_offset()
+		SignalBus.boss_victory_offset_player = false
+
 	var loading_screen = get_node_or_null("LoadingScreen")
 	if loading_screen and loading_screen.has_method("_hide_overlay"):
 		loading_screen._hide_overlay()
@@ -287,7 +291,7 @@ func _on_world_generation_complete() -> void:
 		_start_final_boss_ending_sequence()
 		return
 
-	if SignalBus.summon_boss_on_return and not boss_summon_in_progress:
+	if SignalBus.summon_boss_on_return and not boss_summon_in_progress and not SignalBus.final_boss_defeated:
 		print("[BOSS] Delaying boss summon on overworld return by ", BOSS_SUMMON_DELAY_ON_RETURN, " seconds")
 		call_deferred("_delayed_return_boss_summon")
 
@@ -300,11 +304,14 @@ func _start_final_boss_ending_sequence(initial_boss: Node2D = null) -> void:
 
 	final_boss_ending_running = true
 	SignalBus.final_boss_ending_played = true
+	SignalBus.summon_boss_on_return = false
 	_set_player_controls_locked(true)
 	print("[ENDING] Final boss ending sequence starting")
 	call_deferred("_run_final_boss_ending_sequence", initial_boss)
 
 func _run_final_boss_ending_sequence(initial_boss: Node2D = null) -> void:
+	await get_tree().create_timer(1.0).timeout
+	print("[ENDING] Scene transition complete, starting disintegration")
 	await _fade_out_final_boss(initial_boss)
 	await _fade_out_corruption_tiles()
 	await _run_final_boss_dialogue()
@@ -319,8 +326,12 @@ func _fade_out_final_boss(initial_boss: Node2D = null) -> void:
 	if boss == null or not is_instance_valid(boss):
 		return
 
+	print("[ENDING] Freezing boss before disintegration")
 	if boss.has_method("freeze_for_ending"):
 		boss.freeze_for_ending()
+
+	await get_tree().create_timer(0.3).timeout
+	print("[ENDING] Starting disintegration animation")
 
 	var tween := create_tween()
 	tween.set_parallel(true)
@@ -471,6 +482,29 @@ func _apply_safe_respawn_position() -> void:
 	store_overworld_state()
 	print("[RESPAWN] Player respawned to safe tile: ", chosen_tile)
 
+func _apply_boss_victory_offset() -> void:
+	if player == null:
+		return
+
+	if SignalBus.boss_victory_position == Vector2.ZERO:
+		return
+
+	var boss_pos: Vector2 = SignalBus.boss_victory_position
+	var player_pos: Vector2 = player.global_position
+	
+	# Calculate direction away from boss
+	var direction: Vector2 = (player_pos - boss_pos).normalized()
+	if direction == Vector2.ZERO:
+		direction = Vector2.RIGHT
+	
+	# Offset player by 20 pixels away from boss position
+	var offset_amount: float = 20.0
+	player.global_position = player_pos + direction * offset_amount
+	
+	store_overworld_state()
+	print("[BOSS_VICTORY] Offset player away from boss. Boss pos: ", boss_pos, " New player pos: ", player.global_position)
+	SignalBus.boss_victory_position = Vector2.ZERO
+
 func ensure_one_elite() -> void:
 	var enemies = get_tree().get_nodes_in_group("overworldmob")
 
@@ -542,8 +576,7 @@ func _remove_overworld_enemy(enemy: Node2D) -> void:
 	await get_tree().process_frame
 	print("[BOSS] Enemy removed, storing state")
 	store_overworld_state()
-	print("[BOSS] State stored, checking boss validity")
-	_check_for_boss_summon_validity()
+	print("[BOSS] State stored, skipping automatic boss summon on manual deletion")
 
 func store_overworld_state() -> void:
 	var snapshot: Dictionary = get_overworld_state().duplicate(true)

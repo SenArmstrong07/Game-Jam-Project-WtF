@@ -28,7 +28,7 @@ func _play_sequence() -> void:
 	#EncounterTransition.reset()
 	#await get_tree().process_frame
 	
-	await EncounterTransition.play_return_fade()
+	await EncounterTransition.play_game_over_intro()
 
 	var tween := create_tween()
 	tween.tween_property(game_over_label, "modulate:a", 1.0, 0.8)

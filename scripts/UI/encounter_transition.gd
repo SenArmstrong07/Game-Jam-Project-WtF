@@ -207,7 +207,18 @@ func transition_to_overworld() -> void:
 	var frontlayer = get_tree().get_first_node_in_group("frontlayer")
 
 	if frontlayer:
-		await frontlayer.overworld_ready
+		var timer = get_tree().create_timer(5.0)
+		var completed : bool = false
+		frontlayer.overworld_ready.connect(
+			func():
+				completed = true,
+			CONNECT_ONE_SHOT
+		)
+		while !completed and timer.time_left > 0:
+			await get_tree().process_frame
+
+		if !completed:
+			push_warning("[EncounterTransition] Timed out waiting for overworld_ready.")
 
 	# NOW reveal it
 	await play_return_fade()
@@ -217,6 +228,28 @@ func transition_to_overworld() -> void:
 	visible = false
 	finished.emit()
 
+#SPECIFICALLY FOR GAME OVER:
+
+func play_game_over_intro() -> void:
+	visible = true
+	reset()
+
+	await get_tree().process_frame
+
+	capture_screen(overworld_shot)
+
+	var mat := glitch_overlay.material as ShaderMaterial
+	if mat:
+		mat.set_shader_parameter(
+			"screen_texture",
+			overworld_shot.texture
+		)
+
+	overworld_shot.visible = true
+
+	await play_return_fade()
+
+	overworld_shot.visible = false
 
 func play_return_fade() -> void:
 	reset()
@@ -224,10 +257,8 @@ func play_return_fade() -> void:
 	await get_tree().process_frame
 
 	_play_glitch_sfx()
-	_set_visible(overworld_shot, true)
 	_set_visible(glitch_overlay, true)
 	_set_visible(fade, true)
-	_set_alpha(overworld_shot, 1.0)
 	_set_alpha(glitch_overlay, 0.35)
 	_set_alpha(fade, 0.0)
 
@@ -265,7 +296,7 @@ func play_return_fade() -> void:
 	tween.parallel().tween_property(fade, "modulate:a", 0.35, GLITCH_IN_TIME * 0.5)
 
 	await tween.finished
-	_set_visible(overworld_shot, false)
+
 	_set_visible(glitch_overlay, false)
 	_set_visible(fade, false)
 

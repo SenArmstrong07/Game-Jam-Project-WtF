@@ -30,9 +30,49 @@ var dialogue_bar_start_scale: Vector2
 var dialogue = [
 		{
 			"name": "Cody",
-			"text": "Hey! I'm Cody. I recently graduated with a degree in IT, and today is my very first day working at an IT company.",
+			"text": "...",
 			"animation": "MC",
 			"background": PIXEL_ART_FUTURE
+		},
+		{
+			"name": "Cody",
+			"text": "...Huh?",
+			"animation": "MC"
+		},
+		{
+			"name": "Cody",
+			"text": "Did I... fall asleep on this bench?",
+			"animation": "MC"
+		},
+		{
+			"name": "Cody",
+			"text": "Weird... I had a dream about... something.",
+			"animation": "MC"
+		},
+		{
+			"name": "Cody",
+			"text": "I can't remember what it was anymore.",
+			"animation": "MC"
+		},
+		{
+			"name": "Cody",
+			"text": "Still... it feels like I forgot something important.",
+			"animation": "MC"
+		},
+		{
+			"name": "Cody",
+			"text": "...Heh, first-day nerves, I guess.",
+			"animation": "MC"
+		},
+		{
+			"name": "Cody",
+			"text": "Anyways...",
+			"animation": "MC"
+		},
+		{
+			"name": "Cody",
+			"text": "Hey! I'm Cody. I recently graduated with a degree in IT, and today is my very first day working at an IT company.",
+			"animation": "MC"
 		},
 
 		{

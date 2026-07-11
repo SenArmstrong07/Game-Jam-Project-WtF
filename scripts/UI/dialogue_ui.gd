@@ -25,6 +25,8 @@ var text_speed := 0.03
 var transition_finished := false
 var dialogue_bar_start_position: Vector2
 var dialogue_bar_start_scale: Vector2
+var changing_dialogue := false
+var dialogue_token := 0
 
 # Dialogue data
 var dialogue = [
@@ -239,80 +241,104 @@ func play_intro_transition(message: String) -> void:
 func _input(event):
 	if !transition_finished:
 		return
+
 	if !(event.is_action_pressed("ui_accept") or
-		(event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed)):
+		(event is InputEventMouseButton
+		and event.button_index == MOUSE_BUTTON_LEFT
+		and event.pressed)):
+		return
+
+	# Ignore spam while opening/closing dialogue
+	if changing_dialogue:
 		return
 
 	if typing:
 		typing = false
 	else:
 		next_dialogue()
-
+		
 func show_dialogue() -> void:
 	if dialogue_index >= dialogue.size():
 		end_dialogue()
 		return
 
+	dialogue_token += 1
+	var token = dialogue_token
+
 	var current = dialogue[dialogue_index]
 
-	# Character name
 	character_name.text = current["name"]
 
-	# Hide both portraits first
 	mc.hide()
 	mini_bot.hide()
 
-	# Stop any previous animations
 	mc.stop()
 	mini_bot.stop()
 
-	# Show the correct portrait
 	match current["animation"]:
 		"MC":
 			mc.show()
 			mc.play("mc")
-
 		"MiniBot":
 			mini_bot.show()
 			mini_bot.play("minibot")
 
-	# Change background if specified
 	if current.has("background"):
 		bg_image.texture = current["background"]
 
-	# Dialogue text
 	full_text = current["text"]
 	rich_text_label.text = ""
 	next_arrow.hide()
 
+	changing_dialogue = true
 	await _play_open_animation()
-	type_text()
-	
-func next_dialogue():
-	await _play_close_animation()
-	dialogue_index += 1
-	show_dialogue()
 
+	# If another dialogue started while waiting, cancel this one.
+	if token != dialogue_token:
+		return
+
+	changing_dialogue = false
+	type_text(token)
+
+func next_dialogue():
+	if changing_dialogue:
+		return
+
+	changing_dialogue = true
+
+	await _play_close_animation()
+
+	dialogue_index += 1
+
+	changing_dialogue = false
+	show_dialogue()
 func end_dialogue():
 	await play_end_transition()
 	get_tree().change_scene_to_file("res://scenes/battle/BattleTutorial.tscn")
 
-func type_text() -> void:
+func type_text(token: int) -> void:
 	typing = true
 
 	rich_text_label.text = ""
 
 	for i in range(full_text.length()):
+
+		# Another dialogue has started
+		if token != dialogue_token:
+			return
+
 		if !typing:
 			rich_text_label.text = full_text
 			break
 
-		rich_text_label.text += full_text.substr(i, 1)
+		rich_text_label.text += full_text[i]
 		await get_tree().create_timer(text_speed).timeout
 
 	typing = false
-	next_arrow.show()
-	
+
+	if token == dialogue_token:
+		next_arrow.show()
+		
 #OPENING ANIMATION
 func _play_open_animation() -> void:
 

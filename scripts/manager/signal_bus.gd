@@ -27,8 +27,8 @@ var in_transition := false
 var summon_boss_on_return := false
 var overworld_state: Dictionary = {}
 var is_loading_saved_game := false
-var player_lives: int = 5
-var max_player_lives: int = 5
+var player_lives: int = 3
+var max_player_lives: int = 3
 var respawn_to_safe_spawn := false
 
 const SAVE_GAME_PATH := "user://saved_game.cfg"
@@ -120,6 +120,7 @@ func reset_story_flags() -> void:
 	boss_victory_position = Vector2.ZERO
 	summon_boss_on_return = false
 	current_encounter = null
+	player_lives = max_player_lives
 
 func cache_overworld_state() -> void:
 	var snapshot: Dictionary = {}

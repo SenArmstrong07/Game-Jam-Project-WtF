@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://b2sl4vlh5l6f2"]
+
+[ext_resource type="Script" uid="uid://bv4wtpjjxvtg0" path="res://scripts/UI/GameOverScene.gd" id="1_6v8m3"]
+[ext_resource type="FontFile" uid="uid://ctgejobb4njpx" path="res://assets/fonts/ARCADECLASSIC.TTF" id="2_p38n2"]
+
+[node name="GameOverScene" type="Control" unique_id=219823299]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6v8m3")
+
+[node name="Background" type="ColorRect" parent="." unique_id=570060959]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="GameOverLabel" type="Label" parent="." unique_id=1128319333]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -36.5
+offset_right = 170.0
+offset_bottom = 36.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_p38n2")
+theme_override_font_sizes/font_size = 48
+text = "Game Over"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="." unique_id=1923764251]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = 48.0
+offset_right = 240.0
+offset_bottom = 88.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_p38n2")
+theme_override_font_sizes/font_size = 24
+text = "Press Enter to return to the title screen"
+horizontal_alignment = 1
+vertical_alignment = 1

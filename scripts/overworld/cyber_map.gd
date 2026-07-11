@@ -5,6 +5,7 @@ extends Node2D
 @onready var boss_summon_overlay: Control = $UI/Boss_Summon_Overlay
 @onready var camera: Camera2D = $Camera2D
 
+var transition_in_progress := false
 var overworld_state: Dictionary = {}
 var boss_summon_in_progress := false
 var boss_spawn_point: Marker2D
@@ -230,7 +231,29 @@ func start_overworld_dialogue() -> void:
 		"Oh man! How did I even get here in the first place?",
 		Vector2(10, 10)
 	)
-	
+
+func _begin_screen_transition() -> void:
+	if transition_in_progress:
+		return
+
+	transition_in_progress = true
+
+	# Stop any glitch/summon overlay immediately
+	if boss_summon_overlay:
+		boss_summon_overlay.visible = false
+
+	# Stop warning sounds
+	if warning_fx:
+		warning_fx.stop()
+
+	# Kill every running tween so old visual effects can't continue
+	get_tree().call_group("glitch_effect", "queue_free")
+	get_tree().call_group("summon_effect", "queue_free")
+
+
+func _end_screen_transition() -> void:
+	transition_in_progress = false
+		
 func play_boss_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
@@ -518,8 +541,14 @@ func _run_final_boss_dialogue() -> void:
 	)
 	
 func _show_ending_congratulations() -> void:
+	_begin_screen_transition()
+
+	# Wait one frame so every queued visual effect disappears first
+	await get_tree().process_frame
+
 	fade_to_black.visible = true
 	fade_to_black.modulate.a = 0.0
+	fade_to_black.z_index = 99999
 
 	var tween := create_tween()
 	tween.tween_property(fade_to_black, "modulate:a", 1.0, 2.0)
@@ -805,6 +834,8 @@ func _begin_boss_summon_sequence() -> void:
 	print("[BOSS] Waiting for summon_finished signal")
 
 func _execute_boss_spawn_sequence(spawn_position: Vector2) -> void:
+	if transition_in_progress:
+		return
 	var spawn_point = _create_boss_spawn_point(spawn_position)
 	print("[BOSS] Moving camera to boss spawn")
 	await _move_camera_to_position(spawn_position, 0.9)
@@ -927,6 +958,9 @@ func _find_valid_boss_spawn_position() -> Vector2:
 
 func _corrupt_tiles_around(spawn_position: Vector2) -> void:
 	# Create a small, irregular burst of corruption overlay tiles (black / purple)
+	if transition_in_progress:
+		return
+		
 	if frontlayer == null:
 		return
 

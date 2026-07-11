@@ -144,7 +144,6 @@ script = ExtResource("1_ek7hk")
 after_image_scene = ExtResource("2_8q0nd")
 
 [node name="sprite" type="AnimatedSprite2D" parent="." unique_id=1345536325]
-position = Vector2(-5.9604645e-08, -39)
 scale = Vector2(3.8958333, 3.7890627)
 sprite_frames = SubResource("SpriteFrames_gb7rx")
 animation = &"boss_s_walk"

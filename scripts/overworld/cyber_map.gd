@@ -113,7 +113,7 @@ func set_lives(current_lives: int) -> void:
 
 
 #DIALOGUE STUFF
-func dialogue_pop_up(name: String, portrait_anim: String, message: String):
+func dialogue_pop_up(name: String, portrait_anim: String, message: String, portrait_scale: Vector2 = Vector2(16, 16)):
 
 	if !dialogue_mode:
 		return
@@ -123,7 +123,8 @@ func dialogue_pop_up(name: String, portrait_anim: String, message: String):
 	dialogues.show_tutorial(
 		name,
 		portrait_anim,
-		message
+		message,
+		portrait_scale
 	)
 
 	await dialogues.tutorial_closed
@@ -140,7 +141,8 @@ func start_overworld_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"How many do I need to DELETE before I can go?"
+		"How many do I need to DELETE before I can go?",
+		
 	)
 	
 	await dialogue_pop_up(
@@ -158,7 +160,8 @@ func start_overworld_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"Surprise? why would I want to delete a surprise?"
+		"Surprise? why would I want to delete a surprise?",
+		Vector2(10, 10)
 	)
 	
 	await dialogue_pop_up(
@@ -170,7 +173,8 @@ func start_overworld_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"What are you talking about?! we are talking about the bugs and now memories I don't get what you're saying"
+		"What are you talking about?! we are talking about the bugs and now memories I don't get what you're saying",
+		Vector2(10, 10)
 	)
 	
 	await dialogue_pop_up(
@@ -182,14 +186,16 @@ func start_overworld_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"Oh man! How did I even get here in the first place?"
+		"Oh man! How did I even get here in the first place?",
+		Vector2(10, 10)
 	)
 	
 func play_boss_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"Uhh... What was that just now?"
+		"Uhh... What was that just now?",
+		Vector2(10, 10)
 	)
 	
 	await dialogue_pop_up(
@@ -200,7 +206,8 @@ func play_boss_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"That thing just came out of nowhere! Who does it think it is?"
+		"That thing just came out of nowhere! Who does it think it is?",
+		Vector2(10, 10)
 	)
 	await dialogue_pop_up(
 		"MiniBot",
@@ -221,7 +228,8 @@ func play_boss_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"If that's the case, can I at least know how to get rid of this... thing?"
+		"If that's the case, can I at least know how to get rid of this... thing?",
+		Vector2(10, 10)
 	)
 	await get_tree().create_timer(1).timeout
 	await dialogue_pop_up(
@@ -233,12 +241,14 @@ func play_boss_dialogue() -> void:
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"Wow, you're so thoughtful (-_-)"
+		"Wow, you're so thoughtful (-_-)",
+		Vector2(10, 10)
 	)
 	await dialogue_pop_up(
 		"Cody",
 		"MC",
-		"I'll give you a 'surprise' once I come back..."
+		"I'll give you a 'surprise' once I come back...",
+		Vector2(10, 10)
 	)
 
 #SOUND STUFF

@@ -14,6 +14,17 @@ var dialogue_bar_start_scale: Vector2
 var waiting := false
 var typing := false
 
+const PORTRAIT_DATA = {
+	"MC": {
+		"scale": Vector2(3,3),
+	"position": Vector2(133.5, 60)
+	},
+	"MiniBot": {
+		"scale": Vector2(16, 16),
+		"position": Vector2(133.5, 136)
+	}
+}
+
 func _ready():
 	dialogue_bar_start_position = dialogue_bar.position
 	dialogue_bar_start_scale = dialogue_bar.scale
@@ -24,13 +35,20 @@ func _ready():
 	dialogue_bar.hide()
 	next_arrow.hide()
 
-func show_tutorial(name: String, portrait_anim: String, message: String):
-
+func show_tutorial(name: String, portrait_anim: String, message: String, portrait_scale: Vector2 = Vector2(16, 16)):
+	var data = PORTRAIT_DATA.get(
+		portrait_anim,
+		{
+			"scale": Vector2(3,3),
+			"position": Vector2(133.5,136)
+		}
+	)
 	dialogue_bar.show()
-
+	
 	character_name.text = name
+	portrait.scale = data.scale
+	portrait.position = data.position
 	portrait.play(portrait_anim)
-
 	rich_text_label.text = message
 	rich_text_label.visible_characters = 0
 

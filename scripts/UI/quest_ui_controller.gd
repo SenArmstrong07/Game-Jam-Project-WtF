@@ -34,8 +34,14 @@ func _ready() -> void:
 
 func _finish_ready() -> void:
 	await get_tree().process_frame
+	if not is_inside_tree() or get_tree() == null:
+		return
 
-	var viewport_size = get_viewport().get_visible_rect().size
+	var viewport = get_viewport()
+	if viewport == null:
+		return
+
+	var viewport_size = viewport.get_visible_rect().size
 
 	final_position = Vector2(
 		(viewport_size.x - container.size.x) * 0.5,
@@ -68,13 +74,20 @@ func toggle_quest_ui() -> void:
 
 func _show_with_slide() -> void:
 	visible = true
-	container.position = Vector2(final_position.x, get_viewport().get_visible_rect().size.y + 120)
+	var viewport = get_viewport()
+	if viewport != null:
+		container.position = Vector2(final_position.x, viewport.get_visible_rect().size.y + 120)
+	else:
+		container.position = Vector2(final_position.x, 120)
 	var tween = create_tween()
 	tween.tween_property(container, "position:y", final_position.y, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func _hide_with_slide() -> void:
 	var tween = create_tween()
-	var offscreen_y = get_viewport().get_visible_rect().size.y + 120
+	var offscreen_y: float = 120.0
+	var viewport = get_viewport()
+	if viewport != null:
+		offscreen_y = viewport.get_visible_rect().size.y + 120
 	tween.tween_property(container, "position:y", offscreen_y, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await tween.finished
 	visible = false

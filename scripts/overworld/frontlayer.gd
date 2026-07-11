@@ -166,6 +166,11 @@ func pre_generate_world() -> void:
 	# Generate all chunks within bounds
 	for x in range(-world_bounds, world_bounds + 1):
 		for y in range(-world_bounds, world_bounds + 1):
+			# Guard: stop generation if scene is being unloaded (e.g., game over)
+			if not is_inside_tree():
+				print("[WORLD_GEN] Scene unloading detected, stopping world generation")
+				return
+			
 			var chunk_coord = Vector2i(x, y)
 			generate_chunk(chunk_coord)
 			loaded_chunks[chunk_coord] = true
@@ -176,7 +181,11 @@ func pre_generate_world() -> void:
 			
 			# Yield every few chunks to prevent freezing
 			if chunks_generated % 4 == 0:
-				await get_tree().process_frame
+				if is_inside_tree() and get_tree() != null:
+					await get_tree().process_frame
+				else:
+					print("[WORLD_GEN] Tree became invalid, stopping generation")
+					return
 	
 	SignalBus.overworld_state["terrain_tiles"] = get_saved_terrain_data()
 	_finish_world_setup()

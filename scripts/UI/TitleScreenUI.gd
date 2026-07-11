@@ -33,6 +33,7 @@ func _on_continue_pressed() -> void:
 	exit_button.disabled = true
 
 	if not SignalBus.has_saved_game_state():
+		SignalBus.is_loading_saved_game = false
 		_show_no_save_dialog()
 		continue_button.disabled = false
 		new_button.disabled = false
@@ -40,6 +41,7 @@ func _on_continue_pressed() -> void:
 		return
 
 	SignalBus.load_saved_game_state()
+	SignalBus.is_loading_saved_game = true
 	await _transition_to_scene(OVERWORLD_SCENE_PATH)
 
 

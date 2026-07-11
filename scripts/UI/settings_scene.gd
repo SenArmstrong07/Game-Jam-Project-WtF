@@ -172,7 +172,7 @@ func _save_settings_to_disk() -> void:
 	config.set_value("audio", "music", settings_music_volume)
 	config.set_value("audio", "sfx", settings_sfx_volume)
 	config.save(SETTINGS_CONFIG_PATH)
-	SignalBus.save_current_game_state()
+	SignalBus.save_current_game_state(true)
 
 func _on_save_pressed() -> void:
 	_save_settings_to_disk()

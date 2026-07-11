@@ -9,16 +9,61 @@ extends Control
 @onready var continue_button: Button = $Menu_Buttons/Continue_button
 @onready var new_button: Button = $Menu_Buttons/New_button
 @onready var exit_button: Button = $Menu_Buttons/Exit_button
+@onready var settings_button: Button = $Menu_Buttons/Settings_Button
+
+const OVERWORLD_SCENE_PATH := "res://scenes/overworld/CyberMap.tscn"
+const SETTINGS_SCENE_PATH := "res://scenes/UI/SettingsScene.tscn"
 
 var menu_open := false
 var menu_start_pos: Vector2
 var labels : Array[Label]
+var settings_scene_instance: CanvasLayer
 
 func _on_new_game_pressed():
 	new_button.disabled = true
 	continue_button.disabled = true
 	exit_button.disabled = true
 
+	await _transition_to_scene("res://scenes/UI/opening_dialogue.tscn")
+
+
+func _on_continue_pressed() -> void:
+	continue_button.disabled = true
+	new_button.disabled = true
+	exit_button.disabled = true
+
+	if not SignalBus.has_saved_game_state():
+		_show_no_save_dialog()
+		continue_button.disabled = false
+		new_button.disabled = false
+		exit_button.disabled = false
+		return
+
+	SignalBus.load_saved_game_state()
+	await _transition_to_scene(OVERWORLD_SCENE_PATH)
+
+
+func _show_no_save_dialog() -> void:
+	var dialog := AcceptDialog.new()
+	dialog.title = "No saved game"
+	dialog.dialog_text = "There are no saved states available yet."
+	dialog.exclusive = true
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.canceled.connect(dialog.queue_free)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_settings_pressed() -> void:
+	if settings_scene_instance == null:
+		settings_scene_instance = load(SETTINGS_SCENE_PATH).instantiate() as CanvasLayer
+		settings_scene_instance.set("show_save_data_button", false)
+		settings_scene_instance.set("return_to_title_screen_on_back", false)
+		add_child(settings_scene_instance)
+
+	if settings_scene_instance.has_method("toggle"):
+		settings_scene_instance.toggle()
+
+func _transition_to_scene(target_scene_path: String) -> void:
 	var fade := ColorRect.new()
 	fade.color = Color.BLACK
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -31,10 +76,9 @@ func _on_new_game_pressed():
 
 	var tween = create_tween()
 	tween.tween_property(fade, "modulate:a", 1.0, 0.4)
-
 	await tween.finished
 
-	get_tree().change_scene_to_file("res://scenes/UI/opening_dialogue.tscn")
+	get_tree().change_scene_to_file(target_scene_path)
 
 	
 func _ready():
@@ -55,6 +99,8 @@ func _ready():
 	menu_buttons.visible = false
 	exit_button.pressed.connect(_on_exit_pressed)
 	new_button.pressed.connect(_on_new_game_pressed)
+	continue_button.pressed.connect(_on_continue_pressed)
+	settings_button.pressed.connect(_on_settings_pressed)
 	
 	title_loop()
 	

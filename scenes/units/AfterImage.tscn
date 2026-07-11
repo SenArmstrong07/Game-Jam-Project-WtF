@@ -8,6 +8,5 @@
 script = ExtResource("1_i671v")
 
 [node name="ghost_sprite" type="AnimatedSprite2D" parent="." unique_id=679567614]
-position = Vector2(-5.9604645e-08, -39)
 scale = Vector2(3.8958333, 3.7890627)
 sprite_frames = SubResource("SpriteFrames_i671v")

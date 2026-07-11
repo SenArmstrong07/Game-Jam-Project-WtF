@@ -24,7 +24,6 @@
 [ext_resource type="Texture2D" uid="uid://c5l8p5q3wyy0m" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_07.png" id="19_qsr6o"]
 [ext_resource type="FontFile" uid="uid://dd7nhuhcdhvun" path="res://assets/ui/ThaleahFat.ttf" id="19_sxqrx"]
 [ext_resource type="PackedScene" uid="uid://b1w6e5v4kh0xq" path="res://scenes/UI/SettingsScene.tscn" id="21_3vs5p"]
-[ext_resource type="Texture2D" uid="uid://dvpi1kjfnwa3c" path="res://assets/ui/craftpix-net-894687-free-gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_11.png" id="21_8crk6"]
 [ext_resource type="Texture2D" uid="uid://ct06j0bja4ca6" path="res://assets/ui/Heart_Full_64.png" id="22_8crk6"]
 [ext_resource type="AudioStream" uid="uid://c8b2uawpi0b32" path="res://assets/FX/OverWorld.ogg" id="23_fkalm"]
 [ext_resource type="AudioStream" uid="uid://cykcx5g3pmxkf" path="res://assets/FX/BossSummon.ogg" id="24_upd6r"]
@@ -218,15 +217,6 @@ theme_override_font_sizes/font_size = 24
 icon = ExtResource("19_qsr6o")
 expand_icon = true
 
-[node name="StatsButton" type="Button" parent="Minimap/BottomAppBar/Apps" unique_id=1900000015]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-theme_override_font_sizes/font_size = 24
-icon = ExtResource("21_8crk6")
-expand_icon = true
-
 [node name="Dialogues" type="CanvasLayer" parent="." unique_id=1599703020]
 script = ExtResource("8_k3dwl")
 
@@ -261,7 +251,7 @@ patch_margin_bottom = 2
 position = Vector2(124.00003, 131)
 scale = Vector2(13.1640625, 14.733594)
 sprite_frames = SubResource("SpriteFrames_udnmi")
-animation = &"MiniBot"
+animation = &"MC"
 autoplay = "MiniBot"
 
 [node name="DialogueBar" type="NinePatchRect" parent="Dialogues/DialogueBar" unique_id=1040545828]
@@ -358,6 +348,7 @@ layout_mode = 2
 texture = ExtResource("22_8crk6")
 
 [node name="SimulateEnemyDel" type="Button" parent="UI" unique_id=1728111055]
+visible = false
 offset_left = 2.0
 offset_top = -4.0
 offset_right = 312.0
@@ -370,56 +361,6 @@ text = "Simulate Enemy Delete"
 [node name="Quest_UI" parent="UI" unique_id=834374770 instance=ExtResource("9_quest")]
 
 [node name="SettingsScene" parent="UI" unique_id=12242666 instance=ExtResource("21_3vs5p")]
-
-[node name="ScanPanel" type="Control" parent="UI" unique_id=1900000021]
-visible = false
-layout_mode = 3
-anchor_left = 0.18
-anchor_top = 0.62
-anchor_right = 0.82
-anchor_bottom = 0.88
-
-[node name="BG" type="NinePatchRect" parent="UI/ScanPanel" unique_id=1900000022]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-texture = ExtResource("9_3vs5p")
-patch_margin_left = 10
-patch_margin_top = 10
-patch_margin_right = 10
-patch_margin_bottom = 10
-
-[node name="Title" type="Label" parent="UI/ScanPanel" unique_id=1900000023]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 0.18
-theme_override_font_sizes/font_size = 28
-text = "SYSTEM SCAN"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ScanInfo" type="Label" parent="UI/ScanPanel" unique_id=1900000024]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.05
-anchor_top = 0.2
-anchor_right = 0.95
-anchor_bottom = 0.8
-theme_override_font_sizes/font_size = 20
-text = "Scan complete: active threats, hidden objectives, and safe paths are displayed here."
-autowrap_mode = 1
-
-[node name="CloseScan" type="Button" parent="UI/ScanPanel" unique_id=1900000025]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.7
-anchor_top = 0.75
-anchor_right = 0.95
-anchor_bottom = 0.92
-theme_override_font_sizes/font_size = 20
-text = "CLOSE"
 
 [node name="LoadingScreen" parent="." unique_id=1500000010 instance=ExtResource("5_loading")]
 visible = false
@@ -435,6 +376,4 @@ stream = ExtResource("25_ibjp1")
 
 [connection signal="pressed" from="Minimap/BottomAppBar/Apps/QuestButton" to="." method="_on_bottom_quest_pressed"]
 [connection signal="pressed" from="Minimap/BottomAppBar/Apps/SettingsButton" to="." method="_on_bottom_settings_pressed"]
-[connection signal="pressed" from="Minimap/BottomAppBar/Apps/StatsButton" to="." method="_on_bottom_stats_pressed"]
 [connection signal="pressed" from="UI/SimulateEnemyDel" to="." method="_on_simulate_remove_enemy_pressed"]
-[connection signal="pressed" from="UI/ScanPanel/CloseScan" to="." method="_on_close_scan_pressed"]

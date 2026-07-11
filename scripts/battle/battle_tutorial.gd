@@ -1166,6 +1166,7 @@ func _check_win_condition():
 		battle_active = false
 
 		print("Player wins!")
+		BattleBgm.play_victory_music()
 		battle_ended.emit(player)
 
 		for e in get_tree().get_nodes_in_group("enemies"):

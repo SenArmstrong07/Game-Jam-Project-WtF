@@ -186,7 +186,7 @@ expand_margin_bottom = 5.0
 shadow_size = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhcqh"]
-bg_color = Color(0.27058825, 0.5764706, 1, 1)
+bg_color = Color(0.4095054, 0.6175563, 0.6960544, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -209,9 +209,37 @@ expand_margin_right = 20.0
 expand_margin_bottom = 3.0
 
 [sub_resource type="Theme" id="Theme_rdh3f"]
+default_font_size = 0
 Button/styles/hover = SubResource("StyleBoxFlat_pdu2t")
 Button/styles/normal = SubResource("StyleBoxFlat_dhcqh")
 Button/styles/pressed = SubResource("StyleBoxFlat_h0oma")
+
+[sub_resource type="Theme" id="Theme_pdu2t"]
+default_font = ExtResource("5_rdh3f")
+default_font_size = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yofis"]
+bg_color = Color(0.108316965, 0.7195088, 0.2799182, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_38qi6"]
+bg_color = Color(0.48187888, 0.6690571, 0.2288652, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_psnhf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_axpjk"]
+bg_color = Color(0.38218987, 0.6879482, 0.3039301, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b8e31"]
 bg_color = Color(0.13682574, 0.13682574, 0.13682568, 1)
@@ -391,9 +419,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -77.0
-offset_top = 108.0
+offset_top = 63.5
 offset_right = 86.0
-offset_bottom = 207.0
+offset_bottom = 251.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
@@ -413,6 +441,19 @@ theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("5_rdh3f")
 theme_override_font_sizes/font_size = 35
 text = "NEW GAME"
+
+[node name="Settings_Button" type="Button" parent="TitleScreenUI/Menu_Buttons" unique_id=380932712]
+custom_minimum_size = Vector2(200, 45)
+layout_mode = 2
+theme = SubResource("Theme_pdu2t")
+theme_override_fonts/font = ExtResource("5_rdh3f")
+theme_override_font_sizes/font_size = 34
+theme_override_styles/normal = SubResource("StyleBoxFlat_yofis")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_38qi6")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_psnhf")
+theme_override_styles/hover = SubResource("StyleBoxFlat_axpjk")
+text = "SETTINGS
+"
 
 [node name="Exit_button" type="Button" parent="TitleScreenUI/Menu_Buttons" unique_id=362748349]
 layout_mode = 2

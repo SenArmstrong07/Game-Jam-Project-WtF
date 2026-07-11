@@ -25,6 +25,8 @@ const EMPTY_HEART = preload("uid://dqb46x6jpp2bw")
 @onready var boss_event_bgm: AudioStreamPlayer = $BossEventBGM
 @onready var warning_fx: AudioStreamPlayer = $WarningFX
 @onready var dialogues: CanvasLayer = $Dialogues
+@onready var simulate_enemy_del: Button = $UI/SimulateEnemyDel
+
 var intro_dialogue_running := false
 var boss_dialogue_running := false
 var dialogue_mode := true
@@ -32,7 +34,7 @@ var dialogue_mode := true
 func _ready() -> void:
 	if overworld_state.is_empty() and not SignalBus.overworld_state.is_empty():
 		overworld_state = SignalBus.overworld_state.duplicate(true)
-
+	simulate_enemy_del.visible = false
 	BattleBgm.stop()
 	BgTitleToDial.stop()
 	add_to_group("Cybermap")
@@ -56,6 +58,7 @@ func _ready() -> void:
 	if corruption_tile_script == null:
 		print("[BOSS] Warning: failed to load corruption tile script: ", corruption_tile_script_path)
 
+	_setup_settings_toggle_input()
 	set_lives(max(0, SignalBus.player_lives))
 
 	#prep the loading screen to cover the tilenodes
@@ -368,6 +371,7 @@ func store_overworld_state() -> void:
 
 	overworld_state = snapshot.duplicate(true)
 	SignalBus.overworld_state = overworld_state.duplicate(true)
+	SignalBus.save_current_game_state()
 	_refresh_quest_ui()
 
 func is_event_in_progress() -> bool:
@@ -384,20 +388,31 @@ func _set_player_controls_locked(locked: bool) -> void:
 	elif player:
 		player.controls_locked = locked
 
+func _setup_settings_toggle_input() -> void:
+	if not InputMap.has_action("toggle_settings"):
+		InputMap.add_action("toggle_settings")
+	InputMap.action_erase_events("toggle_settings")
+	var escape_event := InputEventKey.new()
+	escape_event.keycode = KEY_ESCAPE
+	InputMap.action_add_event("toggle_settings", escape_event)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.is_action_pressed("toggle_settings"):
+		_toggle_settings_window()
+		get_viewport().set_input_as_handled()
+
+func _toggle_settings_window() -> void:
+	var settings_ui = get_node_or_null("UI/SettingsScene")
+	if settings_ui and settings_ui.has_method("toggle"):
+		settings_ui.toggle()
+
 func _on_bottom_quest_pressed() -> void:
 	var quest_ui = get_node_or_null("UI/Quest_UI")
 	if quest_ui and quest_ui.has_method("toggle_quest_ui"):
 		quest_ui.toggle_quest_ui()
 
 func _on_bottom_settings_pressed() -> void:
-	var settings_ui = get_node_or_null("UI/SettingsScene")
-	if settings_ui and settings_ui.has_method("toggle"):
-		settings_ui.toggle()
-#TO CHANGE PA
-func _on_bottom_stats_pressed() -> void:
-	var scan_panel = get_node_or_null("UI/ScanPanel")
-	if scan_panel:
-		scan_panel.visible = true
+	_toggle_settings_window()
 
 func _on_close_settings_pressed() -> void:
 	var settings_panel = get_node_or_null("UI/SettingsPanel")
@@ -610,52 +625,65 @@ func _find_valid_boss_spawn_position() -> Vector2:
 
 
 func _corrupt_tiles_around(spawn_position: Vector2) -> void:
-	# Create small ripple of corruption overlay tiles (black / purple)
+	# Create a small, irregular burst of corruption overlay tiles (black / purple)
 	if frontlayer == null:
 		return
 
 	var center_tile: Vector2i = frontlayer.global_to_map(spawn_position)
 	var max_radius := 2
+	var tile_budget := 18 + randi() % 10
+	var spread_tiles: Array[Vector2i] = []
 
-	for r in range(0, max_radius + 1):
-		var ring_tiles := []
-		for dx in range(-r, r + 1):
-			for dy in range(-r, r + 1):
-				if max(abs(dx), abs(dy)) != r:
-					continue
-				var t := center_tile + Vector2i(dx, dy)
-				if not frontlayer.is_tile_walkable(t):
-					continue
-				ring_tiles.append(t)
+	# Generate a jittered cluster so the corruption looks rough and uneven rather than square.
+	for attempt in range(0, tile_budget * 3):
+		var radius := int(round(randf_range(0.0, max_radius)))
+		var angle := randf() * TAU
+		var drift_x := randi_range(-1, 1)
+		var drift_y := randi_range(-1, 1)
 
-		# Scatter tiles in ring randomly for more organic look
-		ring_tiles.shuffle()
+		var dx := int(round(cos(angle) * radius)) + drift_x
+		var dy := int(round(sin(angle) * radius)) + drift_y
+		var t := center_tile + Vector2i(dx, dy)
 
-		for t in ring_tiles:
-			var pos = frontlayer.map_to_global(t)
-			var node := Node2D.new()
-			node.set_script(corruption_tile_script)
-			if node is Node2D:
-					# Parent corruption overlays to the frontlayer so their positions align
-					# with the tilemap's local coordinates and transforms.
-					frontlayer.add_child(node)
-					# compute scaled tile size and center the overlay on the tile
-					var tile_sz := int(frontlayer.tile_size * CORRUPTION_SCALE)
-					node.set("tile_size", tile_sz)
-					# frontlayer.to_local(pos) gives the tile position in frontlayer local coords
-					var local_center := frontlayer.to_local(pos)
-					# position node so its top-left aligns to center - half tile_sz
-					node.position = local_center - Vector2(tile_sz / 2.0, tile_sz / 2.0)
-					# place corruption overlay above tiles but below characters
-					if node is CanvasItem:
-						node.z_index = 5
-					# Randomize color between black and purple
-					var c = Color(0, 0, 0) if randi() % 2 == 0 else Color(0.45, 0.0, 0.45)
-					node.set("color", c)
-					# allow scaling handled earlier; no further action
+		if not frontlayer.is_tile_walkable(t):
+			continue
+		if spread_tiles.has(t):
+			continue
 
-			# small delay between tiles to create ripple
-			await get_tree().create_timer(0.06).timeout
+		spread_tiles.append(t)
+		if spread_tiles.size() >= tile_budget:
+			break
+
+	if spread_tiles.is_empty():
+		spread_tiles.append(center_tile)
+
+	spread_tiles.shuffle()
+
+	for t in spread_tiles:
+		var pos = frontlayer.map_to_global(t)
+		var node := Node2D.new()
+		node.set_script(corruption_tile_script)
+		if node is Node2D:
+				# Parent corruption overlays to the frontlayer so their positions align
+				# with the tilemap's local coordinates and transforms.
+				frontlayer.add_child(node)
+				# compute scaled tile size and center the overlay on the tile
+				var tile_sz := int(frontlayer.tile_size * CORRUPTION_SCALE)
+				node.set("tile_size", tile_sz)
+				# frontlayer.to_local(pos) gives the tile position in frontlayer local coords
+				var local_center := frontlayer.to_local(pos)
+				# position node so its top-left aligns to center - half tile_sz
+				node.position = local_center - Vector2(tile_sz / 2.0, tile_sz / 2.0)
+				# place corruption overlay above tiles but below characters
+				if node is CanvasItem:
+					node.z_index = 5
+				# Randomize color between black and purple
+				var c = Color(0, 0, 0) if randi() % 2 == 0 else Color(0.45, 0.0, 0.45)
+				node.set("color", c)
+				# allow scaling handled earlier; no further action
+
+		# small delay between tiles to create ripple
+		await get_tree().create_timer(0.06).timeout
 
 func _delayed_return_boss_summon() -> void:
 	if not SignalBus.summon_boss_on_return or boss_summon_in_progress:

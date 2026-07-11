@@ -986,6 +986,7 @@ func _check_win_condition():
 		move_shuffle.hide_bar()
 
 		print("Player wins!")
+		BattleBgm.play_victory_music()
 		victory_overlay.show_victory()
 		battle_ended.emit(player)
 

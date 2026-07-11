@@ -11,6 +11,8 @@ var settings_quest_toggle_key := "M"
 var settings_dash_btn := "Ctrl"
 var settings_music_volume := 0.8
 var settings_sfx_volume := 0.8
+var show_save_data_button := true
+var return_to_title_screen_on_back := true
 var button_group: ButtonGroup
 var final_position: Vector2 = Vector2.ZERO
 
@@ -44,9 +46,13 @@ func _ready() -> void:
 	sfx_slider.value_changed.connect(func(value: float) -> void: _set_bus_volume("SFX", value))
 	save_button.pressed.connect(_on_save_pressed)
 	back_button.pressed.connect(_on_back_to_menu_pressed)
+	_apply_view_mode()
 	_apply_settings_to_ui()
 	hide()
 	
+func _apply_view_mode() -> void:
+	if save_button != null:
+		save_button.visible = show_save_data_button
 	
 func _show_with_slide() -> void:
 	await get_tree().process_frame
@@ -166,6 +172,7 @@ func _save_settings_to_disk() -> void:
 	config.set_value("audio", "music", settings_music_volume)
 	config.set_value("audio", "sfx", settings_sfx_volume)
 	config.save(SETTINGS_CONFIG_PATH)
+	SignalBus.save_current_game_state()
 
 func _on_save_pressed() -> void:
 	_save_settings_to_disk()
@@ -176,7 +183,8 @@ func _on_save_pressed() -> void:
 func _on_back_to_menu_pressed() -> void:
 	_save_settings_to_disk()
 	await _hide_with_slide()
-	get_tree().change_scene_to_file("res://scenes/UI/TitleScreen.tscn")
+	if return_to_title_screen_on_back:
+		get_tree().change_scene_to_file("res://scenes/UI/TitleScreen.tscn")
 
 func _hide_with_slide() -> void:
 	var tween := create_tween()

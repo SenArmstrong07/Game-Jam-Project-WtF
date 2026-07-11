@@ -150,21 +150,30 @@ func _unhandled_input(event):
 
 	move_dir = Vector2i.ZERO
 
-	if event.is_action_pressed("ui_right"):
-		move_dir = Vector2i.RIGHT
-		facing = Vector2i.RIGHT
+	var action_map := {
+		"right": Vector2i.RIGHT,
+		"ui_right": Vector2i.RIGHT,
+		"left": Vector2i.LEFT,
+		"ui_left": Vector2i.LEFT,
+		"down": Vector2i.DOWN,
+		"ui_down": Vector2i.DOWN,
+		"up": Vector2i.UP,
+		"ui_up": Vector2i.UP
+	}
 
-	elif event.is_action_pressed("ui_left"):
-		move_dir = Vector2i.LEFT
-		facing = Vector2i.LEFT
-
-	elif event.is_action_pressed("ui_down"):
-		move_dir = Vector2i.DOWN
-		facing = Vector2i.DOWN
-
-	elif event.is_action_pressed("ui_up"):
-		move_dir = Vector2i.UP
-		facing = Vector2i.UP
+	for action_name in action_map.keys():
+		if event.is_action_pressed(action_name):
+			move_dir = action_map[action_name]
+			match action_name:
+				"right", "ui_right":
+					facing = Vector2i.RIGHT
+				"left", "ui_left":
+					facing = Vector2i.LEFT
+				"down", "ui_down":
+					facing = Vector2i.DOWN
+				"up", "ui_up":
+					facing = Vector2i.UP
+			break
 
 	if move_dir == Vector2i.ZERO:
 		return

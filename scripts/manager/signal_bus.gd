@@ -19,6 +19,8 @@ var boss_dialogue_played := false
 var final_boss_defeated := false
 var final_boss_ending_played := false
 var final_boss_return_position: Vector2 = Vector2.ZERO
+var boss_victory_offset_player := false
+var boss_victory_position: Vector2 = Vector2.ZERO
 
 var current_encounter: EncounterData
 var in_transition := false
@@ -114,6 +116,8 @@ func reset_story_flags() -> void:
 	final_boss_defeated = false
 	final_boss_ending_played = false
 	final_boss_return_position = Vector2.ZERO
+	boss_victory_offset_player = false
+	boss_victory_position = Vector2.ZERO
 	summon_boss_on_return = false
 	current_encounter = null
 
@@ -179,15 +183,24 @@ func return_to_overworld(lost_battle: bool = false):
 
 	if not lost_battle and current_encounter != null:
 		var is_final_boss_battle := current_encounter.battle_scene == BOSS_SPAG
+		var defeated_pos = current_encounter.overworld_enemy_position
+		
 		if is_final_boss_battle:
 			final_boss_defeated = true
 			final_boss_ending_played = false
-			final_boss_return_position = current_encounter.overworld_enemy_position
+			final_boss_return_position = defeated_pos
 			summon_boss_on_return = false
-			print("[SIGNAL_BUS] Final boss defeated; ending sequence queued on return")
+			boss_victory_offset_player = true
+			boss_victory_position = defeated_pos
+			if overworld_state.has("enemies"):
+				overworld_state["enemies"] = overworld_state["enemies"].filter(
+					func(e):
+						return e["position"] != defeated_pos
+				)
+			print("[SIGNAL_BUS] Final boss defeated; player offset queued, ending sequence queued on return")
 		else:
-			#Return to overworld and remove defeated enemy from overworld state
-			var defeated_pos = current_encounter.overworld_enemy_position
+			boss_victory_offset_player = true
+			boss_victory_position = defeated_pos
 			if overworld_state.has("enemies"):
 				overworld_state["enemies"] = overworld_state["enemies"].filter(
 					func(e):

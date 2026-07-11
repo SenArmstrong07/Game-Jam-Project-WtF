@@ -394,7 +394,6 @@ layout_mode = 2
 texture = ExtResource("22_8crk6")
 
 [node name="SimulateEnemyDel" type="Button" parent="UI" unique_id=1728111055]
-visible = false
 offset_left = 2.0
 offset_top = -4.0
 offset_right = 312.0

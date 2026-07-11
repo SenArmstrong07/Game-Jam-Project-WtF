@@ -24,7 +24,7 @@
 [ext_resource type="Texture2D" uid="uid://clcmuxpv4t86c" path="res://assets/characters/MC/RightWalk4.png" id="22_w861o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_htfs1"]
-size = Vector2(63, 76)
+size = Vector2(10, 54)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1trwp"]
 animations = [{
@@ -136,7 +136,7 @@ script = ExtResource("1_htfs1")
 after_image_scene = ExtResource("3_wtqxo")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=135061941]
-position = Vector2(2.5, 23)
+position = Vector2(0, 27)
 shape = SubResource("RectangleShape2D_htfs1")
 
 [node name="PlayerSprite" type="AnimatedSprite2D" parent="." unique_id=1387586675]

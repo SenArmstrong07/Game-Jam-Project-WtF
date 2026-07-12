@@ -172,9 +172,18 @@ func _change_to_battle() -> void:
 		current_encounter.battle_scene.resource_path
 	)
 
+func should_skip_overworld_return(lost_battle: bool = false) -> bool:
+	return lost_battle and player_lives <= 0
+
 func return_to_overworld(lost_battle: bool = false):
 	respawn_to_safe_spawn = lost_battle
 	cache_overworld_state()
+
+	if should_skip_overworld_return(lost_battle):
+		print("[SIGNAL_BUS] Player lives reached zero; routing directly to game over scene")
+		in_transition = true
+		get_tree().change_scene_to_file("res://scenes/UI/GameOverScene.tscn")
+		return
 
 	var enemy = current_encounter.overworld_enemy if current_encounter else null
 

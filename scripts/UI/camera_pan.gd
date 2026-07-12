@@ -1,7 +1,7 @@
 extends Camera2D
 
 @export var intro_offset := Vector2(0, -80)
-@export var intro_duration := 1.2
+@export var intro_duration := 0.5
 
 var target_position: Vector2
 

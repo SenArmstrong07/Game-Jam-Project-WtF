@@ -42,10 +42,10 @@ color = Color(0.1, 0.1, 0.1, 1)
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 490.0
+offset_left = 459.5
 offset_top = 254.0
-offset_right = -490.0
-offset_bottom = -323.0
+offset_right = -459.5
+offset_bottom = -207.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -53,14 +53,14 @@ grow_vertical = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_yu3x3")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 40
 text = "Generating world..."
 horizontal_alignment = 1
 
 [node name="LoadingSpinner" type="AnimatedSprite2D" parent="VBoxContainer" unique_id=1234567894]
 unique_name_in_owner = true
-position = Vector2(145.00002, 73)
-scale = Vector2(5.500002, 4.7499995)
+position = Vector2(176.50002, 155)
+scale = Vector2(8.375002, 7.6249995)
 sprite_frames = SubResource("SpriteFrames_loading")
 animation = &"spin"
 autoplay = "spin"

@@ -1,8 +1,8 @@
 extends ColorRect
 
-const GLITCH_OUT_TIME := 0.6
-const GLITCH_IN_TIME := 0.4
-const GLITCH_HOLD_TIME := 0.6
+const GLITCH_OUT_TIME := 0.2
+const GLITCH_IN_TIME := 0.2
+const GLITCH_HOLD_TIME := 0.08
 
 func _ready() -> void:
 	pass

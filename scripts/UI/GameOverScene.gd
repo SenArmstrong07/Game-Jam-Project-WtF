@@ -12,8 +12,10 @@ func _ready() -> void:
 	prompt_label.modulate.a = 0.0
 	await get_tree().process_frame
 	await _play_sequence()
+	SignalBus.in_transition = false
 
 func _play_sequence() -> void:
+	SignalBus.in_transition = true
 	EncounterTransition.visible = true
 	
 	#Capture the last shot

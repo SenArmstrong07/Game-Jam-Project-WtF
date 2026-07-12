@@ -2,9 +2,9 @@ extends CanvasLayer
 
 signal finished
 
-const GLITCH_OUT_TIME := 0.3
-const GLITCH_IN_TIME := 0.4
-const GLITCH_HOLD_TIME := 0.2
+const GLITCH_OUT_TIME := 0.2
+const GLITCH_IN_TIME := 0.2
+const GLITCH_HOLD_TIME := 0.08
 const RETURN_FADE_TIME := 0.2
 @onready var overworld_shot: TextureRect = $OverworldShot
 @onready var glitch_overlay: ColorRect = $GlitchOverlay
@@ -12,6 +12,8 @@ const RETURN_FADE_TIME := 0.2
 @onready var flash: ColorRect = $Flash
 @onready var fade: ColorRect = $Fade
 @onready var glitch_player: AudioStreamPlayer = $GlitchPlayer
+
+var transition_in_progress := false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -82,18 +84,23 @@ func _play_glitch_sfx() -> void:
 		glitch_player.stop()
 		glitch_player.play()
 
-func _wait_for_current_scene() -> Node:
+func _wait_for_scene(target_scene_path: String, timeout_sec: float = 0.75) -> Node:
 	var tree := get_tree()
 	if tree == null:
 		return null
 
-	for i in range(3):
+	var deadline := Time.get_ticks_msec() + int(timeout_sec * 1000.0)
+	var last_scene: Node = null
+
+	while Time.get_ticks_msec() < deadline:
 		await tree.process_frame
 		var scene_root := tree.current_scene
 		if is_instance_valid(scene_root):
-			return scene_root
+			if target_scene_path.is_empty() or scene_root.scene_file_path == target_scene_path:
+				return scene_root
+			last_scene = scene_root
 
-	return null
+	return last_scene
 
 func play_out() -> void:
 	if not is_instance_valid(glitch_overlay):
@@ -138,6 +145,11 @@ func play_out() -> void:
 
 
 func transition_to_battle(battlescene: String) -> void:
+	if transition_in_progress:
+		return
+
+	transition_in_progress = true
+	SignalBus.in_transition = true
 	visible = true
 	reset()
 	
@@ -158,19 +170,15 @@ func transition_to_battle(battlescene: String) -> void:
 
 	await play_out()
 	
-	#load Battle
-	get_tree().change_scene_to_file(battlescene)
-	
-	
-	#wait till Battlesene has rendered
-	await RenderingServer.frame_post_draw
-	await RenderingServer.frame_post_draw
-
-	var scene_root := await _wait_for_current_scene()
-	if is_instance_valid(scene_root):
-		print("Current scene:", scene_root.name)
+	var scene_change_error := get_tree().change_scene_to_file(battlescene)
+	if scene_change_error != OK:
+		push_error("[EncounterTransition] Failed to change scene to %s" % battlescene)
 	else:
-		print("Current scene unavailable during transition")
+		var scene_root := await _wait_for_scene(battlescene, 0.75)
+		if is_instance_valid(scene_root):
+			print("Current scene:", scene_root.name)
+		else:
+			print("Current scene unavailable during transition")
 
 	_set_visible(overworld_shot, false)
 
@@ -182,18 +190,17 @@ func transition_to_battle(battlescene: String) -> void:
 	_set_visible(flash, false)
 
 	visible = false
-
-	if is_instance_valid(overworld_shot):
-		print("OverworldShot visible:", overworld_shot.visible)
-		print("Overworld alpha:", overworld_shot.modulate.a)
-		print("Overworld texture:", overworld_shot.texture)
-		print("Material:", overworld_shot.material)
-
-	print("Transition visible:", visible)
+	transition_in_progress = false
+	SignalBus.in_transition = false
 	finished.emit()
 
 
 func transition_to_overworld() -> void:
+	if transition_in_progress:
+		return
+
+	transition_in_progress = true
+	SignalBus.in_transition = true
 	visible = true
 	reset()
 
@@ -203,22 +210,18 @@ func transition_to_overworld() -> void:
 
 	await get_tree().process_frame
 
-	# Wait until the overworld is actually ready for player input
-	var frontlayer = get_tree().get_first_node_in_group("frontlayer")
+	var deadline := Time.get_ticks_msec() + int(0.75 * 1000.0)
+	var frontlayer: Node = null
+	while Time.get_ticks_msec() < deadline:
+		frontlayer = get_tree().get_first_node_in_group("frontlayer")
+		if is_instance_valid(frontlayer):
+			var overworld_ready: bool = bool(frontlayer.get("is_world_ready"))
+			if overworld_ready:
+				break
+		await get_tree().process_frame
 
-	if frontlayer:
-		var timer = get_tree().create_timer(5.0)
-		var completed : bool = false
-		frontlayer.overworld_ready.connect(
-			func():
-				completed = true,
-			CONNECT_ONE_SHOT
-		)
-		while !completed and timer.time_left > 0:
-			await get_tree().process_frame
-
-		if !completed:
-			push_warning("[EncounterTransition] Timed out waiting for overworld_ready.")
+	if not is_instance_valid(frontlayer):
+		push_warning("[EncounterTransition] Frontlayer unavailable during overworld return")
 
 	# NOW reveal it
 	await play_return_fade()
@@ -226,11 +229,15 @@ func transition_to_overworld() -> void:
 	reset()
 
 	visible = false
+	transition_in_progress = false
+	SignalBus.in_transition = false
 	finished.emit()
 
 #SPECIFICALLY FOR GAME OVER:
 
 func play_game_over_intro() -> void:
+	transition_in_progress = true
+	SignalBus.in_transition = true
 	visible = true
 	reset()
 
@@ -250,6 +257,12 @@ func play_game_over_intro() -> void:
 	await play_return_fade()
 
 	overworld_shot.visible = false
+	_set_visible(glitch_overlay, false)
+	_set_visible(fade, false)
+	_set_visible(flash, false)
+	visible = false
+	transition_in_progress = false
+	SignalBus.in_transition = false
 
 func play_return_fade() -> void:
 	reset()

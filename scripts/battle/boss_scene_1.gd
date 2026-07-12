@@ -81,7 +81,6 @@ func _ready() -> void:
 	SignalBus.victory_continue.connect(_on_victory_continue)
 
 	battle_preperations.visible = false
-	battle_preperations.play_intro()
 	battle_scene = find_battle_scene()
 	player_deck = ChipDeck.new()
 	update_player_ui()
@@ -134,14 +133,15 @@ func play_battle_intro() -> void:
 	ui.visible = false
 	battle_preperations.visible = false
 
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(0.05).timeout
 
+	camera.intro_duration = 0.4
 	await camera.play_intro()
 
 	# Player teleports in
 	await laser_spawn(player)
 
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(0.05).timeout
 
 	# Boss crashes down
 	for enemy in enemies:
@@ -167,7 +167,7 @@ func boss_drop_spawn(boss: Unit) -> void:
 		boss,
 		"position",
 		target,
-		0.45
+		0.22
 	).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
 
 	await tween.finished
@@ -179,14 +179,14 @@ func boss_drop_spawn(boss: Unit) -> void:
 		boss,
 		"position",
 		target + Vector2(0, 12),
-		0.05
+		0.03
 	).set_trans(Tween.TRANS_LINEAR)
 
 	impact.tween_property(
 		boss,
 		"position",
 		target,
-		0.08
+		0.05
 	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 	# Camera shake
@@ -242,7 +242,7 @@ func laser_spawn(unit: Unit) -> void:
 	# Beam travelling down
 	# ==============================
 
-	var duration: float = 0.14
+	var duration: float = 0.08
 	var elapsed: float = 0.0
 
 	while elapsed < duration:
@@ -1070,10 +1070,9 @@ func _on_unit_died(unit: Unit) -> void:
 	battle_active = false
 
 	print("Enemy wins!")
+	SignalBus.player_lives = max(0, SignalBus.player_lives - 1)
 	battle_ended.emit(enemies[0] if enemies.size() > 0 else null)
-
-	await get_tree().create_timer(1.0).timeout
-	get_tree().reload_current_scene()
+	await SignalBus.return_to_overworld(true)
 
 func end_battle() -> void:
 	SignalBus.return_to_overworld()

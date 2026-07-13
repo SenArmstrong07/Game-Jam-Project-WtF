@@ -6,7 +6,11 @@ var damage: int = 10
 var chip: Chip = null
 var speed := 300.0
 
+@onready var gpu_particles_2d_2: GPUParticles2D = $GPUParticles2D2
 @onready var particles: GPUParticles2D = $GPUParticles2D
+var trail_angle := 0.0
+const TRAIL_RADIUS := 20.0
+const TRAIL_SPEED := 15.0
 
 func _ready():
 	particles.emitting = true
@@ -37,6 +41,17 @@ func play_sfx(
 	)
 
 func _process(delta):
+	trail_angle += TRAIL_SPEED * delta
+
+	gpu_particles_2d_2.position = Vector2(
+		cos(trail_angle),
+		sin(trail_angle)
+	) * TRAIL_RADIUS
+
+	particles.position = Vector2(
+		cos(trail_angle + PI),
+		sin(trail_angle + PI)
+	) * TRAIL_RADIUS
 	if !is_instance_valid(target):
 		queue_free()
 		return

@@ -4,7 +4,7 @@ const ISOLATION = preload("uid://ctcutosgfkvp5")
 var direction: Vector2 = Vector2.RIGHT
 var speed: float = 900.0
 var damage: int = 10
-var stun_duration: float = 2.0
+var stun_duration: float = 1.0
 var chip: Chip = null
 
 var hit := false

@@ -47,7 +47,14 @@ particle_flag_disable_z = true
 gravity = Vector3(0, 98, 0)
 scale_min = 7.0
 scale_max = 7.0
-color = Color(1.7871643, 1.9175686, 2.080574, 1)
+color = Color(6.069428e-05, 1.7536987, 1.9538106, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xilke"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 98, 0)
+scale_min = 7.0
+scale_max = 7.0
+color = Color(2.0807502, 1.9140342, 2.0807502, 1)
 
 [node name="Area2D" type="Area2D" unique_id=1163917299]
 script = ExtResource("1_1dyfa")
@@ -66,8 +73,24 @@ position = Vector2(-13, -10)
 rect = Rect2(-10, -10, 46, 42)
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1124391628]
-position = Vector2(-20, 0)
-amount = 40
+modulate = Color(0.5411765, 1, 1, 1)
+position = Vector2(-29, 0)
+skew = -0.20943952
+amount = 42
 lifetime = 0.25
+speed_scale = 2.0
 trail_enabled = true
+trail_sections = 10
+trail_section_subdivisions = 5
 process_material = SubResource("ParticleProcessMaterial_5sim1")
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="." unique_id=802809623]
+position = Vector2(-29, 0)
+skew = -0.20943952
+amount = 42
+lifetime = 0.25
+speed_scale = 2.0
+trail_enabled = true
+trail_sections = 10
+trail_section_subdivisions = 5
+process_material = SubResource("ParticleProcessMaterial_xilke")

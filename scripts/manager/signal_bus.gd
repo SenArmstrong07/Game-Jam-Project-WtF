@@ -37,6 +37,16 @@ const SAVE_GAME_PATH := "user://saved_game.cfg"
 signal battle_won
 signal victory_continue
 
+var tutorial_completed := false
+
+
+func _ready():
+	SignalBus.load_tutorial_completion()
+
+	print(
+		"Tutorial = ",
+		SignalBus.tutorial_completed
+	)
 
 func has_saved_game_state() -> bool:
 	var config := ConfigFile.new()
@@ -85,7 +95,34 @@ func save_current_game_state(explicit_save: bool = false) -> bool:
 	var err := config.save(SAVE_GAME_PATH)
 	return err == OK
 
+func save_tutorial_completion() -> void:
+	var config := ConfigFile.new()
 
+	# load the file if it exists
+	config.load(SAVE_GAME_PATH)
+
+	config.set_value(
+		"save_state",
+		"tutorial_completed",
+		true
+	)
+
+	config.save(SAVE_GAME_PATH)
+
+func load_tutorial_completion() -> void:
+	var config := ConfigFile.new()
+
+	if config.load(SAVE_GAME_PATH) != OK:
+		tutorial_completed = false
+		return
+
+	tutorial_completed = bool(
+		config.get_value(
+			"save_state",
+			"tutorial_completed",
+			false
+		)
+	)
 func load_saved_game_state() -> Dictionary:
 	var config := ConfigFile.new()
 	var err := config.load(SAVE_GAME_PATH)

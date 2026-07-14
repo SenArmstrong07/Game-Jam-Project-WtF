@@ -8,7 +8,7 @@ enum Team {
 	PLAYER,
 	ENEMY
 }
-
+var hitstopped := false
 var is_hurt := false
 var team: Team
 var is_dead: bool = false

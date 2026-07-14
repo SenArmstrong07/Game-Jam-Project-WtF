@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://bfg0cauowuf3e"]
+
+[sub_resource type="GDScript" id="GDScript_j3g2a"]
+script/source = "extends Node
+
+func do_enemy_hitstop(enemy:Node,duration:float):
+
+	if enemy == null:
+		return
+
+	enemy.hitstopped = true
+
+	await get_tree().create_timer(duration).timeout
+
+	if is_instance_valid(enemy):
+		enemy.hitstopped = false
+
+
+func do_player_hitstop(player:Node,duration:float):
+
+	if player == null:
+		return
+
+	player.hitstopped = true
+
+	await get_tree().create_timer(duration).timeout
+
+	if is_instance_valid(player):
+		player.hitstopped = false
+
+
+func do_global_hitstop(duration:float):
+
+	for node in get_tree().get_nodes_in_group(\"hitstop\"):
+		node.hitstopped = true
+
+	await get_tree().create_timer(duration).timeout
+
+	for node in get_tree().get_nodes_in_group(\"hitstop\"):
+
+		if is_instance_valid(node):
+			node.hitstopped = false
+"
+
+[node name="HitStop" type="Node2D" unique_id=1611932668]
+script = SubResource("GDScript_j3g2a")

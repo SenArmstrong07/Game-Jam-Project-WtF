@@ -1,10 +1,13 @@
 extends Control
 
+
 @onready var mc: AnimatedSprite2D = $DialogueBar/CharacterPict/Control/mc
 @onready var mini_bot: AnimatedSprite2D = $DialogueBar/CharacterPict/Control/minibot
 @onready var rich_text_label: RichTextLabel = $DialogueBar/DialogueBar/RichTextLabel
 @onready var character_name: Label = $DialogueBar/CharacterTag/CharacterName
 @onready var bg_image: TextureRect = $BG_Image
+
+@onready var button: Button = $"../Skip_Button/Button"
 
 const PIXEL_ART_FUTURE = preload("uid://c1gtir630iu6e")
 const PIXEL_ART_HOLE = preload("uid://7ig0g7drg7o7")
@@ -201,6 +204,12 @@ var dialogue = [
 var dialogue_index = 0
 
 func _ready() -> void:
+	button.disabled = !SignalBus.tutorial_completed
+	if !SignalBus.tutorial_completed:
+		button.tooltip_text = "Complete the Tutorial first to unlock Skip."
+	else:
+		button.tooltip_text = "Skip the Introduction and Tutorial."
+	
 	dialogue_bar_start_position = dialogue_bar.position
 	dialogue_bar_start_scale = dialogue_bar.scale
 
@@ -218,7 +227,16 @@ func _ready() -> void:
 
 	await play_intro_transition("IN THE FUTURE\nFAR FROM NOW...")
 	transition_finished = true
-	
+
+func _on_button_pressed():
+
+	if !SignalBus.tutorial_completed:
+		return
+
+	get_tree().change_scene_to_file(
+		"res://scenes/overworld/CyberMap.tscn"
+	)
+		
 func play_intro_transition(message: String) -> void:
 	transition_label.text = message
 

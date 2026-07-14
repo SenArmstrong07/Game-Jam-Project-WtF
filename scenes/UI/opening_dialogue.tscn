@@ -103,6 +103,59 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mttey"]
+bg_color = Color(0.02745098, 0.5647059, 0.83137256, 1)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.02745098, 0.45882353, 0.83137256, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8opgy"]
+bg_color = Color(0.011764706, 0.38039216, 0.6666667, 1)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.010657207, 0.22853765, 0.58834916, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qtgru"]
+bg_color = Color(0.02745098, 0.5647059, 0.83137256, 1)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.02745098, 0.37254903, 0.83137256, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8htv2"]
+bg_color = Color(0.0035678844, 0.29720095, 0.5508848, 1)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.00795339, 0.13769221, 0.4922768, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="Theme" id="Theme_1y54r"]
+Button/constants/outline_size = 2
+Button/font_sizes/font_size = 24
+Button/fonts/font = ExtResource("4_usdpe")
+Button/styles/disabled = SubResource("StyleBoxFlat_mttey")
+Button/styles/hover = SubResource("StyleBoxFlat_8opgy")
+Button/styles/normal = SubResource("StyleBoxFlat_qtgru")
+Button/styles/pressed = SubResource("StyleBoxFlat_8htv2")
+
 [node name="Opening_dialogue" type="Node2D" unique_id=1859898110]
 
 [node name="Dialogue_UI" type="Control" parent="." unique_id=579979889]
@@ -191,7 +244,7 @@ anchor_right = 0.994
 anchor_bottom = 0.96800005
 offset_left = -6.630005
 offset_top = 1.0
-offset_right = 12.692017
+offset_right = 4.6920166
 offset_bottom = 6.967987
 texture = ExtResource("7_6cyn7")
 patch_margin_left = 15
@@ -281,3 +334,25 @@ theme_override_fonts/font = ExtResource("3_5p8dl")
 theme_override_font_sizes/font_size = 100
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Skip_Button" type="NinePatchRect" parent="." unique_id=1423213119]
+offset_left = 1081.0
+offset_top = 410.0
+offset_right = 1277.0
+offset_bottom = 463.0
+texture = ExtResource("2_7ldpq")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Button" type="Button" parent="Skip_Button" unique_id=624242401]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 193.0
+offset_bottom = 51.0
+theme = SubResource("Theme_1y54r")
+text = "SKIP TO MAP"
+
+[connection signal="pressed" from="Skip_Button/Button" to="Dialogue_UI" method="_on_button_pressed"]

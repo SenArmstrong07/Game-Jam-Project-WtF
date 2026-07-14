@@ -2,15 +2,27 @@ extends Area2D
 
 @onready var sparks: GPUParticles2D = $Sparks
 signal player_stunned(tile: Vector2i)
+@onready var throwable_1: Sprite2D = $throwable_1
+@onready var throwable_2: Sprite2D = $throwable_2
+@onready var throwable_3: Sprite2D = $throwable_3
+@onready var throwable_4: Sprite2D = $throwable_4
 
 const TILE_SIZE := 64
 const X_OFFSET := 0
-@export var lifespan: float = 5.0
+@export var lifespan: float = 10.0
 var triggered := false
 var landed := false
 var grid_pos := Vector2i.ZERO
 const BOSS_PROJECTILE = preload("uid://dpqks7y6diyji")
 const TRAP_PROJECTILE = preload("uid://dvj4kvagu5wy2")
+var hitstopped := false
+
+@onready var throwables := [
+	$throwable_1,
+	$throwable_2,
+	$throwable_3,
+	$throwable_4
+]
 
 func play_sfx(
 	stream: AudioStream,
@@ -51,7 +63,13 @@ func _ready():
 	play_sfx(BOSS_PROJECTILE, -15)
 	body_entered.connect(_on_body_entered)
 	add_to_group("enemy_projectiles")
-	
+	if hitstopped:
+		return
+	for sprite in throwables:
+		sprite.visible = false
+
+	throwables[randi() % throwables.size()].visible = true
+
 func grid_to_world(cell:Vector2i)->Vector2:
 
 	return Vector2(
@@ -74,22 +92,25 @@ func throw_to(target_tile: Vector2i):
 
 	while elapsed < flight_time:
 
+		if !is_inside_tree():
+			return
+
+		var tree := get_tree()
+
+		if tree == null:
+			return
+
 		var t: float = elapsed / flight_time
 
-		# Smooth horizontal movement
 		var pos: Vector2 = start.lerp(end, t)
-
-		# Parabolic arc
 		pos.y -= 4.0 * arc_height * t * (1.0 - t)
 
 		global_position = pos
 
-		# Spin while flying
 		rotation += 20.0 * get_process_delta_time()
-
 		elapsed += get_process_delta_time()
 
-		await get_tree().process_frame
+		await tree.process_frame
 
 	global_position = end
 	rotation = 0

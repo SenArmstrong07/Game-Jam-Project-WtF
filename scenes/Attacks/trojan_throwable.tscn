@@ -1,43 +1,10 @@
 [gd_scene format=3 uid="uid://b6oe25yx1mgl3"]
 
-[ext_resource type="Texture2D" uid="uid://cppdtlfoweu1a" path="res://assets/characters/Glacier_Man_Asset_Pack/Items/PNG/Large_Health_Drop.png" id="1_mo8un"]
 [ext_resource type="Script" uid="uid://d1t8ga115njfd" path="res://scripts/manager/trojan_throwable.gd" id="1_ylc7g"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ylc7g"]
-atlas = ExtResource("1_mo8un")
-region = Rect2(0, 0, 8, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hxek2"]
-atlas = ExtResource("1_mo8un")
-region = Rect2(8, 0, 8, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w20ub"]
-atlas = ExtResource("1_mo8un")
-region = Rect2(16, 0, 8, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3tgcn"]
-atlas = ExtResource("1_mo8un")
-region = Rect2(24, 0, 8, 16)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_7nrbm"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ylc7g")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hxek2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_w20ub")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3tgcn")
-}],
-"loop": 1,
-"name": &"default",
-"speed": 5.0
-}]
+[ext_resource type="Texture2D" uid="uid://dvugryq1bvsjj" path="res://assets/characters/Throw Bug/Icon14_09.png" id="3_hxtgg"]
+[ext_resource type="Texture2D" uid="uid://ebq5w0mfrqp3" path="res://assets/characters/Throw Bug/Icon14_21.png" id="4_llujr"]
+[ext_resource type="Texture2D" uid="uid://d2enoa4drdpqv" path="res://assets/characters/Throw Bug/Icon14_32.png" id="5_n4ouu"]
+[ext_resource type="Texture2D" uid="uid://bvygsbe3hr8mj" path="res://assets/characters/Throw Bug/Icon14_22.png" id="6_wd0f1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1y54r"]
 radius = 8.0
@@ -59,12 +26,6 @@ collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_ylc7g")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=965296656]
-position = Vector2(0, -1)
-scale = Vector2(4.5, 3)
-sprite_frames = SubResource("SpriteFrames_7nrbm")
-frame_progress = 0.6061541
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=815551253]
 position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_1y54r")
@@ -76,5 +37,25 @@ lifetime = 0.18000000000000002
 one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_hxek2")
+
+[node name="throwable_1" type="Sprite2D" parent="." unique_id=1912890577]
+position = Vector2(1, -1)
+scale = Vector2(1.5, 1.59375)
+texture = ExtResource("3_hxtgg")
+
+[node name="throwable_2" type="Sprite2D" parent="." unique_id=1513005271]
+position = Vector2(1.2499986, 0.24999881)
+scale = Vector2(1.6718749, 1.4218749)
+texture = ExtResource("4_llujr")
+
+[node name="throwable_3" type="Sprite2D" parent="." unique_id=1960901695]
+position = Vector2(0, -0.5)
+scale = Vector2(1.125, 1.09375)
+texture = ExtResource("5_n4ouu")
+
+[node name="throwable_4" type="Sprite2D" parent="." unique_id=933459059]
+position = Vector2(1.4305115e-06, -0.24999857)
+scale = Vector2(1.8750001, 1.5781251)
+texture = ExtResource("6_wd0f1")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

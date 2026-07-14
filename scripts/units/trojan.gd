@@ -44,6 +44,8 @@ var moving := false
 var displayed_hp := 0
 var hp_tween: Tween
 
+var executing_stun_attack := false
+
 func _ready():
 	randomize()
 	z_index = 10
@@ -88,21 +90,20 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 	
 
 func _process(delta):
-	if attack_locked:
-		return
+
 	if battle_scene.current_phase != BattleBase.BattlePhase.BATTLE:
 		return
 
 	if is_dead:
 		return
 
-	# ==========================================
-	# Handle stun
-	# ==========================================
+	# HANDLE STUN TIMER
 	if stunned:
+
 		stun_timer -= delta
 
-		if stun_timer <= 0.0:
+		if stun_timer <= 0:
+
 			stunned = false
 
 			if stun_tween:
@@ -111,11 +112,11 @@ func _process(delta):
 
 			modulate = original_modulate
 
-	# ==========================================
-	# Smooth movement
-	# ==========================================
-	position = position.move_toward(target_position, move_speed * delta)
-
+	# MOVEMENT ALWAYS HAPPENS
+	position = position.move_toward(
+		target_position,
+		move_speed * delta
+	)
 	if moving and position.distance_to(target_position) < 1.0:
 
 		position = target_position
@@ -123,37 +124,35 @@ func _process(delta):
 
 		if !attack_locked and !is_hurt:
 			anim_player.play("IDLE")
-	# Don't think while stunned
+	# LOCK THINKING ONLY
+
+	if attack_locked:
+		return
+	# STUN PREVENTS THINKIN
 	if stunned:
 		return
-
-	# Timers should ALWAYS run
+	# TIMERS
 	follow_timer += delta
 	shoot_timer += delta
+	# AI MOVEMENT
+	if !moving and follow_timer >= follow_interval:
 
-	# ==========================================
-	# Movement
-	# ==========================================
-	if !moving and !attack_locked and follow_timer >= follow_interval:
 		follow_timer = 0.0
 		random_move()
-
-	# ==========================================
-	# Attack
-	# ==========================================
+	# ATTACK
 	if shoot_timer >= shoot_interval:
+
 		shoot_timer = 0.0
 
 		if can_shoot_player():
 			perform_attack()
-
-# ============================================================
+			
 # CORE MOVEMENT (LANE CONTROL AI)
-# ============================================================
 func move_to_player(target_tile: Vector2i) -> bool:
 
 	if moving:
-		return false
+		while moving:
+			await get_tree().process_frame
 
 	var choices = [
 		target_tile + Vector2i.RIGHT,
@@ -351,21 +350,27 @@ func throw_trap():
 # ============================================================
 func _on_player_stunned(tile: Vector2i):
 
-	if attack_locked:
+	if executing_stun_attack:
 		return
 
-	var reached = await move_to_player(tile)
+	executing_stun_attack = true
+	attack_locked = true
 
-	if !reached:
-		return
+	var reached = await move_to_player(player_character.grid_pos)
 
-	shoot_projectile()
-
-	await get_tree().create_timer(0.15).timeout
-
-	if is_instance_valid(self):
+	if reached:
+		anim_player.play("ATTACK")
+		await get_tree().create_timer(0.12).timeout
 		shoot_projectile()
-			
+		await get_tree().create_timer(0.15).timeout
+		shoot_projectile()
+
+	attack_locked = false
+	executing_stun_attack = false
+
+	if !moving:
+		anim_player.play("IDLE")
+		
 func apply_stun(duration: float):
 	print(name, " STUNNED for ", duration)
 
@@ -407,6 +412,7 @@ func play_move_animation(old_pos: Vector2i, new_pos: Vector2i):
 
 	else:
 		anim_player.play("IDLE")
+		
 func play_hurt():
 
 	if is_dead or is_hurt:

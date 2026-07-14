@@ -6,8 +6,8 @@ var damage: int = 10
 var chip: Chip = null
 var speed := 300.0
 
-@onready var gpu_particles_2d_2: GPUParticles2D = $GPUParticles2D2
-@onready var particles: GPUParticles2D = $GPUParticles2D
+@onready var gpu_particles_2d_2: CPUParticles2D = $GPUParticles2D2
+@onready var particles: CPUParticles2D = $GPUParticles2D
 var trail_angle := 0.0
 const TRAIL_RADIUS := 20.0
 const TRAIL_SPEED := 15.0

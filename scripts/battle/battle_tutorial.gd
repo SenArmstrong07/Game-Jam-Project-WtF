@@ -1235,7 +1235,9 @@ func _check_win_condition():
 			"MC",
 			"No! No! No! No! No! Wait! Wait! Wait WAI-"
 		)
-
+		SignalBus.tutorial_completed = true
+		SignalBus.save_tutorial_completion()
+		
 		await get_tree().create_timer(0.5).timeout
 		get_tree().change_scene_to_file("res://scenes/overworld/CyberMap.tscn")
 		# Continue to the next scene or end the tutorial here.
